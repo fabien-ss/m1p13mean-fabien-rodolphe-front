@@ -5,12 +5,15 @@ import { SHOPS } from '../../data/mock-shops';
 import { PRODUCTS } from '../../data/mock-products';
 import { CATEGORIES } from '../../data/mock-categories';
 import { CartService } from '../../core/services/cart.service';
+import { ZardButtonComponent } from '@/shared/components/button';
+import { ZardBadgeComponent } from '@/shared/components/badge';
+import { ZardCardComponent } from '@/shared/components/card';
 
 
 @Component({
   selector: 'app-home-page',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ZardButtonComponent, ZardBadgeComponent, ZardCardComponent],
   templateUrl: './home-page.html'
 })
 export class HomePage {

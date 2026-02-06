@@ -1,3 +1,99 @@
 <div class="space-y-12">
- Init
+  <!-- Promotions du moment -->
+  <section class="container mx-auto px-4 bg-red-50 py-12 rounded-3xl">
+    <div class="flex justify-between items-end mb-8 px-4">
+      <div>
+        <h2 class="text-2xl font-bold text-red-600">Offres Flash ⚡</h2>
+        <p class="text-red-800/60">Ne ratez pas ces pépites à prix réduit</p>
+      </div>
+      <z-button variant="link" color="danger">Voir tout</z-button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
+      @for (product of promotions(); track product._id) {
+      <z-card class="overflow-hidden hover:scale-[1.02] transition-transform">
+        <div class="relative">
+          <img [src]="product.images[0]" class="w-full h-48 object-cover">
+          <z-badge variant="danger" class="absolute top-2 right-2">
+            -{{ calcDiscount(product.oldPrice!, product.price) }}%
+          </z-badge>
+        </div>
+        <div class="p-4 space-y-2">
+          <p class="text-xs text-gray-400 uppercase font-semibold">{{
+            product.brand || 'Premium' }}</p>
+          <h3 class="font-bold text-gray-800 truncate">{{ product.name }}</h3>
+          <div class="flex items-center gap-2">
+            <span class="text-xl font-bold text-primary-600">{{ product.price }}
+              {{ product.devise }}</span>
+            <span class="text-sm text-gray-400 line-through">{{ product.oldPrice
+              }} {{ product.devise }}</span>
+          </div>
+          <z-button class="w-full" variant="outline"
+            (click)="addToCart(product, $event)">
+            Ajouter au panier
+          </z-button>
+        </div>
+      </z-card>
+      }
+    </div>
+  </section>
+
+  <!-- Boutiques populaires -->
+  <section class="container mx-auto px-4">
+    <h2 class="text-2xl font-bold mb-6 font-primary">Boutiques à la une</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (shop of shops(); track shop._id) {
+      <div
+        class="flex items-center p-4 bg-white rounded-xl border border-gray-100 shadow-sm gap-4 hover:border-primary-300 transition-colors">
+        <img [src]="shop.images[1] || shop.images[0]"
+          class="w-16 h-16 rounded-lg bg-gray-50 border object-contain">
+        <div class="flex-1">
+          <h3 class="font-bold">{{ shop.name }}</h3>
+          <p class="text-sm text-gray-500 flex items-center gap-1">
+            <span class="material-icons text-xs">place</span> {{ shop.phone ||
+            'Centre Commercial' }}
+          </p>
+          <div class="flex items-center text-yellow-500 text-sm font-bold">
+            ⭐ 4.8
+          </div>
+        </div>
+        <z-button variant="ghost"
+          [routerLink]="['/shop', shop._id]">Visiter</z-button>
+      </div>
+      }
+    </div>
+  </section>
+
+  <!-- Nouveautés -->
+  <section class="container mx-auto px-4">
+    <div class="flex items-center gap-4 mb-8">
+      <h2 class="text-2xl font-bold">Dernières arrivées</h2>
+      <div class="h-px flex-1 bg-gray-200"></div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      @for (product of newArrivals(); track product._id) {
+      <div [routerLink]="['/product', product._id]"
+        class="group cursor-pointer">
+        <div
+          class="relative overflow-hidden rounded-xl bg-gray-100 mb-3 aspect-square">
+          <img [src]="product.images[0]"
+            class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500">
+          <button (click)="addToCart(product, $event)"
+            class="absolute bottom-2 right-2 p-2 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all">
+            <span
+              class="material-icons text-primary-600">add_shopping_cart</span>
+          </button>
+        </div>
+        <h3 class="font-medium text-gray-900 truncate">{{ product.name }}</h3>
+        <div class="flex justify-between items-center mt-1">
+          <span class="font-bold text-gray-900">{{ product.price }} {{
+            product.devise }}</span>
+          <span class="text-xs text-green-600" *ngIf="product.stock > 0">En
+            stock ({{ product.stock }})</span>
+        </div>
+      </div>
+      }
+    </div>
+  </section>
 </div>
