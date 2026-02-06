@@ -51,27 +51,27 @@ import { ZardButtonComponent } from '@/shared/components/button';
         <div class="container mx-auto px-4">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
-              <h3 class="font-bold mb-4 text-lg">MallConnect</h3>
+              <h3 class="font-bold mb-4 text-lg">Akoor</h3>
               <p class="text-gray-500 text-sm">Votre centre commercial digital préféré, accessible partout.</p>
             </div>
             <div>
-              <h3 class="font-bold mb-4 text-sm uppercase tracking-wider">Aide</h3>
+              <h3 class="font-bold mb-4 text-sm uppercase tracking-wider">Commerce</h3>
               <ul class="space-y-2 text-sm text-gray-600">
-                <li><a href="#">FAQ</a></li>
-                <li><a href="#">Livraison</a></li>
-                <li><a href="#">Retours</a></li>
+                <li><a href="#">Boutiques</a></li>
+                <li><a href="#">Promotions</a></li>
+                <li><a href="#">Nouveautés</a></li>
               </ul>
             </div>
             <div>
-              <h3 class="font-bold mb-4 text-sm uppercase tracking-wider">Légal</h3>
+              <h3 class="font-bold mb-4 text-sm uppercase tracking-wider">Qui sommes nous ?</h3>
               <ul class="space-y-2 text-sm text-gray-600">
-                <li><a href="#">Conditions d'utilisation</a></li>
-                <li><a href="#">Confidentialité</a></li>
+                <li><a href="#">Yoann</a></li>
+                <li><a href="#">Fabien</a></li>
               </ul>
             </div>
           </div>
           <div class="text-center border-t pt-8 text-gray-400 text-xs">
-            © 2025 MallConnect. Réalisé avec Angular 21 + ZardUI.
+            © 2025 Akoor.
           </div>
         </div>
       </footer>

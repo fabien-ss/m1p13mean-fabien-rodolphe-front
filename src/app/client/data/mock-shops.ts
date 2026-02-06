@@ -8,6 +8,7 @@ export const SHOPS = [
     manager: 'user_123',
     creationDate: new Date('2023-01-15'),
     type: 'Électronique de Luxe',
+    location: 'Box 1, RDC',
     images: [
       'https://images.unsplash.com/photo-1550009158-9ebf69173e03?q=80&w=2000', // Banner
       'https://placehold.co/400x400/0f172a/ffffff?text=TP' // Logo
@@ -23,6 +24,7 @@ export const SHOPS = [
     manager: 'user_456',
     creationDate: new Date('2023-05-20'),
     type: 'Mode & Accessoires',
+    location: 'Box 2, RDC',
     images: [
       'https://img.freepik.com/photos-gratuite/interieur-magasin-vetements-marchandises-elegantes-etageres-design-marque-mode-vetements-decontractes-dans-boutique-moderne-salle-exposition-mode-vide-dans-centre-commercial-marchandises-elegantes_482257-65537.jpg?semt=ais_hybrid&w=740&q=80',
       'https://placehold.co/400x400/1e293b/ffffff?text=MM'
