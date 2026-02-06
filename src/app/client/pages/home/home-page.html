@@ -1,4 +1,33 @@
 <div class="space-y-12">
+  <!-- Hero -->
+  <section
+    class="relative bg-gradient-to-r from-blue-600 to-indigo-700 py-16 md:py-24 overflow-hidden">
+    <div
+      class="container mx-auto px-4 flex flex-col md:flex-row items-center relative z-10">
+      <div class="md:w-1/2 text-white space-y-6">
+        <h1 class="text-4xl md:text-6xl font-extrabold leading-tight">
+          Tout le centre commercial <br> dans votre poche.
+        </h1>
+        <p class="text-lg text-blue-100 max-w-lg">
+          Découvrez les meilleures boutiques et profitez de promotions
+          exclusives livrées chez vous en un clic.
+        </p>
+        <div class="flex gap-4">
+          <z-button variant="secondary" size="lg" routerLink="/catalog">Voir le
+            catalogue</z-button>
+          <z-button variant="outline" size="lg"
+            class="text-white border-white hover:bg-white/10">Boutiques</z-button>
+        </div>
+      </div>
+      <div class="hidden md:flex md:w-1/2 justify-center">
+        <img src="/images/centre-commercial.jpg" alt="Banner"
+          class="rounded-2xl shadow-2xl rotate-3">
+      </div>
+    </div>
+    <div
+      class="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+  </section>
+
   <!-- Promotions du moment -->
   <section class="container mx-auto px-4 bg-red-50 py-12 rounded-3xl">
     <div class="flex justify-between items-end mb-8 px-4">
