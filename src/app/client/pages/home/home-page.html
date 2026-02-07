@@ -73,21 +73,30 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       @for (shop of shops(); track shop._id) {
       <div
-        class="flex items-center p-4 bg-white rounded-xl border border-gray-100 shadow-sm gap-4 hover:border-primary-300 transition-colors">
-        <img [src]="shop.images[1] || shop.images[0]"
-          class="w-16 h-16 rounded-lg bg-gray-50 border object-contain">
-        <div class="flex-1">
-          <h3 class="font-bold">{{ shop.name }}</h3>
-          <p class="text-sm text-gray-500 flex items-center gap-1">
-            <span class="material-icons text-xs">place</span> {{ shop.location ||
-            'Centre Commercial' }}
+        class="flex items-center p-5 bg-white rounded-2xl border border-gray-100 shadow-sm gap-4 hover:shadow-md transition-shadow">
+        <img
+          [src]="shop.images[1] || shop.images[0]"
+          class="w-14 h-14 rounded-xl bg-gray-50 border border-gray-200 object-contain p-1" />
+
+        <div class="flex-1 min-w-0">
+          <h3 class="font-semibold text-gray-900 truncate">{{ shop.name }}</h3>
+
+          <p class="text-sm text-gray-500 flex items-center gap-1 truncate">
+            <span class="material-icons text-base text-gray-400">place</span>
+            {{ shop.location || 'Centre Commercial' }}
           </p>
-          <div class="flex items-center text-yellow-500 text-sm font-bold">
-            ⭐ 4.8
+
+          <div
+            class="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-amber-500">
+            <span>★</span><span>4.8</span>
           </div>
         </div>
-        <z-button variant="ghost"
-          [routerLink]="['/shop', shop._id]">Visiter</z-button>
+
+        <a
+          [routerLink]="['/shop', shop._id]"
+          class="px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-colors">
+          Visiter
+        </a>
       </div>
       }
     </div>
