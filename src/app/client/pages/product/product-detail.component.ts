@@ -10,7 +10,7 @@ import { CartService } from '@/client/core/services/cart.service';
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, ZardButtonComponent, ZardBadgeComponent, CurrencyPipe],
+  imports: [CommonModule, RouterLink, ZardBadgeComponent],
   templateUrl: './product-detail.component.html',
 })
 export class ProductDetailComponent {
@@ -88,12 +88,24 @@ export class ProductDetailComponent {
     this.activeImageIndex.set(i);
   }
 
+  // addToCart() {
+  //   const p = this.product();
+  //   console.log('Adding to cart', { product: p, qty: this.qty() });
+  //   if (!p) return;
+  //   if (!p.available || p.stock <= 0) return;
+
+  //   this.cartService.addToCart(p, this.qty());
+  // }
+
   addToCart() {
     const p = this.product();
     if (!p) return;
     if (!p.available || p.stock <= 0) return;
-
-    // depends on your CartService API; adjust if needed
-    this.cartService.addToCart(p, this.qty());
+    this.cartService.addToCart({
+      id: p._id,
+      name: p.name,
+      price: p.price,
+      image: p.images[0]
+    });
   }
 }
