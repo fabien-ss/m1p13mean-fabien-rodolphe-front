@@ -2,13 +2,11 @@ import { Component, inject, signal, HostListener } from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../core/services/cart.service';
-import { ZardBadgeComponent } from '@/shared/components/badge';
-import { ZardButtonComponent } from '@/shared/components/button';
 
 @Component({
     selector: 'app-client-layout',
     standalone: true,
-    imports: [CommonModule, RouterOutlet, RouterLink, ZardBadgeComponent, ZardButtonComponent],
+    imports: [CommonModule, RouterOutlet, RouterLink],
     styleUrls: ['./client-layout.component.css'],
     template: `
     <div class="min-h-screen flex flex-col bg-gray-50">

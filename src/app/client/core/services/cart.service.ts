@@ -23,6 +23,15 @@ export class CartService {
     }
   }
 
+  clearCart() {
+    this._items.set([]);
+    this.saveToStorage([]);
+  }
+
+  getCartItems(): CartItem[] {
+    return this.loadFromStorage();
+  }
+
   addToCart(product: any, qty: number = 1) {
     this._items.update(prev => {
       const existing = prev.find(i => i.id === product.id);
