@@ -18,7 +18,7 @@ export const routes: Routes = [
       },
       
       { path: 'catalog', loadComponent: () => import('./client/pages/home/home-page').then(m => m.HomePage) },
-      { path: 'product/:id', loadComponent: () => import('./client/pages/home/home-page').then(m => m.HomePage) },
+      { path: 'product/:id', loadComponent: () => import('./client/pages/product/product-detail.component').then(m => m.ProductDetailComponent) },
       { path: 'shop/:id', loadComponent: () => import('./client/pages/shop/shop-detail.component').then(m => m.ShopDetailComponent) },
       { path: 'cart', loadComponent: () => import('./client/pages/cart/cart.component').then(m => m.CartComponent) },
     ]

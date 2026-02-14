@@ -30,5 +30,69 @@ export const SHOPS = [
       'https://placehold.co/400x400/1e293b/ffffff?text=MM'
     ],
     isActive: true
+  },
+  {
+    _id: 'shop_003',
+    name: 'Maison Parfumée',
+    description: 'Parfums rares, bougies couture et soins haut de gamme. Une signature olfactive pour chaque moment.',
+    email: 'bonjour@maisonparfumee.mg',
+    phone: '+261 34 00 000 03',
+    manager: 'user_789',
+    creationDate: new Date('2023-09-10'),
+    type: 'Beauté & Parfumerie',
+    location: 'Box 6, RDC',
+    images: [
+      'https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=2000',
+      'https://placehold.co/400x400/4f46e5/ffffff?text=MP'
+    ],
+    isActive: true
+  },
+  {
+    _id: 'shop_004',
+    name: 'Cordonnier Royal',
+    description: 'Souliers cousus main, maroquinerie fine et accessoires de caractère. L’artisanat au sommet.',
+    email: 'contact@cordonnierroyal.mg',
+    phone: '+261 34 00 000 04',
+    manager: 'user_147',
+    creationDate: new Date('2022-11-04'),
+    type: 'Mode & Accessoires',
+    location: 'Box 12, 1er étage',
+    images: [
+      'https://images.unsplash.com/photo-1528701800489-20be3c8c1d39?q=80&w=2000',
+      'https://placehold.co/400x400/0f172a/ffffff?text=CR'
+    ],
+    isActive: true
+  },
+  {
+    _id: 'shop_005',
+    name: 'Maison Intérieure',
+    description: 'Mobilier design, décoration premium et pièces artisanales pour un intérieur élégant.',
+    email: 'hello@maisoninterieure.mg',
+    phone: '+261 34 00 000 05',
+    manager: 'user_258',
+    creationDate: new Date('2024-02-18'),
+    type: 'Maison & Décoration',
+    location: 'Box 3, 1er étage',
+    images: [
+      'https://images.unsplash.com/photo-1505693314120-0d443867891c?q=80&w=2000',
+      'https://placehold.co/400x400/1e293b/ffffff?text=MI'
+    ],
+    isActive: true
+  },
+  {
+    _id: 'shop_006',
+    name: 'Optica Prime',
+    description: 'Lunettes premium, verres polarisés et montures titane. Un style précis, une vision parfaite.',
+    email: 'service@opticaprime.mg',
+    phone: '+261 34 00 000 06',
+    manager: 'user_369',
+    creationDate: new Date('2024-06-01'),
+    type: 'Accessoires & Optique',
+    location: 'Box 9, RDC',
+    images: [
+      'https://images.unsplash.com/photo-1511499767150-a48a237f0083?q=80&w=2000',
+      'https://placehold.co/400x400/4f46e5/ffffff?text=OP'
+    ],
+    isActive: true
   }
 ];
