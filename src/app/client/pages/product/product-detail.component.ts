@@ -6,6 +6,8 @@ import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardBadgeComponent } from '@/shared/components/badge';
 import { PRODUCTS } from '@/client/data/mock-products';
 import { CartService } from '@/client/core/services/cart.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-product-detail',
@@ -17,8 +19,14 @@ export class ProductDetailComponent {
   private route = inject(ActivatedRoute);
   cartService = inject(CartService);
 
+  private routeId = toSignal(
+    this.route.paramMap.pipe(map(pm => pm.get('id') ?? '')),
+    { initialValue: '' }
+  );
+
+  productId = computed(() => this.routeId());
+
   // state
-  productId = signal<string>('');
   qty = signal<number>(1);
   activeImageIndex = signal<number>(0);
 
@@ -65,8 +73,6 @@ export class ProductDetailComponent {
 
   constructor() {
     effect(() => {
-      const id = this.route.snapshot.paramMap.get('id') ?? '';
-      this.productId.set(id);
       this.qty.set(1);
       this.activeImageIndex.set(0);
     });
@@ -88,14 +94,6 @@ export class ProductDetailComponent {
     this.activeImageIndex.set(i);
   }
 
-  // addToCart() {
-  //   const p = this.product();
-  //   console.log('Adding to cart', { product: p, qty: this.qty() });
-  //   if (!p) return;
-  //   if (!p.available || p.stock <= 0) return;
-
-  //   this.cartService.addToCart(p, this.qty());
-  // }
 
   addToCart() {
     const p = this.product();
