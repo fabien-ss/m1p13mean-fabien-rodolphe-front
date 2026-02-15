@@ -13,7 +13,6 @@ import { Router } from '@angular/router';
   selector: 'app-signin-form',
   imports: [
     LabelComponent,
-    CheckboxComponent,
     ButtonComponent,
     InputFieldComponent,
     RouterModule,

@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CartItem, CartService } from '../../core/services/cart.service';
+import { CartService } from '../../core/services/cart.service';
 
 @Component({
   selector: 'app-cart',
@@ -9,26 +9,14 @@ import { CartItem, CartService } from '../../core/services/cart.service';
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.css']
 })
-export class CartComponent implements OnInit {
-  cartItems: CartItem[] = [];
-
-  constructor(private cartService: CartService) { }
-
-  ngOnInit(): void {
-    this.cartItems = this.cartService.getCartItems();
-  }
+export class CartComponent {
+  cartService = inject(CartService);
 
   removeFromCart(itemId: number) {
     this.cartService.remove(itemId);
-    this.cartItems = this.cartService.getCartItems();
   }
 
   clearCart() {
     this.cartService.clearCart();
-    this.cartItems = [];
-  }
-
-  getTotalPrice(): number {
-    return this.cartItems.reduce((total, item) => total + item.price * item.qty, 0);
   }
 }

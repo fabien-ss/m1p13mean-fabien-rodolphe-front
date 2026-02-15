@@ -1,14 +1,27 @@
-import { Component, inject, signal, HostListener } from '@angular/core';
+import { Component, inject, signal, HostListener, effect } from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../core/services/cart.service';
+import { AuthService } from '../core/services/auth.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map, startWith } from 'rxjs/operators';
+
+type AppUser = {
+  _id?: string;
+  id?: string;
+  prenom?: string;
+  nom?: string;
+  name?: string;
+  email?: string;
+  role?: string;
+};
 
 @Component({
-    selector: 'app-client-layout',
-    standalone: true,
-    imports: [CommonModule, RouterOutlet, RouterLink],
-    styleUrls: ['./client-layout.component.css'],
-    template: `
+  selector: 'app-client-layout',
+  standalone: true,
+  imports: [CommonModule, RouterOutlet, RouterLink],
+  styleUrls: ['./client-layout.component.css'],
+  template: `
     <div class="min-h-screen flex flex-col bg-gray-50">
 
       <header
@@ -25,7 +38,7 @@ import { CartService } from '../core/services/cart.service';
 
           <!-- Desktop Nav -->
           <nav class="hidden md:flex items-center gap-6 ml-4 text-sm font-semibold text-gray-600">
-            <a routerLink="/"        routerLinkActive="text-indigo-600 active"  class="nav-link hover:text-gray-900 transition-colors">Accueil</a>
+            <a routerLink="/"        routerLinkActive="text-indigo-600 active" class="nav-link hover:text-gray-900 transition-colors">Accueil</a>
             <a routerLink="/catalog" routerLinkActive="text-indigo-600 active" class="nav-link hover:text-gray-900 transition-colors">Catalogue</a>
             <a routerLink="/shops"   routerLinkActive="text-indigo-600 active" class="nav-link hover:text-gray-900 transition-colors">Boutiques</a>
             <a routerLink="/deals"   routerLinkActive="text-indigo-600 active" class="nav-link hover:text-gray-900 transition-colors flex items-center gap-1">
@@ -34,7 +47,6 @@ import { CartService } from '../core/services/cart.service';
             </a>
           </nav>
 
-          <!-- Search (Desktop) -->
           <div class="hidden md:flex flex-1 max-w-sm mx-4">
             <div class="search-wrap relative w-full">
               <span class="search-icon material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-base transition-colors pointer-events-none">search</span>
@@ -46,7 +58,6 @@ import { CartService } from '../core/services/cart.service';
             </div>
           </div>
 
-          <!-- Spacer on mobile -->
           <div class="flex-1 md:hidden"></div>
 
           <!-- Actions -->
@@ -59,28 +70,47 @@ import { CartService } from '../core/services/cart.service';
               <span class="material-icons text-base">search</span>
             </button>
 
+            <!-- Cart -->
+            <a routerLink="/cart"
+              class="relative w-9 h-9 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors">
+              <span class="material-icons text-base">shopping_bag</span>
+              @if (cartService.count() > 0) {
+                <span class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-indigo-600 text-white text-[10px] font-black flex items-center justify-center px-1">
+                  {{ cartService.count() }}
+                </span>
+              }
+            </a>
 
-                <a routerLink="/cart"
-                  class="relative w-9 h-9 rounded-xl flex items-center justify-center text-gray-600 hover:bg-gray-100 transition-colors">
-                  <span class="material-icons text-base">shopping_bag</span>
-                  @if (cartService.count() > 0) {
-                    <span class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full bg-indigo-600 text-white text-[10px] font-black flex items-center justify-center px-1">
-                      {{ cartService.count() }}
-                    </span>
-                  }
+            <!-- Auth (Desktop) -->
+            <div class="hidden sm:flex items-center gap-2 ml-2">
+
+              @if (!isLoggedIn()) {
+                <a routerLink="/auth/login"
+                  class="px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-colors">
+                  Connexion
                 </a>
-    
-                <!-- Auth buttons -->
-                <div class="hidden sm:flex items-center gap-2 ml-2">
-                  <a routerLink="/auth/login"
-                    class="px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-colors">
-                    Connexion
-                  </a>
-                  <a routerLink="/auth/register"
-                    class="px-4 py-2 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white transition-colors shadow-sm">
-                    S'inscrire
-                  </a>
-                </div>
+                <a routerLink="/auth/register"
+                  class="px-4 py-2 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white transition-colors shadow-sm">
+                  S'inscrire
+                </a>
+              } @else {
+                <a routerLink="/account"
+                  class="px-3 py-2 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-100 transition-colors flex items-center gap-2">
+                  <span class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-black">
+                    {{ userInitials() }}
+                  </span>
+                  <span class="max-w-[160px] truncate">
+                    {{ userDisplayName() }}
+                  </span>
+                </a>
+
+                <button
+                  (click)="logout()"
+                  class="px-4 py-2 rounded-xl text-sm font-semibold border border-gray-200 text-gray-700 hover:border-indigo-300 hover:text-indigo-600 transition-colors">
+                  Déconnexion
+                </button>
+              }
+            </div>
 
             <!-- Mobile menu toggle -->
             <button
@@ -110,14 +140,37 @@ import { CartService } from '../core/services/cart.service';
         @if (mobileMenuOpen()) {
           <nav class="md:hidden border-t border-gray-100 bg-white mobile-menu-enter">
             <div class="container mx-auto px-4 py-4 flex flex-col gap-1">
-              <a routerLink="/"         (click)="toggleMobileMenu()" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-colors">🏠 Accueil</a>
-              <a routerLink="/catalog"  (click)="toggleMobileMenu()" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-colors">📦 Catalogue</a>
-              <a routerLink="/shops"    (click)="toggleMobileMenu()" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-colors">🏪 Boutiques</a>
-              <a routerLink="/deals"    (click)="toggleMobileMenu()" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-colors">⚡ Offres Flash</a>
-              <a routerLink="/map"      (click)="toggleMobileMenu()" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-colors">🗺️ Plan du centre</a>
-              <div class="border-t border-gray-100 mt-2 pt-3 flex gap-2">
-                <a routerLink="/auth/login"    class="flex-1 py-2.5 rounded-xl text-sm font-semibold text-center border border-gray-200 text-gray-700 hover:border-indigo-300 transition-colors">Connexion</a>
-                <a routerLink="/auth/register" class="flex-1 py-2.5 rounded-xl text-sm font-semibold text-center bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">S'inscrire</a>
+              <a routerLink="/"        (click)="toggleMobileMenu()" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-colors">🏠 Accueil</a>
+              <a routerLink="/catalog" (click)="toggleMobileMenu()" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-colors">📦 Catalogue</a>
+              <a routerLink="/shops"   (click)="toggleMobileMenu()" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-colors">🏪 Boutiques</a>
+              <a routerLink="/deals"   (click)="toggleMobileMenu()" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-colors">⚡ Offres Flash</a>
+              <a routerLink="/map"     (click)="toggleMobileMenu()" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-colors">🗺️ Plan du centre</a>
+
+              <div class="border-t border-gray-100 mt-2 pt-3 flex flex-col gap-2">
+                @if (!isLoggedIn()) {
+                  <a routerLink="/auth/login" (click)="toggleMobileMenu()"
+                    class="py-2.5 rounded-xl text-sm font-semibold text-center border border-gray-200 text-gray-700 hover:border-indigo-300 transition-colors">
+                    Connexion
+                  </a>
+                  <a routerLink="/auth/register" (click)="toggleMobileMenu()"
+                    class="py-2.5 rounded-xl text-sm font-semibold text-center bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
+                    S'inscrire
+                  </a>
+                } @else {
+                  <a routerLink="/account" (click)="toggleMobileMenu()"
+                    class="px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-colors flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-black">
+                      {{ userInitials() }}
+                    </span>
+                    <span class="truncate">{{ userDisplayName() }}</span>
+                  </a>
+
+                  <button
+                    (click)="logout(); toggleMobileMenu()"
+                    class="py-2.5 rounded-xl text-sm font-semibold text-center border border-gray-200 text-gray-700 hover:border-indigo-300 hover:text-indigo-600 transition-colors">
+                    Déconnexion
+                  </button>
+                }
               </div>
             </div>
           </nav>
@@ -161,18 +214,13 @@ import { CartService } from '../core/services/cart.service';
             <div class="space-y-4">
               <h3 class="font-black text-gray-900 text-sm uppercase tracking-wider">Qui sommes-nous ?</h3>
               <ul>
-                <li>
-                    <p class="text-sm text-gray-500">RAKOTO-HARISOA Rodolphe Yoann</p>
-                </li>
-                <li>
-                    <p class="text-sm text-gray-500">RAKOTOMANANA Andriniaina Fabien</p>
-                </li>
+                <li><p class="text-sm text-gray-500">RAKOTO-HARISOA Rodolphe Yoann</p></li>
+                <li><p class="text-sm text-gray-500">RAKOTOMANANA Andriniaina Fabien</p></li>
               </ul>
             </div>
           </div>
         </div>
 
-        <!-- Bottom bar -->
         <div class="border-t border-gray-100">
           <div class="container mx-auto px-6 md:px-10 py-4 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-gray-400">
             <span>© 2025 Akoor · Tous droits réservés</span>
@@ -188,23 +236,64 @@ import { CartService } from '../core/services/cart.service';
   `
 })
 export class ClientLayoutComponent {
-    cartService = inject(CartService);
-    isScrolled = signal(false);
-    mobileMenuOpen = signal(false);
-    searchOpen = signal(false);
+  cartService = inject(CartService);
+  authService = inject(AuthService);
 
-    @HostListener('window:scroll')
-    onScroll(): void {
-        this.isScrolled.set(window.scrollY > 10);
-    }
+  isScrolled = signal(false);
+  mobileMenuOpen = signal(false);
+  searchOpen = signal(false);
 
-    toggleMobileMenu(): void {
-        this.mobileMenuOpen.update(v => !v);
-        if (this.searchOpen()) this.searchOpen.set(false);
-    }
+  private loggedInSig = toSignal(
+    this.authService.loggedIn$.pipe(startWith(this.authService.isLoggedIn())),
+    { initialValue: this.authService.isLoggedIn() }
+  );
 
-    toggleSearch(): void {
-        this.searchOpen.update(v => !v);
-        if (this.mobileMenuOpen()) this.mobileMenuOpen.set(false);
-    }
+  user = signal<AppUser | null>(this.authService.getUser());
+
+  isLoggedIn = signal<boolean>(this.authService.isLoggedIn());
+
+  constructor() {
+    effect(() => {
+      const logged = this.loggedInSig();
+      this.isLoggedIn.set(!!logged);
+      this.user.set(logged ? this.authService.getUser() : null);
+    });
+  }
+
+  userDisplayName(): string {
+    const u = this.user();
+    if (!u) return '';
+    // supports {prenom, nom} OR {name}
+    const full = `${u.prenom ?? ''} ${u.nom ?? ''}`.trim();
+    return full || u.name || u.email || 'Utilisateur';
+  }
+
+  userInitials(): string {
+    const u = this.user();
+    if (!u) return 'U';
+    const first = (u.prenom || u.name || u.email || 'U')[0] ?? 'U';
+    const last = (u.nom || '')[0] ?? '';
+    return (first + last).toUpperCase();
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.user.set(null);
+    this.isLoggedIn.set(false);
+  }
+
+  @HostListener('window:scroll')
+  onScroll(): void {
+    this.isScrolled.set(window.scrollY > 10);
+  }
+
+  toggleMobileMenu(): void {
+    this.mobileMenuOpen.update(v => !v);
+    if (this.searchOpen()) this.searchOpen.set(false);
+  }
+
+  toggleSearch(): void {
+    this.searchOpen.update(v => !v);
+    if (this.mobileMenuOpen()) this.mobileMenuOpen.set(false);
+  }
 }

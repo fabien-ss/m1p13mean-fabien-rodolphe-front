@@ -1,18 +1,18 @@
 <div class="container mx-auto mt-10">
-  <h1 class="text-3xl font-bold mb-5">Shopping Cart</h1>
-  <div *ngIf="cartItems.length > 0; else emptyCart">
+  <h1 class="text-3xl font-bold mb-5">Mon panier</h1>
+  <div *ngIf="cartService.items().length > 0; else emptyCart">
     <table class="w-full table-auto">
       <thead>
         <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-          <th class="py-3 px-6 text-left">Product</th>
-          <th class="py-3 px-6 text-left">Price</th>
-          <th class="py-3 px-6 text-center">Quantity</th>
+          <th class="py-3 px-6 text-left">Produit</th>
+          <th class="py-3 px-6 text-left">Prix</th>
+          <th class="py-3 px-6 text-center">Quantité</th>
           <th class="py-3 px-6 text-center">Total</th>
-          <th class="py-3 px-6 text-center">Actions</th>
+          <th class="py-3 px-6 text-center"></th>
         </tr>
       </thead>
       <tbody class="text-gray-600 text-sm font-light">
-        @for (item of cartItems; track $index) {
+        @for (item of cartService.items(); track $index) {
         <tr class="border-b border-gray-200 hover:bg-gray-100">
           <td class="py-3 px-6 text-left whitespace-nowrap">
             <div class="flex items-center">
@@ -34,7 +34,7 @@
           </td>
           <td class="py-3 px-6 text-center">
             <button (click)="removeFromCart(item.id)"
-              class="bg-red-500 text-white py-1 px-3 rounded-full text-xs">Remove</button>
+              class="bg-red-500 text-white py-1 px-3 rounded-full text-xs">Enlever</button>
           </td>
         </tr>
         }
@@ -42,13 +42,13 @@
     </table>
     <div class="mt-5 flex justify-between items-center">
       <button (click)="clearCart()"
-        class="bg-red-500 text-white py-2 px-4 rounded">Clear Cart</button>
+        class="bg-red-500 text-white py-2 px-4 rounded">Vider le panier</button>
       <div class="text-right">
-        <p class="text-lg font-bold">Total: {{ getTotalPrice() | currency }}</p>
+        <p class="text-lg font-bold">Total: {{ cartService.total() | currency }}</p>
       </div>
     </div>
   </div>
   <ng-template #emptyCart>
-    <p class="text-center text-gray-500">Your cart is empty.</p>
+    <p class="text-center text-gray-500">Votre panier est vide.</p>
   </ng-template>
 </div>
