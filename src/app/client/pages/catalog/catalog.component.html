@@ -1,0 +1,175 @@
+<div class="bg-gray-50 min-h-screen pb-20">
+
+  <div class="bg-white border-b border-gray-100">
+    <div class="container mx-auto px-4 md:px-6 pt-6 pb-4">
+      <!-- Breadcrumb -->
+      <nav class="text-sm text-gray-500 flex items-center gap-2 mb-6">
+        <a routerLink="/" class="hover:text-indigo-600 transition-colors">Accueil</a>
+        <span>/</span>
+        <span class="text-gray-700 font-semibold">Catalogue</span>
+      </nav>
+
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+          <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900">Les Collections</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-6 py-12">
+    <div class="flex flex-col lg:flex-row gap-16">
+      
+      <!-- sidebar recherche -->
+      <aside class="hidden lg:block w-72 flex-shrink-0 space-y-12">
+        
+        <!-- Catégories -->
+        <div class="space-y-6">
+          <h3 class="text-sm font-bold uppercase tracking-[0.2em] text-slate-400">Catégories</h3>
+          <ul class="space-y-4">
+            <li class="group flex items-center justify-between cursor-pointer">
+              <span class="text-sm font-medium text-slate-900 border-b border-slate-950 pb-1">Toutes les pièces</span>
+              <span class="text-sm text-slate-300 italic">{{ allProducts().length }}</span>
+            </li>
+            <li class="group flex items-center justify-between cursor-pointer text-slate-500 hover:text-slate-950 transition-colors">
+              <span class="text-sm">Mode & Maroquinerie</span>
+              <span class="text-sm text-slate-300 italic">24</span>
+            </li>
+            <li class="group flex items-center justify-between cursor-pointer text-slate-500 hover:text-slate-950 transition-colors">
+              <span class="text-sm">Haute Horlogerie</span>
+              <span class="text-sm text-slate-300 italic">12</span>
+            </li>
+            <li class="group flex items-center justify-between cursor-pointer text-slate-500 hover:text-slate-950 transition-colors">
+              <span class="text-sm">Beauté & Parfums</span>
+              <span class="text-sm text-slate-300 italic">08</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Prix Range -->
+        <div class="space-y-6">
+          <h3 class="text-sm font-bold uppercase tracking-[0.2em] text-slate-400">Gamme de Prix</h3>
+          <div class="space-y-4 px-1">
+             <div class="h-0.5 bg-slate-100 relative">
+                <div class="absolute inset-y-0 left-0 right-1/4 bg-slate-950"></div>
+                <div class="absolute -top-1.5 left-0 w-3 h-3 bg-white border-2 border-slate-950 rounded-full cursor-pointer"></div>
+                <div class="absolute -top-1.5 right-1/4 w-3 h-3 bg-white border-2 border-slate-950 rounded-full cursor-pointer"></div>
+             </div>
+             <div class="flex justify-between text-sm font-bold tracking-widest text-slate-900">
+                <span>0 MGA</span>
+                <span>5 000 000 MGA</span>
+             </div>
+          </div>
+        </div>
+
+        <!-- Marques -->
+        <div class="space-y-6">
+          <h3 class="text-sm font-bold uppercase tracking-[0.2em] text-slate-400">Marques</h3>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1 border border-slate-200 text-[9px] font-bold uppercase tracking-widest hover:border-slate-950 cursor-pointer transition-all">Zenith</span>
+            <span class="px-3 py-1 border border-slate-200 text-[9px] font-bold uppercase tracking-widest hover:border-slate-950 cursor-pointer transition-all">Acoustics</span>
+            <span class="px-3 py-1 border border-slate-950 bg-slate-950 text-white text-[9px] font-bold uppercase tracking-widest">Horizon</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- listes des produits -->
+      <main class="flex-1">
+        
+        <!-- Barre de tri -->
+        <div class="flex items-center justify-between mb-12 pb-6 border-b border-slate-50">
+          <p class="text-sm uppercase tracking-widest text-slate-400">
+            Affichage de <span class="text-slate-950 font-bold">{{ filteredProducts().length }}</span> résultats
+          </p>
+          
+          <div class="flex items-center gap-6">
+            <div class="flex items-center gap-2 cursor-pointer group">
+              <span class="text-sm font-bold uppercase tracking-widest">Trier par : Nouveautés</span>
+              <span class="material-icons text-sm">expand_more</span>
+            </div>
+          </div>
+        </div>
+
+        @if (isLoading()) {
+          <div class="flex justify-center py-40">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-slate-900"></div>
+          </div>
+        } @else {
+          <!-- Grid des produits -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-5 gap-y-10">
+            @for (product of filteredProducts(); track product._id) {
+<a
+                [routerLink]="['/product', product._id]"
+                class="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-md transition-shadow group">
+                <div
+                    class="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
+
+                    <!-- Image -->
+                    <div
+                        class="relative aspect-[4/5] bg-gray-50 overflow-hidden">
+                        <img
+                            [src]="product.images[0]"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            alt="Product" />
+
+                        <!-- Limited stock badge -->
+                        @if (product.stock > 0 && product.stock <= 5) {
+                        <div
+                            class="absolute top-3 left-3 bg-white/90 backdrop-blur border border-gray-200 rounded-full
+                            text-[11px] px-3 py-1 text-gray-700">
+                            Stock faible ({{ product.stock }})
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Content -->
+                    <div class="p-4 space-y-2">
+                        <p
+                            class="text-[11px] tracking-widest uppercase text-gray-500 font-semibold">
+                            {{ product.brand || 'Premium' }}
+                        </p>
+
+                        <h3 class="font-semibold text-gray-900 truncate">
+                            {{ product.name }}
+                        </h3>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-lg font-bold text-gray-900">
+                                {{ product.price | number:'1.0-0' }} {{
+                                product.devise }}
+                            </span>
+                            <span
+                                class="text-[11px] text-gray-400 font-mono truncate max-w-[110px]">
+                                {{ product.sku }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            } @empty {
+              <div class="col-span-full py-40 text-center">
+                <p class="text-slate-400 italic font-light text-xl">Aucune pièce ne correspond à votre recherche.</p>
+              </div>
+            }
+          </div>
+
+          <!-- Paginatio -->
+          <div class="mt-32 pt-12 border-t border-slate-100 flex items-center justify-between">
+            <button class="text-sm font-bold uppercase tracking-widest text-slate-300 cursor-not-allowed">Précédent</button>
+            
+            <div class="flex items-center gap-8">
+              <span class="text-sm font-bold uppercase tracking-widest border-b-2 border-slate-950 pb-1">01</span>
+              <span class="text-sm font-bold uppercase tracking-widest text-slate-400 hover:text-slate-950 cursor-pointer">02</span>
+              <span class="text-sm font-bold uppercase tracking-widest text-slate-400 hover:text-slate-950 cursor-pointer">03</span>
+              <span class="text-sm font-bold uppercase tracking-widest text-slate-400">...</span>
+              <span class="text-sm font-bold uppercase tracking-widest text-slate-400 hover:text-slate-950 cursor-pointer">12</span>
+            </div>
+
+            <button class="text-sm font-bold uppercase tracking-widest text-slate-950 hover:text-primary-600 transition-colors">Suivant</button>
+          </div>
+        }
+
+      </main>
+    </div>
+  </div>
+</div>
