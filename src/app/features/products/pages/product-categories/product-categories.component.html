@@ -1,0 +1,41 @@
+<app-component-card title="Add New Product Category">
+    <div class="space-y-6">
+
+        <!-- Category Name -->
+        <div>
+            <app-label for="categoryName">Category Name *</app-label>
+            <app-input-field [(ngModel)]="categoryName" id="categoryName" name="categoryName" placeholder="Enter category name" required />
+        </div>
+
+        <!-- Parent Category (optional) -->
+        <div>
+            <app-label for="parentCategory">Parent Category</app-label>
+            <app-select id="parentCategory" [options]="parentCategories" placeholder="Select parent category (optional)"
+                [value]="selectedParentCategory" (valueChange)="onParentCategoryChange($any($event))"
+                className="dark:bg-dark-900"></app-select>
+        </div>
+
+        <!-- Category Description -->
+        <div>
+            <app-label for="categoryDescription">Description</app-label>
+            <app-text-area id="categoryDescription" name="categoryDescription"
+                placeholder="Add a short description for this category" class="w-full h-24"></app-text-area>
+        </div>
+
+        <!-- Status Toggle -->
+        <div class="flex items-center gap-3">
+            <app-switch name="categoryStatus" [defaultChecked]="true" class="scale-125">
+                Active
+            </app-switch>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex justify-end">
+            <app-button size="sm" variant="primary" (click)="onSaveCategory()" [endIcon]="saveIcon">
+                Save Category
+            </app-button>
+        </div>
+
+    </div>
+</app-component-card>
+<app-product-categories-list />

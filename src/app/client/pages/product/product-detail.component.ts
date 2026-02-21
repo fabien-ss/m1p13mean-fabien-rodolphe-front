@@ -7,7 +7,8 @@ import { ZardBadgeComponent } from '@/shared/components/badge';
 import { PRODUCTS } from '@/client/data/mock-products';
 import { CartService } from '@/client/core/services/cart.service';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs/operators';
+import { distinctUntilChanged, map } from 'rxjs/operators';
+import { ProductService } from '@/client/core/services/product.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -17,10 +18,11 @@ import { map } from 'rxjs/operators';
 })
 export class ProductDetailComponent {
   private route = inject(ActivatedRoute);
+  private productService = inject(ProductService);
   cartService = inject(CartService);
 
   private routeId = toSignal(
-    this.route.paramMap.pipe(map(pm => pm.get('id') ?? '')),
+    this.route.paramMap.pipe(map(pm => pm.get('id') ?? ''),distinctUntilChanged()),
     { initialValue: '' }
   );
 

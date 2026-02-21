@@ -1,0 +1,186 @@
+<div class="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 mt-5">
+
+    <!-- Header -->
+    <div class="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Orders</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Manage and track customer orders</p>
+      </div>
+  
+      <div class="flex items-center gap-3">
+
+        <app-date-picker id="filter-date"  placeholder="Start Date" > </app-date-picker>
+
+        <app-date-picker id="filter-date"  placeholder="End Date" > </app-date-picker>
+
+        <!-- Status Filter -->
+        <div class="flex items-center rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <button (click)="filterStatus = 'all'"
+            class="px-3 py-2 text-theme-sm font-medium transition-colors"
+            [class]="filterStatus === 'all' ? 'bg-brand-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">
+            All
+          </button>
+          <button (click)="filterStatus = 'pending'"
+            class="px-3 py-2 text-theme-sm font-medium transition-colors"
+            [class]="filterStatus === 'pending' ? 'bg-orange-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">
+            Pending
+          </button>
+          <button (click)="filterStatus = 'processing'"
+            class="px-3 py-2 text-theme-sm font-medium transition-colors"
+            [class]="filterStatus === 'processing' ? 'bg-blue-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">
+            Processing
+          </button>
+          <button (click)="filterStatus = 'delivered'"
+            class="px-3 py-2 text-theme-sm font-medium transition-colors"
+            [class]="filterStatus === 'delivered' ? 'bg-green-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">
+            Delivered
+          </button>
+          <button (click)="filterStatus = 'cancelled'"
+            class="px-3 py-2 text-theme-sm font-medium transition-colors"
+            [class]="filterStatus === 'cancelled' ? 'bg-red-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">
+            Cancelled
+          </button>
+        </div>
+  
+        <button class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03]">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 4v6h-6" />
+            <path d="M1 20v-6h6" />
+            <path d="M3.51 9a9 9 0 0 1 14.36-3.36L23 10M1 14l5.13 4.36A9 9 0 0 0 20.49 15" />
+          </svg>
+          Refresh
+        </button>
+  
+        <button class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
+          <svg class="stroke-current fill-white dark:fill-gray-800" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2.29004 5.90393H17.7067" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M17.7075 14.0961H2.29085" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M12.0826 3.33331C13.5024 3.33331 14.6534 4.48431 14.6534 5.90414C14.6534 7.32398 13.5024 8.47498 12.0826 8.47498C10.6627 8.47498 9.51172 7.32398 9.51172 5.90415C9.51172 4.48432 10.6627 3.33331 12.0826 3.33331Z" stroke-width="1.5" />
+            <path d="M7.91745 11.525C6.49762 11.525 5.34662 12.676 5.34662 14.0959C5.34661 15.5157 6.49762 16.6667 7.91745 16.6667C9.33728 16.6667 10.4883 15.5157 10.4883 14.0959C10.4883 12.676 9.33728 11.525 7.91745 11.525Z" stroke-width="1.5" />
+          </svg>
+          Filter
+        </button>
+  
+      </div>
+    </div>
+  
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+      <div class="rounded-xl border border-orange-100 bg-orange-50 dark:border-orange-800 dark:bg-orange-900/10 px-4 py-3">
+        <p class="text-xs font-medium text-orange-600 dark:text-orange-400 uppercase tracking-wide mb-1">Pending</p>
+        <p class="text-2xl font-bold text-orange-700 dark:text-orange-300">12</p>
+        <p class="text-xs text-orange-400 mt-0.5">awaiting confirmation</p>
+      </div>
+      <div class="rounded-xl border border-blue-100 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/10 px-4 py-3">
+        <p class="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide mb-1">Processing</p>
+        <p class="text-2xl font-bold text-blue-700 dark:text-blue-300">8</p>
+        <p class="text-xs text-blue-400 mt-0.5">being prepared</p>
+      </div>
+      <div class="rounded-xl border border-green-100 bg-green-50 dark:border-green-800 dark:bg-green-900/10 px-4 py-3">
+        <p class="text-xs font-medium text-green-600 dark:text-green-400 uppercase tracking-wide mb-1">Delivered</p>
+        <p class="text-2xl font-bold text-green-700 dark:text-green-300">143</p>
+        <p class="text-xs text-green-400 mt-0.5">completed orders</p>
+      </div>
+      <div class="rounded-xl border border-red-100 bg-red-50 dark:border-red-800 dark:bg-red-900/10 px-4 py-3">
+        <p class="text-xs font-medium text-red-600 dark:text-red-400 uppercase tracking-wide mb-1">Cancelled</p>
+        <p class="text-2xl font-bold text-red-700 dark:text-red-300">5</p>
+        <p class="text-xs text-red-400 mt-0.5">this month</p>
+      </div>
+    </div>
+  
+    <!-- Table -->
+    <div class="max-w-full overflow-x-auto">
+      <table class="w-full text-left">
+        <thead class="border-y border-gray-100 dark:border-gray-800">
+          <tr>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400">Order</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400">Customer</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Items</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Total</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Payment</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Status</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Date</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+          @for (order of filteredOrders; track order.id) {
+            <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+  
+              <!-- Order ID -->
+              <td class="py-4 px-4">
+                <p class="font-semibold text-gray-800 text-theme-sm dark:text-white/90">#{{ order.id }}</p>
+                <span class="text-gray-400 text-theme-xs">{{ order.channel }}</span>
+              </td>
+  
+              <!-- Customer -->
+              <td class="py-4 px-4">
+                <div class="flex items-center gap-2">
+                  <div class="h-8 w-8 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center text-xs font-bold text-brand-600 dark:text-brand-400 flex-shrink-0">
+                    {{ order.customer.name.charAt(0) }}
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-800 dark:text-white/90">{{ order.customer.name }}</p>
+                    <p class="text-xs text-gray-400">{{ order.customer.email }}</p>
+                  </div>
+                </div>
+              </td>
+  
+              <!-- Items -->
+              <td class="py-4 px-4 text-center text-gray-500 text-theme-sm dark:text-gray-400">
+                {{ order.itemCount }} item{{ order.itemCount > 1 ? 's' : '' }}
+              </td>
+  
+              <!-- Total -->
+              <td class="py-4 px-4 text-center font-semibold text-gray-800 dark:text-white/90">
+                ${{ order.total.toFixed(2) }}
+              </td>
+  
+              <!-- Payment -->
+              <td class="py-4 px-4 text-center">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
+                  [class]="order.paymentStatus === 'paid'
+                    ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                    : order.paymentStatus === 'pending'
+                    ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400'
+                    : 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'">
+                  {{ order.paymentStatus | titlecase }}
+                </span>
+              </td>
+  
+              <!-- Status -->
+              <td class="py-4 px-4 text-center">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
+                  [class]="order.status === 'delivered' ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                    : order.status === 'processing' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'
+                    : order.status === 'pending' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400'
+                    : 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'">
+                  {{ order.status | titlecase }}
+                </span>
+              </td>
+  
+              <!-- Date -->
+              <td class="py-4 px-4 text-center text-gray-500 text-theme-sm dark:text-gray-400">
+                {{ order.date }}
+              </td>
+  
+              <!-- Actions -->
+              <td class="py-4 px-4 text-center">
+                <div class="inline-flex items-center gap-2">
+                  <app-button size="sm" variant="outline" (click)="viewOrder(order)">
+                    View
+                  </app-button>
+                  <app-button size="sm" variant="primary" (click)="updateStatus(order)"
+                    [disabled]="order.status === 'delivered' || order.status === 'cancelled'">
+                    Cancel
+                  </app-button>
+                </div>
+              </td>
+  
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  
+  </div>
