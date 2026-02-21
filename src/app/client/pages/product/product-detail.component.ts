@@ -1,5 +1,5 @@
 import { CommonModule, CurrencyPipe, NgIf } from '@angular/common';
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, resource, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { ZardButtonComponent } from '@/shared/components/button';
@@ -7,8 +7,9 @@ import { ZardBadgeComponent } from '@/shared/components/badge';
 import { PRODUCTS } from '@/client/data/mock-products';
 import { CartService } from '@/client/core/services/cart.service';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { distinctUntilChanged, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { ProductService } from '@/client/core/services/product.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-product-detail',
@@ -22,7 +23,7 @@ export class ProductDetailComponent {
   cartService = inject(CartService);
 
   private routeId = toSignal(
-    this.route.paramMap.pipe(map(pm => pm.get('id') ?? ''),distinctUntilChanged()),
+    this.route.paramMap.pipe(map(pm => pm.get('id') ?? '')),
     { initialValue: '' }
   );
 
@@ -32,11 +33,27 @@ export class ProductDetailComponent {
   qty = signal<number>(1);
   activeImageIndex = signal<number>(0);
 
-  // get product
-  product = computed(() => {
-    const id = this.productId();
-    return PRODUCTS.find(p => p._id === id);
+  productResource = resource({
+    params: () => {return this.productId()}, // ✅ rerun when route id changes
+    loader: async ({ params: id }) => {
+      if (!id) return null;
+      return await firstValueFrom(this.productService.getProductById(id));
+    },
   });
+
+  product = computed(() => this.productResource.value()); // Product | null
+
+  relatedProductsResource = resource({
+    params: () => this.product()?.shop ?? '', // ✅ rerun when product/shop changes
+    loader: async ({ params: shopId }) => {
+      if (!shopId) return [];
+      return await firstValueFrom(this.productService.getProductsByShop(shopId._id));
+    },
+  });
+
+  related = computed(() =>
+    (this.relatedProductsResource.value() ?? []).filter(p => p._id !== this.productId()).slice(0, 4)
+  );
 
   // derived
   activeImage = computed(() => {
@@ -63,14 +80,6 @@ export class ProductDetailComponent {
     if (p.stock <= 0) return 'Rupture de stock';
     if (p.stock <= 5) return `Stock faible (${p.stock})`;
     return `En stock (${p.stock})`;
-  });
-
-  related = computed(() => {
-    const p = this.product();
-    if (!p) return [];
-    return PRODUCTS
-      .filter(x => x._id !== p._id && x.category === p.category)
-      .slice(0, 4);
   });
 
   constructor() {

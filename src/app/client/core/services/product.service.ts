@@ -8,10 +8,13 @@ export interface Product {
     price: number;     // Ajouté pour le commerce
     oldPrice?: number; // Pour les promos
     promo?: boolean;   // Pour le filtrage
+    tags?: string[];
+    sku?: string;
+    barcode?: string;
     stock: number;
     brand?: string;
     images: string[];
-    shop: string;      // ID de la boutique
+    shop: {_id: string};      // ID de la boutique
     available: boolean;
 }
 @Injectable({ providedIn: 'root' })
