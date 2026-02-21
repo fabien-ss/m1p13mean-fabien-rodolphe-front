@@ -115,6 +115,6 @@ export class ProductDetailComponent {
       name: p.name,
       price: p.price,
       image: p.images[0]
-    });
+    },this.qty());
   }
 }
