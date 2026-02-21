@@ -14,7 +14,7 @@ import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, ZardBadgeComponent],
+  imports: [CommonModule, RouterLink, ZardBadgeComponent, ZardButtonComponent],
   templateUrl: './product-detail.component.html',
 })
 export class ProductDetailComponent {
@@ -34,7 +34,7 @@ export class ProductDetailComponent {
   activeImageIndex = signal<number>(0);
 
   productResource = resource({
-    params: () => {return this.productId()}, // ✅ rerun when route id changes
+    params: () => {return this.productId()}, 
     loader: async ({ params: id }) => {
       if (!id) return null;
       return await firstValueFrom(this.productService.getProductById(id));
@@ -44,7 +44,7 @@ export class ProductDetailComponent {
   product = computed(() => this.productResource.value()); // Product | null
 
   relatedProductsResource = resource({
-    params: () => this.product()?.shop ?? '', // ✅ rerun when product/shop changes
+    params: () => this.product()?.shop ?? '', 
     loader: async ({ params: shopId }) => {
       if (!shopId) return [];
       return await firstValueFrom(this.productService.getProductsByShop(shopId._id));

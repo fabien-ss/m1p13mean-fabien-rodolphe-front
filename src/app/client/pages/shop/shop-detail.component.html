@@ -116,64 +116,68 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       @for (product of shopProducts(); track product._id) {
+      <a
+        [routerLink]="['/product', product._id]"
+        class="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-md transition-shadow group">
+        <div
+          class="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
 
-      <div
-        class="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
+          <!-- Image -->
+          <div class="relative aspect-[4/5] bg-gray-50 overflow-hidden">
+            <img
+              [src]="product.images[0]"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              alt="Product" />
 
-        <!-- Image -->
-        <div class="relative aspect-[4/5] bg-gray-50 overflow-hidden">
-          <img
-            [src]="product.images[0]"
-            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-            alt="Product" />
-
-          <!-- Limited stock badge -->
-          @if (product.stock > 0 && product.stock <= 5) {
-          <div
-            class="absolute top-3 left-3 bg-white/90 backdrop-blur border border-gray-200 rounded-full
+            <!-- Limited stock badge -->
+            @if (product.stock > 0 && product.stock <= 5) {
+            <div
+              class="absolute top-3 left-3 bg-white/90 backdrop-blur border border-gray-200 rounded-full
                             text-[11px] px-3 py-1 text-gray-700">
-            Stock faible ({{ product.stock }})
-          </div>
-          }
+              Stock faible ({{ product.stock }})
+            </div>
+            }
 
-          <!-- Quick action -->
-          <div
-            class="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-            <z-button
-              (click)="addToCart(product)"
-              class="w-full"
-              variant="primary">
-              Ajouter au panier
-            </z-button>
+            <!-- Quick action -->
+            <div
+              class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+              <z-button
+                (click)="addToCart(product)"
+                class="w-full"
+                variant="primary">
+                Ajouter au panier
+              </z-button>
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="p-4 space-y-2">
+            <p
+              class="text-[11px] tracking-widest uppercase text-gray-500 font-semibold">
+              {{ product.brand || 'Premium' }}
+            </p>
+
+            <h3 class="font-semibold text-gray-900 truncate">
+              {{ product.name }}
+            </h3>
+
+            <div class="flex items-center justify-between pt-1">
+              <span class="text-lg font-bold text-gray-900">
+                {{ product.price | number:'1.0-0' }} {{ product.devise }}
+              </span>
+              <span
+                class="text-[11px] text-gray-400 font-mono truncate max-w-[110px]">
+                {{ product.sku }}
+              </span>
+            </div>
           </div>
         </div>
-
-        <!-- Content -->
-        <div class="p-4 space-y-2">
-          <p
-            class="text-[11px] tracking-widest uppercase text-gray-500 font-semibold">
-            {{ product.brand || 'Premium' }}
-          </p>
-
-          <h3 class="font-semibold text-gray-900 truncate">
-            {{ product.name }}
-          </h3>
-
-          <div class="flex items-center justify-between pt-1">
-            <span class="text-lg font-bold text-gray-900">
-              {{ product.price | number:'1.0-0' }} {{ product.devise }}
-            </span>
-            <span
-              class="text-[11px] text-gray-400 font-mono truncate max-w-[110px]">
-              {{ product.sku }}
-            </span>
-          </div>
-        </div>
-      </div>
+      </a>
 
       } @empty {
       <div class="col-span-full py-24 text-center">
-        <p class="text-gray-500">Cette boutique n’a pas encore de produits.</p>
+        <p class="text-gray-500">Cette boutique n’a pas encore de
+          produits.</p>
       </div>
       }
     </div>

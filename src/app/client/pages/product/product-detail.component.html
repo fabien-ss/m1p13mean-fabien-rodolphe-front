@@ -1,223 +1,264 @@
 <div class="bg-gray-50 min-h-screen">
-  @if (product(); as p) {
+    @if (product(); as p) {
 
     <!-- Breadcrumb -->
     <div class="container mx-auto px-4 md:px-6 pt-6">
-      <nav class="text-sm text-gray-500 flex items-center gap-2">
-        <a routerLink="/" class="hover:text-indigo-600 transition-colors">Accueil</a>
-        <span>/</span>
-        <a routerLink="/catalog" class="hover:text-indigo-600 transition-colors">Catalogue</a>
-        <span>/</span>
-        <span class="text-gray-700 font-semibold truncate">{{ p.name }}</span>
-      </nav>
+        <nav class="text-sm text-gray-500 flex items-center gap-2">
+            <a routerLink="/"
+                class="hover:text-indigo-600 transition-colors">Accueil</a>
+            <span>/</span>
+            <a routerLink="/catalog"
+                class="hover:text-indigo-600 transition-colors">Catalogue</a>
+            <span>/</span>
+            <span class="text-gray-700 font-semibold truncate">{{ p.name
+                }}</span>
+        </nav>
     </div>
 
     <section class="container mx-auto px-4 md:px-6 py-6">
-      <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-0">
+        <div
+            class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-0">
 
-          <!-- Images -->
-          <div class="lg:col-span-7 p-6 md:p-8 border-b lg:border-b-0 lg:border-r border-gray-100">
-            <div class="relative overflow-hidden rounded-2xl bg-gray-50 border border-gray-100">
-              <img [src]="activeImage()" class="w-full h-[340px] md:h-[460px] object-cover" [alt]="p.name" />
+                <!-- Images -->
+                <div
+                    class="lg:col-span-7 p-6 md:p-8 border-b lg:border-b-0 lg:border-r border-gray-100">
+                    <div
+                        class="relative overflow-hidden rounded-2xl bg-gray-50 border border-gray-100">
+                        <img [src]="activeImage()"
+                            class="w-full h-[340px] md:h-[460px] object-cover"
+                            [alt]="p.name" />
 
-              @if (isPromo()) {
-                <div class="absolute top-4 left-4">
-                  <z-badge class="bg-red-600 text-white border-none rounded-full px-3 py-1 text-[11px] font-black">
-                    -{{ discountPercent() }}%
-                  </z-badge>
-                </div>
-              }
-            </div>
+                        @if (isPromo()) {
+                        <div class="absolute top-4 left-4">
+                            <z-badge
+                                class="bg-red-600 text-white border-none rounded-full px-3 py-1 text-[11px] font-black">
+                                -{{ discountPercent() }}%
+                            </z-badge>
+                        </div>
+                        }
+                    </div>
 
-            <!-- Thumbnails -->
-            @if (p.images.length > 1) {
-              <div class="mt-4 flex gap-3 overflow-x-auto pb-1">
-                @for (img of p.images; track $index) {
-                  <button
-                    (click)="setImage($index)"
-                    class="shrink-0 w-16 h-16 rounded-xl overflow-hidden border transition-colors"
-                    [class.border-indigo-300]="$index === activeImageIndex()"
-                    [class.border-gray-200]="$index !== activeImageIndex()"
-                    aria-label="Miniature"
-                  >
-                    <img [src]="img" class="w-full h-full object-cover" />
-                  </button>
-                }
-              </div>
-            }
-          </div>
-
-          <!-- Content -->
-          <div class="lg:col-span-5 p-6 md:p-8 space-y-6">
-
-            <div class="space-y-2">
-              <p class="text-[11px] tracking-widest uppercase text-gray-500 font-black">
-                {{ p.brand || 'Premium' }}
-              </p>
-
-              <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-gray-900">
-                {{ p.name }}
-              </h1>
-
-              <p class="text-gray-600 leading-relaxed">
-                {{ p.description }}
-              </p>
-            </div>
-
-            <!-- Price block -->
-            <div class="bg-gray-50 border border-gray-100 rounded-2xl p-4 space-y-2">
-              <div class="flex items-end justify-between">
-                <div class="flex items-baseline gap-2">
-                  <span class="text-2xl font-black">
-                    {{ p.price }} {{ p.devise }}
-                  </span>
-
-                  @if (p.oldPrice && p.oldPrice > p.price) {
-                    <span class="text-sm text-gray-400 line-through">
-                      {{ p.oldPrice }} {{ p.devise }}
-                    </span>
-                  }
+                    <!-- Thumbnails -->
+                    @if (p.images.length > 1) {
+                    <div class="mt-4 flex gap-3 overflow-x-auto pb-1">
+                        @for (img of p.images; track $index) {
+                        <button
+                            (click)="setImage($index)"
+                            class="shrink-0 w-16 h-16 rounded-xl overflow-hidden border transition-colors"
+                            [class.border-indigo-300]="$index === activeImageIndex()"
+                            [class.border-gray-200]="$index !== activeImageIndex()"
+                            aria-label="Miniature">
+                            <img [src]="img"
+                                class="w-full h-full object-cover" />
+                        </button>
+                        }
+                    </div>
+                    }
                 </div>
 
-                <span class="text-xs text-gray-500 font-semibold">
-                  {{ stockLabel() }}
-                </span>
-              </div>
+                <!-- Content -->
+                <div class="lg:col-span-5 p-6 md:p-8 space-y-6">
 
-              <div class="flex flex-wrap gap-2">
-                @for (tag of (p.tags || []); track tag) {
-                  <span class="px-3 py-1 rounded-full text-xs border border-gray-200 bg-white text-gray-600">
-                    {{ tag }}
-                  </span>
-                }
-              </div>
-            </div>
+                    <div class="space-y-2">
+                        <p
+                            class="text-[11px] tracking-widest uppercase text-gray-500 font-black">
+                            {{ p.brand || 'Premium' }}
+                        </p>
 
-            <!-- Quantity + Add -->
-            <div class="flex flex-col gap-3">
-              <div class="flex items-center justify-between gap-4">
-                <span class="text-sm font-semibold text-gray-700">Quantité</span>
+                        <h1
+                            class="text-2xl md:text-3xl font-extrabold tracking-tight text-gray-900">
+                            {{ p.name }}
+                        </h1>
 
-                <div class="flex items-center gap-2">
-                  <button
-                    (click)="decQty()"
-                    class="w-10 h-10 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition-colors flex items-center justify-center"
-                    aria-label="Diminuer"
-                  >
-                    <span class="material-icons text-base text-gray-600">remove</span>
-                  </button>
+                        <p class="text-gray-600 leading-relaxed">
+                            {{ p.description }}
+                        </p>
+                    </div>
 
-                  <div class="min-w-[44px] text-center font-black text-gray-900">
-                    {{ qty() }}
-                  </div>
+                    <!-- Price block -->
+                    <div
+                        class="bg-gray-50 border border-gray-100 rounded-2xl p-4 space-y-2">
+                        <div class="flex items-end justify-between">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-2xl font-black">
+                                    {{ p.price }} {{ p.devise }}
+                                </span>
 
-                  <button
-                    (click)="incQty()"
-                    class="w-10 h-10 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition-colors flex items-center justify-center"
-                    aria-label="Augmenter"
-                  >
-                    <span class="material-icons text-base text-gray-600">add</span>
-                  </button>
+                                @if (p.oldPrice && p.oldPrice > p.price) {
+                                <span
+                                    class="text-sm text-gray-400 line-through">
+                                    {{ p.oldPrice }} {{ p.devise }}
+                                </span>
+                                }
+                            </div>
+
+                            <span class="text-xs text-gray-500 font-semibold">
+                                {{ stockLabel() }}
+                            </span>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2">
+                            @for (tag of (p.tags || []); track tag) {
+                            <span
+                                class="px-3 py-1 rounded-full text-xs border border-gray-200 bg-white text-gray-600">
+                                {{ tag }}
+                            </span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Quantity + Add -->
+                    <div class="flex flex-col gap-3">
+                        <div class="flex items-center justify-between gap-4">
+                            <span
+                                class="text-sm font-semibold text-gray-700">Quantité</span>
+
+                            <div class="flex items-center gap-2">
+                                <button
+                                    (click)="decQty()"
+                                    class="w-10 h-10 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition-colors flex items-center justify-center"
+                                    aria-label="Diminuer">
+                                    <span
+                                        class="material-icons text-base text-gray-600">remove</span>
+                                </button>
+
+                                <div
+                                    class="min-w-[44px] text-center font-black text-gray-900">
+                                    {{ qty() }}
+                                </div>
+
+                                <button
+                                    (click)="incQty()"
+                                    class="w-10 h-10 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition-colors flex items-center justify-center"
+                                    aria-label="Augmenter">
+                                    <span
+                                        class="material-icons text-base text-gray-600">add</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button
+                            variant="primary"
+                            class="px-4 py-2 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white transition-colors shadow-sm w-full"
+                            (click)="addToCart()"
+                            [disabled]="!p.available || p.stock <= 0">
+                            Ajouter au panier
+                        </button>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <a
+                                routerLink="/catalog"
+                                class="px-4 py-3 rounded-xl text-sm font-semibold text-center border border-gray-200 text-gray-700 hover:border-indigo-300 hover:text-indigo-600 transition-colors">
+                                Continuer
+                            </a>
+                            <a
+                                routerLink="/cart"
+                                class="px-4 py-3 rounded-xl text-sm font-semibold text-center bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-sm">
+                                Voir panier
+                            </a>
+                        </div>
+
+                        <!-- autres info -->
+                        <div class="pt-2 text-xs text-gray-400 space-y-1">
+                            <div>SKU: <span class="font-mono">{{ p.sku
+                                    }}</span></div>
+                            <div>Barcode: <span class="font-mono">{{ p.barcode
+                                    }}</span></div>
+                        </div>
+                    </div>
+
                 </div>
-              </div>
-
-              <button
-                variant="primary"
-                class="px-4 py-2 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white transition-colors shadow-sm w-full"
-                (click)="addToCart()"
-                [disabled]="!p.available || p.stock <= 0"
-              >
-                Ajouter au panier
-            </button>
-
-              <div class="grid grid-cols-2 gap-3">
-                <a
-                  routerLink="/catalog"
-                  class="px-4 py-3 rounded-xl text-sm font-semibold text-center border border-gray-200 text-gray-700 hover:border-indigo-300 hover:text-indigo-600 transition-colors"
-                >
-                  Continuer
-                </a>
-                <a
-                  routerLink="/cart"
-                  class="px-4 py-3 rounded-xl text-sm font-semibold text-center bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-sm"
-                >
-                  Voir panier
-                </a>
-              </div>
-
-              <!-- autres info -->
-              <div class="pt-2 text-xs text-gray-400 space-y-1">
-                <div>SKU: <span class="font-mono">{{ p.sku }}</span></div>
-                <div>Barcode: <span class="font-mono">{{ p.barcode }}</span></div>
-              </div>
             </div>
-
-          </div>
         </div>
-      </div>
     </section>
 
     <!-- Autres products -->
     <section class="container mx-auto px-4 md:px-6 pb-14">
-      <div class="flex items-end justify-between gap-4 mb-6">
-        <div>
-          <p class="text-xs tracking-widest uppercase text-gray-500 font-black">Suggestions</p>
-          <h2 class="text-xl md:text-2xl font-bold text-gray-900">Vous aimerez aussi</h2>
+        <div class="flex items-end justify-between gap-4 mb-6">
+            <div>
+                <p
+                    class="text-xs tracking-widest uppercase text-gray-500 font-black">Suggestions</p>
+                <h2 class="text-xl md:text-2xl font-bold text-gray-900">Vous
+                    aimerez aussi</h2>
+            </div>
+
+            <a
+                routerLink="/catalog"
+                class="px-4 py-2 rounded-xl text-sm font-semibold border border-gray-200 text-gray-700 hover:border-indigo-300 hover:text-indigo-600 transition-colors">
+                Voir le catalogue
+            </a>
         </div>
 
-        <a
-          routerLink="/catalog"
-          class="px-4 py-2 rounded-xl text-sm font-semibold border border-gray-200 text-gray-700 hover:border-indigo-300 hover:text-indigo-600 transition-colors"
-        >
-          Voir le catalogue
-        </a>
-      </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            @for (product of related(); track product._id) {
+            <a
+                [routerLink]="['/product', product._id]"
+                class="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-md transition-shadow group">
+                <div
+                    class="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        @for (rp of related(); track rp._id) {
-          <a
-            [routerLink]="['/product', rp._id]"
-            class="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-md transition-shadow group"
-          >
-            <div class="relative aspect-square bg-gray-50 overflow-hidden">
-              <img [src]="rp.images[0]" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-              @if (rp.promo && rp.oldPrice && rp.oldPrice > rp.price) {
-                <span class="absolute top-3 left-3 px-2 py-1 rounded-full bg-red-600 text-white text-[11px] font-black">
-                  Promo
-                </span>
-              }
+                    <!-- Image -->
+                    <div
+                        class="relative aspect-[4/5] bg-gray-50 overflow-hidden">
+                        <img
+                            [src]="product.images[0]"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            alt="Product" />
+
+                        <!-- Limited stock badge -->
+                        @if (product.stock > 0 && product.stock <= 5) {
+                        <div
+                            class="absolute top-3 left-3 bg-white/90 backdrop-blur border border-gray-200 rounded-full
+                            text-[11px] px-3 py-1 text-gray-700">
+                            Stock faible ({{ product.stock }})
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Content -->
+                    <div class="p-4 space-y-2">
+                        <p
+                            class="text-[11px] tracking-widest uppercase text-gray-500 font-semibold">
+                            {{ product.brand || 'Premium' }}
+                        </p>
+
+                        <h3 class="font-semibold text-gray-900 truncate">
+                            {{ product.name }}
+                        </h3>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-lg font-bold text-gray-900">
+                                {{ product.price | number:'1.0-0' }} {{
+                                product.devise }}
+                            </span>
+                            <span
+                                class="text-[11px] text-gray-400 font-mono truncate max-w-[110px]">
+                                {{ product.sku }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            } @empty {
+            <div class="col-span-full py-12 text-center text-gray-500">
+                Aucun produit similaire pour le moment.
             </div>
-            <div class="p-4 space-y-1">
-              <p class="text-[11px] tracking-widest uppercase text-gray-500 font-black truncate">
-                {{ rp.brand || 'Premium' }}
-              </p>
-              <h3 class="font-semibold text-gray-900 truncate">{{ rp.name }}</h3>
-              <div class="flex items-center justify-between">
-                <span class="font-bold text-gray-900">{{ rp.price }} {{ rp.devise }}</span>
-                <span class="text-xs text-gray-400">TTC</span>
-              </div>
-            </div>
-          </a>
-        } @empty {
-          <div class="col-span-full py-12 text-center text-gray-500">
-            Aucun produit similaire pour le moment.
-          </div>
-        }
-      </div>
+            }
+        </div>
     </section>
 
-  } @else {
+    } @else {
     <!-- Not found -->
-    <div class="min-h-screen flex flex-col items-center justify-center gap-4 text-center px-6">
-      <h2 class="text-2xl font-black text-gray-900">Produit introuvable</h2>
-      <p class="text-gray-500">Retournez au catalogue pour continuer.</p>
-      <a
-        routerLink="/catalog"
-        class="px-6 py-3 rounded-xl text-sm font-semibold border border-gray-200 text-gray-700 hover:border-indigo-300 hover:text-indigo-600 transition-colors"
-      >
-        Retour au catalogue
-      </a>
+    <div
+        class="min-h-screen flex flex-col items-center justify-center gap-4 text-center px-6">
+        <h2 class="text-2xl font-black text-gray-900">Produit introuvable</h2>
+        <p class="text-gray-500">Retournez au catalogue pour continuer.</p>
+        <a
+            routerLink="/catalog"
+            class="px-6 py-3 rounded-xl text-sm font-semibold border border-gray-200 text-gray-700 hover:border-indigo-300 hover:text-indigo-600 transition-colors">
+            Retour au catalogue
+        </a>
     </div>
-  }
+    }
 </div>

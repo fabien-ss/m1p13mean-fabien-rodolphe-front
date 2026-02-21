@@ -8,6 +8,7 @@ export interface Shop {
   email?: string;
   phone?: string;
   images: string[];
+  type?: string;
   isActive: boolean;
   location?: string; // Ajouté pour l'UI
 }
@@ -19,6 +20,10 @@ export class ShopService {
 
   getShops() {
     return this.http.get<Shop[]>(this.API_URL);
+  }
+
+  getShopById(id: string) {
+    return this.http.get<Shop>(`${this.API_URL}/${id}`);
   }
 
   getFeaturedShops() {
