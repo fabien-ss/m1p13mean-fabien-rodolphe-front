@@ -31,7 +31,7 @@ export class CatalogComponent {
 
 
   productsResource = resource({
-    loader: () => firstValueFrom(this.productService.getProducts())
+    loader: () => firstValueFrom(this.productService.getProductsList())
   });
 
   allProducts = computed(() => this.productsResource.value() ?? []);

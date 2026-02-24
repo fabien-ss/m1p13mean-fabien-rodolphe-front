@@ -31,8 +31,7 @@ export const routes: Routes = [
       { path: 'cart', loadComponent: () => import('./client/pages/cart/cart.component').then(m => m.CartComponent) },
       { path: 'auth/login', loadComponent: () => import('./client/pages/auth/login/login.component').then(m => m.LoginComponent) },
       { path: 'auth/register', loadComponent: () => import('./client/pages/auth/register/register.component').then(m => m.RegisterComponent) },
-    ],
-    canActivate: [authGuard]
+    ]
   },
   {
     path: 'shop',
@@ -91,11 +90,6 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   // auth pages
-  {
-    path: '',
-    component: SignInComponent,
-    title: 'Sign In'
-  },
   {
     path: 'signup',
     component: SignUpComponent,

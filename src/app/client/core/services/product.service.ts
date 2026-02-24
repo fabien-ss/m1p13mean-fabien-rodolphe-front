@@ -26,8 +26,12 @@ export class ProductService {
         return this.http.get<Product[]>(this.API_URL);
     }
 
+    getProductsList() {
+        return this.http.get<Product[]>(`${this.API_URL}/list`);
+    }
+
     getProductById(id: string) {
-        return this.http.get<Product>(`${this.API_URL}/${id}`);
+        return this.http.get<Product>(`${this.API_URL}/client/${id}`);
     }
 
     // Pour les produits similaires

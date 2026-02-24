@@ -24,7 +24,7 @@ export class HomePage {
 
   // ressources lancent l'appel HTTP
   productsResource = resource({
-    loader: () => firstValueFrom(this.productService.getProducts())
+    loader: () => firstValueFrom(this.productService.getProductsList())
   });
 
   shopsResource = resource({
