@@ -9,6 +9,7 @@ export interface Shop {
   phone?: string;
   images: string[];
   type?: string;
+  rating?: number;
   isActive: boolean;
   location?: string; // Ajouté pour l'UI
 }
@@ -19,7 +20,7 @@ export class ShopService {
   private readonly API_URL = 'http://localhost:8888/shop';
 
   getShops() {
-    return this.http.get<Shop[]>(this.API_URL);
+    return this.http.get<Shop[]>(`${this.API_URL}/list`);
   }
 
   getShopById(id: string) {
