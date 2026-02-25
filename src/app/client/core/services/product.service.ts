@@ -34,6 +34,10 @@ export class ProductService {
         return this.http.get<Product>(`${this.API_URL}/client/${id}`);
     }
 
+    getHotDeals() {
+        return this.http.get<Product[]>(`${this.API_URL}/hot-deals`);
+    }
+
     // Pour les produits similaires
     getProductsByShop(shopId: string) {
         return this.http.get<Product[]>(`${this.API_URL}/shop/${shopId}`);

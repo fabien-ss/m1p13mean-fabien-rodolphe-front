@@ -31,8 +31,13 @@ export class HomePage {
     loader: () => firstValueFrom(this.shopService.getFeaturedShops())
   });
 
+  hotDealsResource = resource({
+    loader: () => firstValueFrom(this.productService.getHotDeals())
+  });
+
   allProducts = computed(() => this.productsResource.value() ?? []);
   shops = computed(() => this.shopsResource.value() ?? []);
+  hotDeals = computed(() => this.hotDealsResource.value() ?? []);
 
   promotions = computed(() => 
     this.allProducts().filter(p => p.promo || (p.oldPrice && p.oldPrice > p.price)).slice(0, 4)

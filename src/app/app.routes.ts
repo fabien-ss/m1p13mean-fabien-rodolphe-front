@@ -35,7 +35,7 @@ export const routes: Routes = [
     ]
   },
   {
-    path: 'shop',
+    path: 'admin-shop',
     component: AppLayoutComponent,
     children: [
       {
