@@ -6,9 +6,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* =========================
-   Theme tokens (from file 1)
-   ========================= */
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -936,10 +933,6 @@ pre[class*="language-"].line-numbers {
   padding-left: 2.8em !important;
 }
 
-/* =========================
-   Scrollbar (merged, single copy)
-   Uses theme variables from file 1
-   ========================= */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

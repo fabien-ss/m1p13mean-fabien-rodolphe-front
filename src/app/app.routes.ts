@@ -30,6 +30,7 @@ export const routes: Routes = [
       { path: 'shop/:id', loadComponent: () => import('./client/pages/shop/shop-detail.component').then(m => m.ShopDetailComponent) },
       { path: 'shops', loadComponent: () => import('./client/pages/shop/shops.component').then(m => m.ShopsComponent) },
       { path: 'cart', loadComponent: () => import('./client/pages/cart/cart.component').then(m => m.CartComponent) },
+      { path: 'deals', loadComponent: () => import('./client/pages/hot-deal/hot-deal.component').then(m => m.HotDealComponent) },
       { path: 'auth/login', loadComponent: () => import('./client/pages/auth/login/login.component').then(m => m.LoginComponent) },
       { path: 'auth/register', loadComponent: () => import('./client/pages/auth/register/register.component').then(m => m.RegisterComponent) },
     ]
