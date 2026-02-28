@@ -34,7 +34,7 @@ export class ProductDetailComponent {
   activeImageIndex = signal<number>(0);
 
   productResource = resource({
-    params: () => {return this.productId()}, 
+    params: () => { return this.productId() },
     loader: async ({ params: id }) => {
       if (!id) return null;
       return await firstValueFrom(this.productService.getProductById(id));
@@ -44,7 +44,7 @@ export class ProductDetailComponent {
   product = computed(() => this.productResource.value()); // Product | null
 
   relatedProductsResource = resource({
-    params: () => this.product()?.shop ?? '', 
+    params: () => this.product()?.shop ?? '',
     loader: async ({ params: shopId }) => {
       if (!shopId) return [];
       return await firstValueFrom(this.productService.getProductsByShop(shopId._id));
@@ -106,15 +106,27 @@ export class ProductDetailComponent {
   }
 
 
-  addToCart() {
-    const p = this.product();
-    if (!p) return;
-    if (!p.available || p.stock <= 0) return;
-    this.cartService.addToCart({
-      id: p._id,
-      name: p.name,
-      price: p.price,
-      image: p.images[0]
-    },this.qty());
+  addToCart(event: Event, product?: any) {
+    event.stopPropagation();
+    event.preventDefault();
+    if (product) {
+      this.cartService.addToCart({
+        id: product._id,
+        name: product.name,
+        price: product.price,
+        image: product.images[0],
+      });
+
+    } else {
+      const p = this.product();
+      if (!p) return;
+      if (!p.available || p.stock <= 0) return;
+      this.cartService.addToCart({
+        id: p._id,
+        name: p.name,
+        price: p.price,
+        image: p.images[0]
+      }, this.qty());
+    }
   }
 }

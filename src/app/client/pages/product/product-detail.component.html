@@ -141,7 +141,7 @@
                         <button
                             variant="primary"
                             class="px-4 py-2 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white transition-colors shadow-sm w-full"
-                            (click)="addToCart()"
+                            (click)="addToCart($event)"
                             [disabled]="!p.available || p.stock <= 0">
                             Ajouter au panier
                         </button>
@@ -194,49 +194,80 @@
             @for (product of related(); track product._id) {
             <a
                 [routerLink]="['/product', product._id]"
-                class="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-md transition-shadow group">
-                <div
-                    class="group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
+                class="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-md transition-all duration-300">
 
-                    <!-- Image -->
-                    <div
-                        class="relative aspect-[4/5] bg-gray-50 overflow-hidden">
-                        <img
-                            [src]="product.images[0]"
-                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                            alt="Product" />
+                <!-- Image -->
+                <div class="relative aspect-[4/5] bg-gray-50 overflow-hidden">
+                    <img
+                        [src]="product.images[0]"
+                        [alt]="product.name"
+                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
 
-                        <!-- Limited stock badge -->
-                        @if (product.stock > 0 && product.stock <= 5) {
-                        <div
-                            class="absolute top-3 left-3 bg-white/90 backdrop-blur border border-gray-200 rounded-full
-                            text-[11px] px-3 py-1 text-gray-700">
-                            Stock faible ({{ product.stock }})
-                        </div>
-                        }
+                    <!-- Promo badge -->
+                    @if (product.promo) {
+                    <div class="absolute top-3 left-3">
+                        <span
+                            class="bg-red-500 text-white text-[11px] font-black rounded-full px-3 py-1">
+                            -{{ product.discountPercent }}%
+                        </span>
                     </div>
+                    }
 
-                    <!-- Content -->
-                    <div class="p-4 space-y-2">
-                        <p
-                            class="text-[11px] tracking-widest uppercase text-gray-500 font-semibold">
-                            {{ product.brand || 'Premium' }}
-                        </p>
+                    <!-- Low stock badge -->
+                    @if (product.stock > 0 && product.stock <= 5) {
+                    <div class="absolute top-3 right-3">
+                        <span
+                            class="bg-white/90 backdrop-blur border border-gray-200 text-gray-700 text-[11px] font-semibold rounded-full px-3 py-1">
+                            Stock faible ({{ product.stock }})
+                        </span>
+                    </div>
+                    }
 
-                        <h3 class="font-semibold text-gray-900 truncate">
-                            {{ product.name }}
-                        </h3>
+                    @if (product.stock === 0) {
+                    <div
+                        class="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center">
+                        <span
+                            class="bg-white border border-gray-200 text-gray-500 text-xs font-bold px-4 py-2 rounded-xl shadow-sm">
+                            Rupture de stock
+                        </span>
+                    </div>
+                    }
 
-                        <div class="flex items-center justify-between pt-1">
-                            <span class="text-lg font-bold text-gray-900">
+                    <!-- Hover add to cart -->
+                    <div
+                        class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                        <z-button
+                            (click)="addToCart($event, product)"
+                            class="w-full"
+                            variant="primary">
+                            Ajouter au panier
+                        </z-button>
+                    </div>
+                </div>
+
+                <div class="p-4 space-y-2">
+                    <p
+                        class="text-[11px] tracking-widest uppercase text-gray-500 font-black">
+                        {{ product.brand || 'Premium' }}
+                    </p>
+                    <h3 class="font-semibold text-gray-900 truncate">{{
+                        product.name
+                        }}</h3>
+                    <div class="flex items-baseline justify-between pt-1">
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-lg font-black text-gray-900">
                                 {{ product.price | number:'1.0-0' }} {{
                                 product.devise }}
                             </span>
-                            <span
-                                class="text-[11px] text-gray-400 font-mono truncate max-w-[110px]">
-                                {{ product.sku }}
+                            @if (product.promo && product.oldPrice) {
+                            <span class="text-xs text-gray-400 line-through">
+                                {{ product.oldPrice | number:'1.0-0' }}
                             </span>
+                            }
                         </div>
+                        <span
+                            class="text-[11px] text-gray-400 font-mono truncate max-w-[80px]">{{
+                            product.sku }}</span>
                     </div>
                 </div>
             </a>

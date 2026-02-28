@@ -17,7 +17,8 @@
                 <div>
                     <h1
                         class="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900">
-                        Offres <span class="px-3.5 py-0.5 rounded-full bg-red-100 text-red-600 text-3xl md:text-4xl font-black">HOT</span>
+                        Offres <span
+                            class="px-3.5 py-0.5 rounded-full bg-red-100 text-red-600 text-3xl md:text-4xl font-black">HOT</span>
                     </h1>
                     <p class="text-sm text-gray-500 mt-1">
                         Découvrez toutes les offres du moment.
@@ -59,11 +60,20 @@
                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                             alt="Product" />
 
+                        <!-- ✅ Promo badge (top-right) -->
+                        @if (product.promo && product.oldPrice &&
+                        product.oldPrice > product.price) {
+                        <div
+                            class="absolute top-3 right-3 bg-red-600 text-white rounded-full text-[11px] px-3 py-1 font-semibold shadow-sm">
+                            {{product.discountPercent}}%
+                        </div>
+                        }
+
                         <!-- Limited stock badge -->
                         @if (product.stock > 0 && product.stock <= 5) {
                         <div
                             class="absolute top-3 left-3 bg-white/90 backdrop-blur border border-gray-200 rounded-full
-                            text-[11px] px-3 py-1 text-gray-700">
+               text-[11px] px-3 py-1 text-gray-700">
                             Stock faible ({{ product.stock }})
                         </div>
                         }
@@ -81,10 +91,23 @@
                         </h3>
 
                         <div class="flex items-center justify-between pt-1">
-                            <span class="text-lg font-bold text-gray-900">
-                                {{ product.price | number:'1.0-0' }} {{
-                                product.devise }}
-                            </span>
+                            <!-- ✅ Price + oldPrice -->
+                            <div class="flex items-baseline gap-2 min-w-0">
+                                <span class="text-lg font-bold text-gray-900">
+                                    {{ product.price | number:'1.0-0' }} {{
+                                    product.devise }}
+                                </span>
+
+                                @if (product.promo && product.oldPrice &&
+                                product.oldPrice > product.price) {
+                                <span
+                                    class="text-[12px] text-gray-400 line-through truncate">
+                                    {{ product.oldPrice | number:'1.0-0' }} {{
+                                    product.devise }}
+                                </span>
+                                }
+                            </div>
+
                             <span
                                 class="text-[11px] text-gray-400 font-mono truncate max-w-[110px]">
                                 {{ product.sku }}
