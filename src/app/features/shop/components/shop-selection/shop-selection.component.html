@@ -1,110 +1,142 @@
 <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 pb-3 pt-4 dark:border-white/[0.05] dark:bg-white/[0.03] sm:px-6">
-    <div class="flex justify-between gap-2 mb-4 sm:items-center">
-      <div>
-        <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">
-          Shop
-        </h3>
-      </div>
-  
-      <div class="relative inline-block">
-        <app-table-dropdown>
-          <div dropdown-button>
-            <button class="text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
-              <svg class="size-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M5.99902 10.245C6.96552 10.245 7.74902 11.0285 7.74902 11.995V12.005C7.74902 12.9715 6.96552 13.755 5.99902 13.755C5.03253 13.755 4.24902 12.9715 4.24902 12.005V11.995C4.24902 11.0285 5.03253 10.245 5.99902 10.245ZM17.999 10.245C18.9655 10.245 19.749 11.0285 19.749 11.995V12.005C19.749 12.9715 18.9655 13.755 17.999 13.755C17.0325 13.755 16.249 12.9715 16.249 12.005V11.995C16.249 11.0285 17.0325 10.245 17.999 10.245ZM13.749 11.995C13.749 11.0285 12.9655 10.245 11.999 10.245C11.0325 10.245 10.249 11.0285 10.249 11.995V12.005C10.249 12.9715 11.0325 13.755 11.999 13.755C12.9655 13.755 13.749 12.9715 13.749 12.005V11.995Z"
-                />
-              </svg>
-            </button>
-          </div>
-          <div dropdown-content>
-            <button
-              (click)="handleViewMore()"
-              class="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300 p-2"
-            >
-              View More
-            </button>
-            <button
-              (click)="handleDelete()"
-              class="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300 p-2"
-            >
-              Delete
-            </button>
-          </div>
-        </app-table-dropdown>
-      </div>
+
+  <div class="flex justify-between gap-2 mb-4 sm:items-center">
+    <div>
+      <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Shop</h3>
     </div>
-  
+
+    <div class="flex items-center gap-2">
+      <!-- Bouton créer -->
+      <app-button size="sm" variant="primary" [startIcon]="plusIcon" (click)="openCreateModal()">
+        New Shop
+      </app-button>
+
+      <!-- Dropdown global -->
+      <app-table-dropdown>
+        <div dropdown-button>
+          <button class="text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+            <svg class="size-6" fill="currentColor" viewBox="0 0 24 24">
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M5.99902 10.245C6.96552 10.245 7.74902 11.0285 7.74902 11.995V12.005C7.74902 12.9715 6.96552 13.755 5.99902 13.755C5.03253 13.755 4.24902 12.9715 4.24902 12.005V11.995C4.24902 11.0285 5.03253 10.245 5.99902 10.245ZM17.999 10.245C18.9655 10.245 19.749 11.0285 19.749 11.995V12.005C19.749 12.9715 18.9655 13.755 17.999 13.755C17.0325 13.755 16.249 12.9715 16.249 12.005V11.995C16.249 11.0285 17.0325 10.245 17.999 10.245ZM13.749 11.995C13.749 11.0285 12.9655 10.245 11.999 10.245C11.0325 10.245 10.249 11.0285 10.249 11.995V12.005C10.249 12.9715 11.0325 13.755 11.999 13.755C12.9655 13.755 13.749 12.9715 13.749 12.005V11.995Z"/>
+            </svg>
+          </button>
+        </div>
+        <div dropdown-content>
+          <button
+            (click)="openCreateModal()"
+            class="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300 p-2">
+            New Shop
+          </button>
+        </div>
+      </app-table-dropdown>
+    </div>
+  </div>
+
+  <!-- Error -->
+  @if (errorMessage) {
+    <div class="mb-4 rounded-lg border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/10 px-4 py-3 text-sm text-red-600 dark:text-red-400">
+      ⚠️ {{ errorMessage }}
+    </div>
+  }
+
+  <!-- Loading -->
+  @if (isLoading) {
+    <div class="py-10 text-center text-sm text-gray-400 dark:text-gray-500">Loading shops...</div>
+  }
+
+  <!-- Table -->
+  @if (!isLoading) {
     <div class="max-w-full overflow-x-auto">
       <table class="w-full">
         <thead class="border-gray-100 border-y dark:border-white/[0.05]">
           <tr>
-            <th scope="col" class="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-              Manager
-            </th>
-            <th scope="col" class="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-              Shop Name
-            </th>
-            <th scope="col" class="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-              
-            </th>
+            <th class="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Manager</th>
+            <th class="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Shop Name</th>
+            <th class="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Status</th>
+            <th class="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"></th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-100 dark:divide-white/[0.05]">
-          @for (item of shops; track $index) {
-          <tr>
-            <td class="py-3">
-              <div class="flex items-center gap-[18px]">
-                <div class="w-10 h-10 overflow-hidden rounded-full">
-                  <img
-                    width="40"
-                    height="40"
-                    class="w-full size-10"
-                    [src]="item.manager.image"
-                    alt="user"
-                  />
-                </div>
-                <div>
+          @for (item of shops; track item._id) {
+            <tr>
+
+              <!-- Manager -->
+              <td class="py-3">
+                <div class="flex items-center gap-[18px]">
+                  <div class="w-10 h-10 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-sm font-semibold text-gray-600 dark:text-gray-300">
+                    @if (item.manager.image) {
+                      <img width="40" height="40" class="w-full size-10 object-cover" [src]="item.manager.image" alt="manager" />
+                    } @else {
+                      {{ item.manager.firstName?.charAt(0) }}{{ item.manager.name?.charAt(0) }}
+                    }
+                  </div>
                   <p class="text-gray-700 text-theme-sm dark:text-gray-400">
-                    {{item.manager.name}}
+                    {{ item.manager.firstName }} {{ item.manager.name }}
                   </p>
                 </div>
-              </div>
-            </td>
-            <td class="py-3">
-              <div class="flex items-center w-full gap-5">
-                <div class="w-full max-w-8">
-                  <img
-                    width="32"
-                    height="32"
-                    class="w-full size-8"
-                    [src]="item.images[0]"
-                    alt="brand"
-                  />
+              </td>
+
+              <!-- Shop Name -->
+              <td class="py-3">
+                <div class="flex items-center gap-5">
+                  @if (item.images?.[0]) {
+                    <div class="w-8 h-8 overflow-hidden rounded">
+                      <img width="32" height="32" class="w-full size-8 object-cover" [src]="apiEndpoint + item.images[0]" alt="shop" />
+                    </div>
+                  }
+                  <div class="truncate">
+                    <p class="mb-0.5 truncate text-theme-sm font-medium text-gray-700 dark:text-gray-400">{{ item.name }}</p>
+                    <span class="text-gray-500 text-theme-xs dark:text-gray-400">{{ item.type }}</span>
+                  </div>
                 </div>
-                <div class="truncate">
-                  <p class="mb-0.5 truncate text-theme-sm font-medium text-gray-700 dark:text-gray-400">
-                    {{item.name}}
-                  </p>
-                  <span class="text-gray-500 text-theme-xs dark:text-gray-400">
-                    {{item.type}}
-                  </span>
+              </td>
+
+              <!-- Status -->
+              <td class="py-3">
+                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                  [class]="item.isActive
+                    ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                    : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'">
+                  {{ item.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+
+              <!-- Actions -->
+              <td class="py-3 text-right">
+                <div class="flex items-center justify-end gap-2">
+                  <app-button size="sm" variant="outline" (click)="handleEdit(item)">
+                    Edit
+                  </app-button>
+                  <app-button size="sm" variant="primary" (click)="goToView(item)" [endIcon]="boxIcon">
+                    Manage
+                  </app-button>
                 </div>
-              </div>
-            </td>
-            <td class="py-3 text-right">
-              <app-button size="sm" variant="primary"  (click)="goToView(item)" [endIcon]="boxIcon">
-                Manage
-              </app-button>
-            </td>
-          </tr>
+              </td>
+
+            </tr>
+          }
+
+          @empty {
+            <tr>
+              <td colspan="4" class="py-10 text-center text-sm text-gray-400 dark:text-gray-500">
+                No shops found.
+              </td>
+            </tr>
           }
         </tbody>
       </table>
     </div>
+  }
+</div>
 
+<!-- Modal Create -->
+<app-modal [isOpen]="isCreateModalOpen" (close)="closeCreateModal()" className="max-w-[1200px] max-h-[90vh] overflow-y-auto p-6 lg:p-10">
+  <app-shop-new (shopCreated)="onShopCreated($event)" />
+</app-modal>
 
-
-  </div>
+<!-- Modal Edit -->
+<app-modal [isOpen]="isEditModalOpen" (close)="closeEditModal()" className="max-w-[1200px] max-h-[90vh] overflow-y-auto p-6 lg:p-10">
+  @if (selectedShop) {
+    <app-shop-edit [shop]="selectedShop" (shopUpdated)="onShopUpdated($event)" />
+  }
+</app-modal>

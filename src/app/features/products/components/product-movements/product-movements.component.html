@@ -30,7 +30,9 @@
           </button>
         </div>
   
-        <button class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
+        <button 
+          (click)="loadMovements()"
+          class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M23 4v6h-6" />
             <path d="M1 20v-6h6" />
@@ -56,17 +58,17 @@
     <div class="grid grid-cols-3 gap-4 mb-6">
       <div class="rounded-xl border border-green-100 bg-green-50 dark:border-green-800 dark:bg-green-900/10 px-4 py-3">
         <p class="text-xs font-medium text-green-600 dark:text-green-400 uppercase tracking-wide mb-1">Total IN</p>
-        <p class="text-2xl font-bold text-green-700 dark:text-green-300">+1,240</p>
+        <p class="text-2xl font-bold text-green-700 dark:text-green-300">{{ totalIn }}</p>
         <p class="text-xs text-green-500 mt-0.5">units received</p>
       </div>
       <div class="rounded-xl border border-red-100 bg-red-50 dark:border-red-800 dark:bg-red-900/10 px-4 py-3">
         <p class="text-xs font-medium text-red-600 dark:text-red-400 uppercase tracking-wide mb-1">Total OUT</p>
-        <p class="text-2xl font-bold text-red-700 dark:text-red-300">-870</p>
-        <p class="text-xs text-red-500 mt-0.5">units dispatched</p>
+        <p class="text-2xl font-bold text-red-700 dark:text-red-300">{{ totalOut }}</p>
+        <p class="text-xs text-red-500 mt-0.5">units solded</p>
       </div>
       <div class="rounded-xl border border-gray-100 bg-gray-50 dark:border-gray-700 dark:bg-gray-800 px-4 py-3">
         <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Net Balance</p>
-        <p class="text-2xl font-bold text-gray-800 dark:text-white/90">+370</p>
+        <p class="text-2xl font-bold text-gray-800 dark:text-white/90">{{ totalIn - totalOut }}</p>
         <p class="text-xs text-gray-400 mt-0.5">units in stock</p>
       </div>
     </div>

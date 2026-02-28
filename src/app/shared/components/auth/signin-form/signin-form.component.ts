@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { LabelComponent } from '../../form/label/label.component';
 import { CheckboxComponent } from '../../form/input/checkbox.component';
-import { ButtonComponent } from '../../ui/button/button.component';
 import { InputFieldComponent } from '../../form/input/input-field.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -17,7 +16,6 @@ import { environment } from '../../../../../environments/environment';
     CommonModule,
     LabelComponent,
     CheckboxComponent,
-    ButtonComponent,
     InputFieldComponent,
     RouterModule,
     FormsModule,
@@ -38,7 +36,7 @@ export class SigninFormComponent {
 
   private apiUrl = `${this.apiEndPoint}/auth/login`;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) { }
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
@@ -50,7 +48,6 @@ export class SigninFormComponent {
       return;
     }
 
-
     this.isLoading = true;
     this.errorMessage = '';
 
@@ -61,6 +58,9 @@ export class SigninFormComponent {
       next: (response) => {
         this.isLoading = false;
         localStorage.setItem('token', response.token);
+        localStorage.setItem('userFirstName', response.user.firstName);
+        localStorage.setItem('userName', response.user.name);
+        localStorage.setItem('currentUserRole', response.user.role);
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {

@@ -9,9 +9,9 @@
   
       <div class="flex items-center gap-3">
 
-        <app-date-picker id="filter-date"  placeholder="Start Date" > </app-date-picker>
+        <app-date-picker  id="filter-date"  placeholder="Start Date" (dateChange)="startDate = $event.Str" > </app-date-picker>
 
-        <app-date-picker id="filter-date"  placeholder="End Date" > </app-date-picker>
+        <app-date-picker id="filter-date"  placeholder="End Date" (dateChange)="endDate = $event.Str" > </app-date-picker>
 
         <!-- Status Filter -->
         <div class="flex items-center rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -25,10 +25,10 @@
             [class]="filterStatus === 'pending' ? 'bg-orange-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">
             Pending
           </button>
-          <button (click)="filterStatus = 'processing'"
+          <button (click)="filterStatus = 'in progress'"
             class="px-3 py-2 text-theme-sm font-medium transition-colors"
-            [class]="filterStatus === 'processing' ? 'bg-blue-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">
-            Processing
+            [class]="filterStatus === 'in progress' ? 'bg-blue-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">
+            In Progress
           </button>
           <button (click)="filterStatus = 'delivered'"
             class="px-3 py-2 text-theme-sm font-medium transition-colors"
@@ -42,7 +42,9 @@
           </button>
         </div>
   
-        <button class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03]">
+        <button
+          (click)="refreshOrders()"
+          class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03]">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M23 4v6h-6" />
             <path d="M1 20v-6h6" />
@@ -68,22 +70,22 @@
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
       <div class="rounded-xl border border-orange-100 bg-orange-50 dark:border-orange-800 dark:bg-orange-900/10 px-4 py-3">
         <p class="text-xs font-medium text-orange-600 dark:text-orange-400 uppercase tracking-wide mb-1">Pending</p>
-        <p class="text-2xl font-bold text-orange-700 dark:text-orange-300">12</p>
+        <p class="text-2xl font-bold text-orange-700 dark:text-orange-300">{{ pending }}</p>
         <p class="text-xs text-orange-400 mt-0.5">awaiting confirmation</p>
       </div>
       <div class="rounded-xl border border-blue-100 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/10 px-4 py-3">
-        <p class="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide mb-1">Processing</p>
-        <p class="text-2xl font-bold text-blue-700 dark:text-blue-300">8</p>
+        <p class="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide mb-1">In Progress</p>
+        <p class="text-2xl font-bold text-blue-700 dark:text-blue-300">{{ processing }}</p>
         <p class="text-xs text-blue-400 mt-0.5">being prepared</p>
       </div>
       <div class="rounded-xl border border-green-100 bg-green-50 dark:border-green-800 dark:bg-green-900/10 px-4 py-3">
         <p class="text-xs font-medium text-green-600 dark:text-green-400 uppercase tracking-wide mb-1">Delivered</p>
-        <p class="text-2xl font-bold text-green-700 dark:text-green-300">143</p>
+        <p class="text-2xl font-bold text-green-700 dark:text-green-300">{{ delivered }}</p>
         <p class="text-xs text-green-400 mt-0.5">completed orders</p>
       </div>
       <div class="rounded-xl border border-red-100 bg-red-50 dark:border-red-800 dark:bg-red-900/10 px-4 py-3">
         <p class="text-xs font-medium text-red-600 dark:text-red-400 uppercase tracking-wide mb-1">Cancelled</p>
-        <p class="text-2xl font-bold text-red-700 dark:text-red-300">5</p>
+        <p class="text-2xl font-bold text-red-700 dark:text-red-300">{{ cancelled }}</p>
         <p class="text-xs text-red-400 mt-0.5">this month</p>
       </div>
     </div>
@@ -152,7 +154,7 @@
               <td class="py-4 px-4 text-center">
                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
                   [class]="order.status === 'delivered' ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
-                    : order.status === 'processing' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'
+                    : order.status === 'in progress' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'
                     : order.status === 'pending' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400'
                     : 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'">
                   {{ order.status | titlecase }}

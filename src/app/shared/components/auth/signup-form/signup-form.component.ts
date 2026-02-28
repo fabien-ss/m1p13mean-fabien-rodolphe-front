@@ -11,7 +11,6 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-signup-form',
   imports: [
     LabelComponent,
-    CheckboxComponent,
     InputFieldComponent,
     RouterModule,
     FormsModule

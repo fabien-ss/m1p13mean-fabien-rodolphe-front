@@ -8,11 +8,17 @@ import { ShopManagementComponent } from './features/shop/pages/shop-management/s
 import { ShopViewComponent } from './features/shop/pages/shop-view/shop-view.component';
 import { ProductListComponent } from './features/products/pages/product-list/product-list.component';
 import { ProductCategoriesComponent } from './features/products/pages/product-categories/product-categories.component';
-import { ProductInvetoryComponent } from './features/products/pages/product-invetory/product-invetory.component';
 import { ProductSettingsComponent } from './features/products/pages/product-settings/product-settings.component';
 import { ProductOrdersComponent } from './features/products/pages/product-orders/product-orders.component';
 import { NotFoundComponent } from './pages/other-page/not-found/not-found.component';
 import { authGuard } from './services/guards/auth.guard';
+import { roleGuard } from './services/guards/role.guard';
+import { ForbidenComponent } from './pages/other-page/forbiden/forbiden.component';
+
+import { UserNewComponent } from './features/user/user-new/user-new.component';
+import { UserEditComponent } from './features/user/user-edit/user-edit.component';
+import { UserResetPasswordComponent } from './features/user/user-reset-password/user-reset-password.component';
+import { UserListComponent } from './features/user/user-list/user-list.component';
 
 export const routes: Routes = [
   {
@@ -27,24 +33,24 @@ export const routes: Routes = [
           'Angular Ecommerce Dashboard | TailAdmin - Angular Admin Dashboard Template',
       },
     ],
-    canActivate: [authGuard]
+    canActivate: [authGuard, roleGuard(['admin'])]
   },
   {
     path: 'shop',
     component: AppLayoutComponent,
+    canActivate: [authGuard, roleGuard(['boutique', 'admin'])],
     children: [
       {
         path: '',
         component: ShopManagementComponent,
         pathMatch: 'full',
         title: 'Managing shop',
-        canActivate: [authGuard]
       },
       {
         path: 'view',
         component: ShopViewComponent,
         pathMatch: 'full',
-        title: 'Managing shop'
+        title: 'Managing shop',
       },
       {
         path: 'view/products/add',
@@ -65,12 +71,6 @@ export const routes: Routes = [
           'Product categories',
       },
       {
-        path: 'view/products/inventory',
-        component: ProductInvetoryComponent,
-        title:
-          'Product inventory',
-      },
-      {
         path: 'view/products/settings',
         component: ProductSettingsComponent,
         title:
@@ -82,9 +82,37 @@ export const routes: Routes = [
         title:
           'Orders',
       },
-    ],
-    canActivate: [authGuard]
+      
+    ]
   },
+  {
+    path: 'user',
+    title: 'User',
+    component: AppLayoutComponent,
+    children: [
+      {
+        path: 'list',
+        component: UserListComponent,
+        title: 'User List'
+      },
+      {
+        path: 'new',
+        component: UserNewComponent,
+        title: 'New User'
+      },
+      {
+        path: 'edit',
+        component: UserEditComponent,
+        title: 'Edit User'
+      },
+      {
+        path: 'reset-password',
+        component: UserResetPasswordComponent,
+        title: 'Reset Password'
+      }
+    ]
+  }
+  ,
   // auth pages
   {
     path:'',
@@ -107,4 +135,9 @@ export const routes: Routes = [
     component: NotFoundComponent,
     title:'Page not found'
   },
+  {
+    path:'unauthorized',
+    component: ForbidenComponent,
+    title:'Forbidden'
+  }
 ];

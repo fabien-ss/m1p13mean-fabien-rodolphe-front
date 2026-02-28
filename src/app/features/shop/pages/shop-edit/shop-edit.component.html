@@ -1,0 +1,132 @@
+<div class="space-y-6">
+
+  <!-- SECTION 1: Basic Info -->
+  <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-6 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
+    <h4 class="text-base font-semibold text-gray-800 dark:text-white/90 mb-4">Basic Information</h4>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <div class="lg:col-span-2 space-y-4">
+        <div>
+          <app-label>Shop Name *</app-label>
+          <app-input-field name="name" [(ngModel)]="name" (ngModelChange)="emit()" class="w-full" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <div>
+    <app-label>Type</app-label>
+    <!-- Tags affichés -->
+    @if (typeList.length > 0) {
+      <div class="flex flex-wrap gap-1.5 mb-2">
+        @for (t of typeList; track t) {
+          <span class="inline-flex items-center gap-1 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 text-xs font-medium px-2.5 py-1">
+            {{ t }}
+            <button type="button" (click)="removeType(t)" class="hover:text-brand-900 dark:hover:text-white">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
+                <path d="M1 1l8 8M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </span>
+        }
+      </div>
+    }
+    <!-- Input libre -->
+    <div class="flex gap-2">
+      <app-input-field
+        name="typeInput"
+        [(ngModel)]="typeInput"
+        placeholder="e.g. Fashion"
+        (keydown.enter)="addType()"
+        class="w-full" />
+      <button
+        type="button"
+        (click)="addType()"
+        class="shrink-0 rounded-lg border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5">
+        Add
+      </button>
+    </div>
+  </div>
+  <div>
+    <app-label>Phone</app-label>
+    <app-input-field name="phone" [(ngModel)]="phone" (ngModelChange)="emit()" class="w-full" />
+  </div>
+</div>
+
+        <div>
+          <app-label>Email *</app-label>
+          <app-input-field type="email" name="email" [(ngModel)]="email" (ngModelChange)="emit()" class="w-full" />
+        </div>
+
+        <div>
+          <app-label>Description</app-label>
+          <app-input-field name="description" [(ngModel)]="description" (ngModelChange)="emit()" class="w-full" />
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <app-dropzone class="w-full h-full" [(ngModel)]="files" (filesDropped)="onFilesDropped($event)" />
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION 2: Manager -->
+  <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-6 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
+    <h4 class="text-base font-semibold text-gray-800 dark:text-white/90 mb-4">Manager</h4>
+    <div class="space-y-4">
+
+      <!-- Manager actuel -->
+      @if (shop?.manager) {
+        <div class="flex items-center gap-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-white/[0.03] px-4 py-3">
+          <div class="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 dark:bg-brand-900 text-brand-600 dark:text-brand-300 font-semibold text-sm">
+            {{ shop.manager.firstName?.charAt(0) }}{{ shop.manager.name?.charAt(0) }}
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-800 dark:text-white/90">
+              {{ shop.manager.firstName }} {{ shop.manager.name }}
+            </p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">{{ shop.manager.role }}</p>
+          </div>
+          <span class="ml-auto text-xs text-gray-400 dark:text-gray-500">Current manager</span>
+        </div>
+      }
+
+      <div>
+        <app-label>Change Manager (email)</app-label>
+        <app-input-field type="email" name="managerEmail" [(ngModel)]="managerEmail" (ngModelChange)="emit()" placeholder="Leave empty to keep current manager" class="w-full" />
+      </div>
+      <p class="text-sm text-gray-500 dark:text-gray-400">
+        Enter a new manager email only if you want to reassign the shop.
+      </p>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  @if (errorMessage) {
+    <div class="rounded-lg border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/10 px-4 py-3 text-sm text-red-600 dark:text-red-400">
+      ⚠️ {{ errorMessage }}
+    </div>
+  }
+
+  <!-- Actions -->
+  <div class="flex items-center justify-between pt-4 gap-4">
+    <div class="flex items-center gap-3">
+      <app-label>Active</app-label>
+      <app-switch name="isActive" [(ngModel)]="isActive" class="scale-125">
+        Shop is active
+      </app-switch>
+    </div>
+    <div class="flex items-center gap-2">
+      <app-button size="sm" variant="outline" type="button" (click)="onReset()">
+        Reset
+      </app-button>
+      <button
+        type="button"
+        (click)="onSave()"
+        [disabled]="isLoading"
+        class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-theme-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50">
+        {{ isLoading ? 'Saving...' : 'Update Shop' }}
+      </button>
+    </div>
+  </div>
+
+</div>

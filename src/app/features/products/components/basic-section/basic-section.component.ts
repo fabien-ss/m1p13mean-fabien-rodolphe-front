@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { LabelComponent } from '../../../../shared/components/form/label/label.component';
 import { InputFieldComponent } from '../../../../shared/components/form/input/input-field.component';
@@ -13,21 +13,10 @@ import { SwitchComponent } from '../../../../shared/components/form/input/switch
 import { LabelComponent as AppLabel } from '../../../../shared/components/form/label/label.component';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../../../environments/environment';
+import { Product } from '../../../../services/models/product.models';
+import { CategoryService } from '../../../../services/services/category.service';
+import { Category } from '../../../../services/models/category.model';
 
-export interface BasicSectionData {
-  name: string;
-  category: string;
-  brand: string;
-  sku: string;
-  barcode: string;
-  model: string;
-  description: string;
-  price: number;
-  sellingPrice: number;
-  stock: number;
-  expiryDate: string | null;
-  isActive: boolean;
-}
 
 @Component({
   selector: 'app-basic-section',
@@ -38,7 +27,6 @@ export interface BasicSectionData {
     LabelComponent,
     InputFieldComponent,
     DropzoneComponent,
-    TextAreaComponent,
     DatePickerComponent,
     SelectComponent,
     ButtonComponent,
@@ -47,8 +35,18 @@ export interface BasicSectionData {
   templateUrl: './basic-section.component.html'
 })
 export class BasicSectionComponent {
+  onExpiryDateChange($event: any) {
+    console.log('Date picker change detected:', $event.dateStr);
+    this.expiryDate = $event.dateStr;
+  }
+  expiryDateChange($event: any) {
+    console.log('Expiry date changed:', $event);
+    this.expiryDate = $event.dateStr;
+    this.emit();
+  }
 
-  @Output() formChange = new EventEmitter<BasicSectionData>();
+  @Output() formChange = new EventEmitter<Product>();
+  constructor(private http: HttpClient, private router: Router, private categoryService: CategoryService) { }
 
   private apiEndPoint = environment.apiUrl;
 
@@ -58,15 +56,22 @@ export class BasicSectionComponent {
   errorMessage = '';
   isActive = true;
 
-  options = [
-    { value: 'electronics', label: 'Electronics' },
-    { value: 'accessories', label: 'Accessories' },
-    { value: 'clothing', label: 'Clothing' },
-  ];
+  options: any[] = [];
+
+  // setup options for select component, calling get all categories
+  setupCategoryOptions() {
+    const shopId = localStorage.getItem('selectedShopId');
+    this.categoryService.getAllByShop(shopId!).subscribe({
+      next: (data) => {
+        this.options = data.map((cat) => ({ value: cat._id!, label: cat.name! }));
+      },
+      error: (err) => this.errorMessage = err?.error?.message ?? 'Failed to load categories.'
+    });
+  }
 
   // Form fields
   name = '';
-  category = '';
+  category: Category = { _id: '', name: '', description: '', isActive: true };
   brand = '';
   sku = '';
   barcode = '';
@@ -76,38 +81,42 @@ export class BasicSectionComponent {
   sellingPrice = 0;
   stock = 0;
   expiryDate: string | null = null;
+  files: File[] = [];
+  objectUrls: string[] = [];
 
-  constructor(private http: HttpClient, private router: Router) {}
 
   emit() {
     this.formChange.emit(this.buildPayload());
   }
 
   handleSelectChange(value: string) {
-    this.category = value;
-    this.emit();
+    this.category = this.options.find(opt => opt.value === value)?.value || null;
+  
   }
 
-  buildPayload(): BasicSectionData {
+  buildPayload(): Product {
     return {
+      _id: '', // This will be set by the backend
       name: this.name,
-      category: this.category,
+      category: this.category as Category,
       brand: this.brand,
       sku: this.sku,
       barcode: this.barcode,
       model: this.model,
       description: this.description,
-      price: this.costPrice,
+      costPrice: this.costPrice,
       sellingPrice: this.sellingPrice,
       stock: this.stock,
       expiryDate: this.expiryDate,
       isActive: this.isActive,
+      shop: localStorage.getItem("selectedShopId")
     };
   }
 
   onSave() {
-    this.errorMessage = '';
-  
+
+    console.log(this.files)
+    
     // Validate required fields
     if (!this.name.trim()) {
       this.errorMessage = 'Product Name is required.';
@@ -137,17 +146,28 @@ export class BasicSectionComponent {
       this.errorMessage = 'Opening Stock is required and cannot be negative.';
       return;
     }
-  
+
     this.isLoading = true;
-  
+
     const payload = this.buildPayload();
-    console.log('Payload:', payload);
-  
-    this.http.post<{ id: string }>(this.apiUrl, payload).subscribe({
+
+    console.log('Submitting product:', payload, 'with files:', this.files);
+
+    const formData = new FormData();
+
+    Object.entries(payload).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) {
+        formData.append(key, String(value)); // ✅ safely convert
+      }
+    });
+
+    this.files.forEach(file => formData.append('image', file));
+
+    this.http.post<{ id: string }>(this.apiUrl, formData).subscribe({
       next: (response) => {
         console.log('Product created:', response);
         this.isLoading = false;
-        this.router.navigate(['/products']);
+        this.onClear();
       },
       error: (err) => {
         this.errorMessage = err?.error?.message ?? 'Something went wrong.';
@@ -158,7 +178,7 @@ export class BasicSectionComponent {
 
   onClear() {
     this.name = '';
-    this.category = '';
+    this.category = { _id: '', name: '', description: '', isActive: true };
     this.brand = '';
     this.sku = '';
     this.barcode = '';
@@ -170,5 +190,22 @@ export class BasicSectionComponent {
     this.expiryDate = null;
     this.isActive = true;
     this.errorMessage = '';
+    this.files = [];
+    this.objectUrls.forEach(url => URL.revokeObjectURL(url));
+    this.objectUrls = [];
+  }
+  onFilesDropped(files: File[]) {
+    this.objectUrls.forEach(url => URL.revokeObjectURL(url));
+
+    this.files = files;
+    this.objectUrls = files.map(file => URL.createObjectURL(file));
+    console.log('Files dropped (p):', this.files);
+  }
+  onSubmit() {
+
+  }
+
+  ngOnInit() {
+    this.setupCategoryOptions();
   }
 }

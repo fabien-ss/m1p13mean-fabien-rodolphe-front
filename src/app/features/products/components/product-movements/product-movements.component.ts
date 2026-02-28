@@ -1,42 +1,53 @@
-import { Component } from '@angular/core';
-
-export interface StockMovement {
-  id: string;
-  type: 'in' | 'out';
-  product: { name: string; sku: string; image: string; };
-  quantity: number;
-  costPrice?: number;
-  sellingPrice?: number;
-  expiryDate?: string;
-  date: string;
-  note?: string;
-}
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MovementService } from '../../../../services/services/movement.service';
+import { Movement } from '../../../../services/models/movement.models';
 
 @Component({
   selector: 'app-product-movements',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './product-movements.component.html',
   styleUrl: './product-movements.component.css',
 })
-export class ProductMovementsComponent {
+export class ProductMovementsComponent implements OnInit {
   filterType: 'all' | 'in' | 'out' = 'all';
+  movements: Movement[] = [];
+  isLoading = false;
+  errorMessage = '';
 
-  movements: StockMovement[] = [
-    {
-      id: '1', type: 'in',
-      product: { name: 'Dell Laptop', sku: 'WNC-HP-001', image: 'https://i.dell.com/...' },
-      quantity: 50, costPrice: 2500, sellingPrice: 3000,
-      expiryDate: '', date: '2026-02-20', note: 'Initial stock'
-    },
-    {
-      id: '2', type: 'out',
-      product: { name: 'Dell Laptop', sku: 'WNC-HP-001', image: 'https://i.dell.com/...' },
-      quantity: 3, date: '2026-02-21', note: 'Customer order #1042'
-    },
-  ];
+  totalIn = 0;
+  totalOut = 0;
 
-  get filteredMovements(): StockMovement[] {
-    if (this.filterType === 'all') return this.movements;
-    return this.movements.filter(m => m.type === this.filterType);
+  constructor(private movementService: MovementService) {}
+
+  ngOnInit() {
+    this.loadMovements();
+  }
+
+  loadMovements() {
+    const shopId = localStorage.getItem('selectedShopId');
+    if (!shopId) { this.errorMessage = 'No shop selected.'; return; }
+
+    this.isLoading = true;
+    this.movementService.getByShop(shopId, this.filterType).subscribe({
+      next: (data) => { 
+        this.movements = data; 
+        this.totalIn = this.movements.filter(m => m.type === 'in').reduce((sum, m) => sum + m.quantity, 0);
+        this.totalOut = this.movements.filter(m => m.type === 'out').reduce((sum, m) => sum + m.quantity, 0);
+        this.isLoading = false; 
+      },
+      error: (err) => { this.errorMessage = err?.error?.message ?? 'Failed to load.'; this.isLoading = false; }
+    });
+    console.log('Loaded movements with filter:', this.filterType);
+  }
+
+  setFilter(type: 'all' | 'in' | 'out') {
+    this.filterType = type;
+    this.loadMovements();
+  }
+
+  get filteredMovements(): Movement[] {
+    return this.movements;
   }
 }

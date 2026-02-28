@@ -13,7 +13,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <app-label>Category *</app-label>
-            <app-select [options]="options" placeholder="Select category" [value]="category" (valueChange)="handleSelectChange($event)" className="dark:bg-dark-900" />
+            <app-select [options]="options" placeholder="Select category" [value]="category._id" (valueChange)="handleSelectChange($event)" className="dark:bg-dark-900" />
           </div>
           <div>
             <app-label>Brand</app-label>
@@ -41,7 +41,7 @@
       </div>
 
       <div class="flex flex-col gap-4">
-        <app-dropzone class="w-full h-full" />
+        <app-dropzone class="w-full h-full" [(ngModel)]="files" (filesDropped)="onFilesDropped($event)" />
       </div>
 
     </div>
@@ -72,7 +72,7 @@
           <app-input-field type="number" name="stock" [(ngModel)]="stock" (ngModelChange)="emit()" class="w-full" />
         </div>
         <div>
-          <app-date-picker id="expiry-date-picker" label="Expiry Date" placeholder="Select a date" [(ngModel)]="expiryDate" (ngModelChange)="emit()" />
+          <app-date-picker (dateChange)="onExpiryDateChange($event)" id="expiry-date-picker" label="Expiry Date" placeholder="Select a date" (dateChange)="expiryDateChange($event)" />
         </div>
       </div>
     </div>
