@@ -100,7 +100,6 @@ export const routes: Routes = [
         title: 'Orders',
         canActivate: [authGuard, roleGuard(['boutique'])]
       },
-      
     ]
   },
   {

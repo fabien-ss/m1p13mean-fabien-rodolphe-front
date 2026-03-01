@@ -12,13 +12,13 @@ export class UserDropdownComponent {
   singout() {
     const keepLoggedIn = localStorage.getItem('keepLoggedIn');
     if (keepLoggedIn === 'true') { 
-      window.location.href = '/login';
+      window.location.href = '/#/login';
       return;
     }
     localStorage.removeItem('token');
     localStorage.removeItem('userName');
     localStorage.removeItem('userFirstName');
-    window.location.href = '/login';
+    window.location.href = '/#/login';
   }
   isOpen = false;
 

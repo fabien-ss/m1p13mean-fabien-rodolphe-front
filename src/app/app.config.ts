@@ -4,7 +4,8 @@ import { provideHttpClient, withInterceptorsFromDi, withInterceptors } from '@an
 import { authInterceptor } from './services/interceptors/auth.interceptor';
 import { routes } from './app.routes';
 import { provideZard } from '@/shared/core/provider/providezard';
-
+// app.config.ts
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -12,7 +13,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideZard(),
     provideHttpClient(withInterceptorsFromDi()),
-    provideHttpClient(withInterceptors([authInterceptor]))
+    provideHttpClient(withInterceptors([authInterceptor])),
+    { provide: LocationStrategy, useClass: HashLocationStrategy }
 
   ]
 };
