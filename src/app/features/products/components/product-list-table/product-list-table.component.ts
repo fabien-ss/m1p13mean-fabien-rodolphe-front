@@ -1,101 +1,124 @@
+// product-list-table.component.ts
 import { Component, OnInit } from '@angular/core';
-import { SwitchComponent } from '../../../../shared/components/form/input/switch.component';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { SwitchComponent } from '../../../../shared/components/form/input/switch.component';
 import { ButtonComponent } from '../../../../shared/components/ui/button/button.component';
 import { ModalComponent } from '../../../../shared/components/ui/modal/modal.component';
 import { ProductAvancementComponent } from '../product-avancement/product-avancement.component';
 import { ProductStockEntryComponent } from '../product-stock-entry/product-stock-entry.component';
+import { ProductEditDrawerComponent } from '../product-edit-drawer/product-edit-drawer.component';  // 👈 new
 import { Product } from '../../../../services/models/product.models';
-import { CommonModule } from '@angular/common';
 import { ProductService } from '../../../../services/services/product.service';
-import { FormsModule } from '@angular/forms';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-product-list-table',
+  standalone: true,
   imports: [
-    FormsModule,
     CommonModule,
+    FormsModule,
     SwitchComponent,
     ButtonComponent,
     ModalComponent,
     ProductAvancementComponent,
     ProductStockEntryComponent,
+    ProductEditDrawerComponent,   // 👈 new
   ],
   templateUrl: './product-list-table.component.html',
   styleUrl: './product-list-table.component.css',
 })
 export class ProductListTableComponent implements OnInit {
-  updateProductStatus(id: string, isActivate: boolean) {
-    console.log('Switch toggled for product ID:', id, 'New Status:', isActivate);
-    this.productService.setActive(id, isActivate).subscribe({
-      next: (updatedProduct) => {
-        const index = this.tableData.findIndex(p => p._id === id);
-        if (index !== -1) {
-          this.tableData[index] = updatedProduct;
-        }
-      }
-    });
-  }
 
-  constructor(private router: Router, private productService: ProductService) { }
+  constructor(
+    private router: Router,
+    private productService: ProductService,
+  ) {}
 
-  isOpen = false;
-  isStockModalOpen = false;
-  isLoading = false;
-  errorMessage = '';
+  // ── State ──────────────────────────────────────────────────────────────
   tableData: Product[] = [];
+  isLoading    = false;
+  errorMessage = '';
 
   selectedProduct: Product | null = null;
 
-  apiEndPoint = environment.apiUrl // Replace with your actual API endpoint
+  // Modal flags (existing)
+  isOpen          = false;
+  isStockModalOpen = false;
 
-  ngOnInit() {
+  // Drawer flag (new)
+  isEditDrawerOpen = false;
+
+  apiEndPoint = environment.apiUrl;
+
+  // ── Lifecycle ──────────────────────────────────────────────────────────
+
+  ngOnInit(): void {
     this.refreshTable();
   }
 
-  getBadgeColor(status: string): 'success' | 'warning' | 'error' {
-    if (status === 'Available') return 'success';
-    if (status === 'Comming soon') return 'warning';
-    return 'error';
-  }
+  // ── Data ───────────────────────────────────────────────────────────────
 
-  newProduct() {
-    this.router.navigate(['/shop/view/products/add']);
-  }
-
-  openModal(product: Product) { 
-    this.selectedProduct = product;
-    this.isOpen = true;  
-  }
-  openStockModal(product: Product) { 
-    this.selectedProduct = product; 
-    this.isStockModalOpen = true; }
-  resetModalFields() { }
-//  handlePricingSettings() { this.openModal(); }
-  handleSotckEntry() { this.openStockModal(this.selectedProduct!); }
-  closeModal() { this.isOpen = false; this.resetModalFields(); }
-  closeStockModal() { this.isStockModalOpen = false; this.resetModalFields(); }
-  handleStockSettings() { this.openStockModal(this.selectedProduct!); }
-
-  refreshTable(){
-    console.log('Refreshing product table...');
+  refreshTable(): void {
     const shopId = localStorage.getItem('selectedShopId');
-    if (!shopId) {
-      this.errorMessage = 'No shop selected.';
-      return;
-    }
+    if (!shopId) { this.errorMessage = 'No shop selected.'; return; }
 
     this.isLoading = true;
     this.productService.getByShop(shopId).subscribe({
-      next: (products) => {
-        this.tableData = products;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.errorMessage = err?.error?.message ?? 'Failed to load products.';
-        this.isLoading = false;
+      next:  (products) => { this.tableData = products; this.isLoading = false; },
+      error: (err)      => { this.errorMessage = err?.error?.message ?? 'Failed to load products.'; this.isLoading = false; }
+    });
+  }
+
+  // ── Toggle available ────────────────────────────────────────────────────
+
+  updateProductStatus(id: string, isActivate: boolean): void {
+    this.productService.setActive(id, isActivate).subscribe({
+      next: (updated) => {
+        const idx = this.tableData.findIndex(p => p._id === id);
+        if (idx !== -1) this.tableData[idx] = updated;
       }
     });
-  } 
+  }
+
+  // ── Edit drawer ─────────────────────────────────────────────────────────
+
+  openEditDrawer(product: Product): void {
+    this.selectedProduct = product;
+    this.isEditDrawerOpen = true;
+  }
+
+  closeEditDrawer(): void {
+    this.isEditDrawerOpen = false;
+  }
+
+  /** Called when the drawer emits a saved product — patch the row in-place */
+  onProductSaved(updated: Product): void {
+    const idx = this.tableData.findIndex(p => p._id === updated._id);
+    if (idx !== -1) {
+      this.tableData[idx] = updated;
+      this.tableData = [...this.tableData]; // trigger change detection
+    }
+    this.closeEditDrawer();
+  }
+
+  // ── Other modals ────────────────────────────────────────────────────────
+
+  openModal(product: Product): void      { this.selectedProduct = product; this.isOpen = true; }
+  openStockModal(product: Product): void { this.selectedProduct = product; this.isStockModalOpen = true; }
+  closeModal(): void      { this.isOpen = false; }
+  closeStockModal(): void { this.isStockModalOpen = false; }
+
+  // ── Navigation ─────────────────────────────────────────────────────────
+
+  newProduct(): void {
+    this.router.navigate(['/admin-shop/view/products/add']);
+  }
+
+  getBadgeColor(status: string): 'success' | 'warning' | 'error' {
+    if (status === 'Available')    return 'success';
+    if (status === 'Comming soon') return 'warning';
+    return 'error';
+  }
 }

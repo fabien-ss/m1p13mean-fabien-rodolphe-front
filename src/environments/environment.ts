@@ -1,4 +1,4 @@
 export const environment = {
     production: false,
-    apiUrl: 'https://m1p13mean-fabien-rodolphe-back-1.onrender.com'
+    apiUrl: 'http://localhost:8888'
 };

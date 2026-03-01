@@ -105,7 +105,7 @@ export class BasicSectionComponent {
       model: this.model,
       description: this.description,
       costPrice: this.costPrice,
-      sellingPrice: this.sellingPrice,
+      price: this.sellingPrice,
       stock: this.stock,
       expiryDate: this.expiryDate,
       isActive: this.isActive,

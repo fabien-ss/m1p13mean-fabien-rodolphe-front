@@ -1,4 +1,3 @@
-// catalog.component.ts
 import { Component, inject, signal, computed, resource } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -7,8 +6,8 @@ import { firstValueFrom } from 'rxjs';
 import { ProductService } from '@/client/core/services/product.service';
 import { CartService } from '@/client/core/services/cart.service';
 import { ZardButtonComponent } from '@/shared/components/button';
+import { CategoryService } from '@/client/core/services/category.service';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface FilterMetadata {
   brands:        { brand: string; count: number }[];
@@ -28,9 +27,10 @@ interface FilterMetadata {
 })
 export class CatalogComponent {
   private productService = inject(ProductService);
+  private categoryService = inject(CategoryService);
   cartService = inject(CartService);
 
-  // ── Filter state signals ────────────────────────────────────────────────
+  // Filter useState
   searchTerm       = signal('');
   selectedCategory = signal<string | null>(null);
   selectedBrands   = signal<string[]>([]);
@@ -43,7 +43,7 @@ export class CatalogComponent {
   currentPage      = signal(1);
   pageSize         = signal(12);
 
-  // ── Filter metadata resource (brands, tags, price range) ───────────────
+  // Filter metadata resource (brands, tags, price range)
   // Loads once on init — feeds the sidebar
   metadataResource = resource({
     loader: () => firstValueFrom(
@@ -51,11 +51,19 @@ export class CatalogComponent {
     ) as Promise<FilterMetadata>
   });
 
+  // Get all categories for filter
+  categoriesResource = resource({
+    loader: () => firstValueFrom(
+      this.categoryService.getAll()
+    )
+  });
+
   availableBrands = computed(() => this.metadataResource.value()?.brands    ?? []);
   availableTags   = computed(() => this.metadataResource.value()?.tags       ?? []);
   priceRange      = computed(() => this.metadataResource.value()?.priceRange ?? { min: 0, max: 0, avg: 0 });
+  availableCategories = computed(() => this.categoriesResource.value() ?? []);
 
-  // ── Products resource — reloads whenever any filter signal changes ──────
+  // Products resource — reloads whenever any filter signal changes
   productsResource = resource({
     params: () => ({
       q:         this.searchTerm(),
@@ -65,6 +73,7 @@ export class CatalogComponent {
       onPromo:   this.onPromoOnly()  || undefined,
       minPrice:  this.minPrice()     ?? undefined,
       maxPrice:  this.maxPrice()     ?? undefined,
+      category:   this.selectedCategory() ?? undefined,
       sortBy:    this.sortBy().split('_')[0],
       sortOrder: this.sortBy().split('_')[1] ?? 'desc',
       page:      this.currentPage(),
@@ -75,7 +84,6 @@ export class CatalogComponent {
     )
   });
 
-  // ── Derived ─────────────────────────────────────────────────────────────
   allProducts   = computed(() => this.productsResource.value()?.data       ?? []);
   totalProducts = computed(() => this.productsResource.value()?.total      ?? 0);
   totalPages    = computed(() => this.productsResource.value()?.totalPages  ?? 1);
@@ -105,7 +113,6 @@ export class CatalogComponent {
     return pages;
   });
 
-  // ── Actions ─────────────────────────────────────────────────────────────
 
   selectCategory(id: string | null): void {
     this.selectedCategory.set(id);
