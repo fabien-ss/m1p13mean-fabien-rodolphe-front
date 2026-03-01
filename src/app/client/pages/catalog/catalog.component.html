@@ -57,30 +57,16 @@
               <span class="text-xs text-gray-400 font-mono">{{ totalProducts()
                 }}</span>
             </li>
+            @for (category of availableCategories(); track category._id) {
             <li
-              (click)="selectCategory('mode')"
+              (click)="selectCategory(category._id)"
               class="flex items-center justify-between px-3 py-2 rounded-xl cursor-pointer transition-colors hover:bg-gray-50"
-              [class.bg-indigo-50]="selectedCategory() === 'mode'"
-              [class.text-indigo-600]="selectedCategory() === 'mode'">
-              <span class="text-sm text-gray-600">Mode & Maroquinerie</span>
-              <span class="text-xs text-gray-400 font-mono">24</span>
+              [class.bg-indigo-50]="selectedCategory() === category._id"
+              [class.text-indigo-600]="selectedCategory() === category._id">
+              <span class="text-sm font-medium">{{ category.name }}</span>
+              <!-- <span class="text-xs text-gray-400 font-mono">20</span> -->
             </li>
-            <li
-              (click)="selectCategory('horlogerie')"
-              class="flex items-center justify-between px-3 py-2 rounded-xl cursor-pointer transition-colors hover:bg-gray-50"
-              [class.bg-indigo-50]="selectedCategory() === 'horlogerie'"
-              [class.text-indigo-600]="selectedCategory() === 'horlogerie'">
-              <span class="text-sm text-gray-600">Haute Horlogerie</span>
-              <span class="text-xs text-gray-400 font-mono">12</span>
-            </li>
-            <li
-              (click)="selectCategory('beaute')"
-              class="flex items-center justify-between px-3 py-2 rounded-xl cursor-pointer transition-colors hover:bg-gray-50"
-              [class.bg-indigo-50]="selectedCategory() === 'beaute'"
-              [class.text-indigo-600]="selectedCategory() === 'beaute'">
-              <span class="text-sm text-gray-600">Beauté & Parfums</span>
-              <span class="text-xs text-gray-400 font-mono">08</span>
-            </li>
+            }
           </ul>
         </div>
 
@@ -305,7 +291,7 @@
             <!-- Image -->
             <div class="relative aspect-[4/5] bg-gray-50 overflow-hidden">
               <img
-                [src]="product.images[0]"
+                [src]="apiEndPoint + (product?.images?.[0] ?? '') || '/assets/placeholder.png'"
                 [alt]="product.name"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
 

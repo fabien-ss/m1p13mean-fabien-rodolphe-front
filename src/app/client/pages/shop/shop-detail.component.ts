@@ -11,6 +11,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ProductService } from '@/client/core/services/product.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-shop-detail',
@@ -27,6 +28,7 @@ export class ShopDetailComponent {
   private shopService = inject(ShopService);
   private productService = inject(ProductService);
   private cartService = inject(CartService);
+  apiEndPoint = environment.apiUrl;
 
   private routeId = toSignal(
     this.route.paramMap.pipe(map(pm => pm.get('id') ?? '')),

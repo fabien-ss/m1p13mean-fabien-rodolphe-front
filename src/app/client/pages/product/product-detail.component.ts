@@ -10,6 +10,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
 import { ProductService } from '@/client/core/services/product.service';
 import { firstValueFrom } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-product-detail',
@@ -20,6 +21,7 @@ import { firstValueFrom } from 'rxjs';
 export class ProductDetailComponent {
   private route = inject(ActivatedRoute);
   private productService = inject(ProductService);
+  apiEndPoint = environment.apiUrl;
   cartService = inject(CartService);
 
   private routeId = toSignal(
@@ -59,7 +61,7 @@ export class ProductDetailComponent {
   activeImage = computed(() => {
     const p = this.product();
     if (!p?.images?.length) return 'https://placehold.co/800x800?text=No+Image';
-    return p.images[this.activeImageIndex()] ?? p.images[0];
+    return this.apiEndPoint + (p.images[this.activeImageIndex()] ?? p.images[0]);
   });
 
   isPromo = computed(() => {

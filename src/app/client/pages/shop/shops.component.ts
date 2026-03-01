@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 import { ShopService } from '@/client/core/services/shop.service';
 import { RouterLink } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 type Shop = {
   _id: string;
@@ -22,7 +23,7 @@ type Shop = {
 })
 export class ShopsComponent {
   private shopService = inject(ShopService);
-
+  apiEndPoint = environment.apiUrl;
   shopResource = resource({
     loader: () => firstValueFrom(this.shopService.getShops()),
   });

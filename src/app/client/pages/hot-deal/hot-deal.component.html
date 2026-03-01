@@ -56,7 +56,7 @@
                     <div
                         class="relative aspect-[4/5] bg-gray-50 overflow-hidden">
                         <img
-                            [src]="product.images[0]"
+                            [src]="apiEndPoint + (product?.images?.[0] ?? '') || '/assets/placeholder.png'"
                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                             alt="Product" />
 

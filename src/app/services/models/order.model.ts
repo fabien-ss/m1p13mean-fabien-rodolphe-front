@@ -28,6 +28,24 @@ export interface Order {
   date: string | Date;
 }
 
+export interface OrderClientInterface {
+  id: string;
+  products: {
+    id: string;
+    name: string;
+    price: number;
+    devise: string;
+  }[];
+  customer: {
+    name: string;
+    email: string;
+  };
+  itemCount: number;
+  total: number;
+  status: OrderStatus;
+  date: string | Date;
+}
+
 export interface ShopProduct {
   id: string;
   name: string;
@@ -53,6 +71,6 @@ export interface OrderItem {
 
 export interface CreateOrderPayload {
   clientId: string;
-  shopId: string;
+  // shopId: string;
   items: OrderItem[];
 }

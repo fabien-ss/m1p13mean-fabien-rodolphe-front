@@ -49,7 +49,9 @@
                             [class.border-indigo-300]="$index === activeImageIndex()"
                             [class.border-gray-200]="$index !== activeImageIndex()"
                             aria-label="Miniature">
-                            <img [src]="img"
+
+                            <img
+                                [src]="apiEndPoint + (img ?? '') || '/assets/placeholder.png'"
                                 class="w-full h-full object-cover" />
                         </button>
                         }

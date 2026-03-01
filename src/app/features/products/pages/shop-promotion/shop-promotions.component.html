@@ -1,0 +1,541 @@
+<div
+    class="flex h-screen overflow-hidden bg-slate-950 text-slate-100 font-mono">
+
+    <aside
+        class="w-72 flex-shrink-0 flex flex-col border-r border-slate-800 bg-slate-900">
+
+        <!-- Rail header -->
+        <div class="px-5 pt-6 pb-4 border-b border-slate-800">
+            <p
+                class="text-[10px] tracking-[0.25em] uppercase text-slate-500 mb-1">Shop
+                Promotions</p>
+            <h1 class="text-lg font-bold text-white leading-none">Products</h1>
+        </div>
+
+        <!-- Filters -->
+        <div class="px-4 py-3 border-b border-slate-800 space-y-2">
+            <div class="relative">
+                <svg
+                    class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+                    xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <circle cx="11" cy="11" r="8" /><path
+                        d="m21 21-4.35-4.35" />
+                </svg>
+                <input type="text" [(ngModel)]="searchTerm"
+                    placeholder="Search…"
+                    class="w-full bg-slate-800 border border-slate-700 rounded-lg pl-8 pr-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-amber-400 focus:outline-none transition-colors" />
+            </div>
+            @if (categories.length) {
+            <select [(ngModel)]="selectedCatId"
+                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-300 focus:border-amber-400 focus:outline-none transition-colors">
+                <option value>All categories</option>
+                @for (c of categories; track c._id) {
+                <option [value]="c._id">{{ c.name }}</option>
+                }
+            </select>
+            }
+        </div>
+
+        <!-- List -->
+        <div class="flex-1 overflow-y-auto">
+            @if (isLoadingProducts()) {
+            <div class="flex justify-center items-center h-32">
+                <div
+                    class="w-5 h-5 rounded-full border-2 border-amber-400 border-t-transparent animate-spin"></div>
+            </div>
+            } @else if (!filteredProducts.length) {
+            <div
+                class="flex flex-col items-center justify-center h-40 text-slate-500 text-sm">
+
+                No products found
+            </div>
+            } @else {
+            <ul>
+                @for (p of filteredProducts; track p._id) {
+                <li>
+                    <button (click)="openCreate(p)"
+                        class="w-full flex items-center gap-3 px-4 py-3 border-b border-slate-800/60 hover:bg-slate-800 transition-colors text-left group"
+                        [class.bg-slate-800]="selectedProduct?._id === p._id"
+                        [class.border-l-2]="selectedProduct?._id === p._id"
+                        [class.border-l-amber-400]="selectedProduct?._id === p._id">
+
+                        <!-- Thumbnail -->
+                        <div
+                            class="w-9 h-9 rounded-lg overflow-hidden bg-slate-700 flex-shrink-0">
+                            @if (p.images?.length) {
+                            <img [src]="apiUrl + p.images![0]" [alt]="p.name"
+                                class="w-full h-full object-cover" />
+                            } @else {
+                            <div
+                                class="w-full h-full flex items-center justify-center text-slate-500 text-xs">?</div>
+                            }
+                        </div>
+
+                        <!-- Info -->
+                        <div class="flex-1 min-w-0">
+                            <p
+                                class="text-sm font-semibold text-slate-100 truncate group-hover:text-amber-300 transition-colors">
+                                {{ p.name }}
+                            </p>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <span class="text-[11px] text-slate-500">{{
+                                    p.sku }}</span>
+                                @if (hasActive(p._id)) {
+                                <span
+                                    class="px-1.5 py-0 rounded text-[10px] font-bold bg-amber-400/20 text-amber-300">
+                                    LIVE
+                                </span>
+                                } @else if (promoCount(p._id)) {
+                                <span
+                                    class="px-1.5 py-0 rounded text-[10px] text-slate-500">
+                                    {{ promoCount(p._id) }} promo
+                                </span>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <svg
+                            class="text-slate-600 group-hover:text-amber-400 transition-colors flex-shrink-0"
+                            xmlns="http://www.w3.org/2000/svg" width="14"
+                            height="14" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <path d="M9 18l6-6-6-6" />
+                        </svg>
+                    </button>
+                </li>
+                }
+            </ul>
+            }
+        </div>
+
+        <!-- Global feedback -->
+        @if (globalSuccess) {
+        <div
+            class="mx-4 mb-4 px-3 py-2.5 rounded-lg bg-emerald-900/40 border border-emerald-700 text-xs text-emerald-400 font-semibold">
+            ✓ {{ globalSuccess }}
+        </div>
+        }
+        @if (globalError) {
+        <div
+            class="mx-4 mb-4 px-3 py-2.5 rounded-lg bg-red-900/30 border border-red-700 text-xs text-red-400">
+            ⚠ {{ globalError }}
+        </div>
+        }
+
+    </aside>
+
+    <main class="flex-1 overflow-y-auto p-6">
+        @if (isLoadingPromos()) {
+        <div class="flex items-center gap-2 mb-4 text-xs text-slate-500">
+            <div
+                class="w-3.5 h-3.5 rounded-full border-2 border-amber-400 border-t-transparent animate-spin"></div>
+            Loading promotions…
+        </div>
+        }
+        <full-calendar [options]="calendarOptions" />
+    </main>
+
+    <div class="fixed inset-0 z-30 pointer-events-none">
+        <!-- Backdrop -->
+        @if (activePanel === 'create') {
+        <div class="absolute inset-0 bg-black/50 pointer-events-auto"
+            (click)="closeCreate()"></div>
+        }
+
+        <!-- Panel -->
+        <aside
+            class="absolute top-0 right-0 h-full w-full max-w-md bg-slate-900 border-l border-slate-700 flex flex-col shadow-2xl transition-transform duration-300 pointer-events-auto"
+            [class.translate-x-0]="activePanel === 'create'"
+            [class.translate-x-full]="activePanel !== 'create'">
+
+            @if (selectedProduct) {
+
+            <!-- Panel header -->
+            <div class="px-6 pt-6 pb-4 border-b border-slate-800 flex-shrink-0">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <p
+                            class="text-[10px] tracking-[0.2em] uppercase text-amber-400 font-bold mb-1">New
+                            Promotion</p>
+                        <h2
+                            class="text-lg font-black text-white leading-tight">{{
+                            selectedProduct.name }}</h2>
+                    </div>
+                    <button (click)="closeCreate()"
+                        class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-800 hover:text-white transition-colors flex-shrink-0 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                            height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5">
+                            <path d="M18 6L6 18M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Product identity strip -->
+                <div
+                    class="flex items-center gap-3 p-3 rounded-xl bg-slate-800 border border-slate-700">
+                    <div
+                        class="w-10 h-10 rounded-lg overflow-hidden bg-slate-700 flex-shrink-0">
+                        @if (selectedProduct.images?.length) {
+                        <img [src]="apiUrl + selectedProduct.images![0]"
+                            class="w-full h-full object-cover" />
+                        } @else {
+                        <div
+                            class="w-full h-full flex items-center justify-center text-slate-500 text-xs">?</div>
+                        }
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-mono">{{
+                            selectedProduct.sku }}</p>
+                        <p class="text-sm font-bold text-white">
+                            {{ selectedProduct.price }} {{
+                            selectedProduct.devise }}
+                            <span
+                                class="text-slate-500 font-normal text-xs ml-1">current
+                                price</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form body -->
+            <div class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
+
+                <!-- Title -->
+                <div>
+                    <label
+                        class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">Title
+                        *</label>
+                    <input type="text" [(ngModel)]="promoTitle"
+                        placeholder="e.g. Summer Flash Sale"
+                        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:border-amber-400 focus:outline-none transition-colors" />
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label
+                        class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">Description
+                        <span
+                            class="text-slate-600 normal-case font-normal">(optional)</span></label>
+                    <textarea [(ngModel)]="promoDescription" rows="2"
+                        placeholder="Short description…"
+                        class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:border-amber-400 focus:outline-none transition-colors resize-none"></textarea>
+                </div>
+
+                <!-- Discount -->
+                <div>
+                    <label
+                        class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">Discount
+                        *</label>
+                    <div class="flex gap-2">
+                        <!-- Type toggle -->
+                        <div
+                            class="flex rounded-xl border border-slate-700 overflow-hidden flex-shrink-0">
+                            <button type="button"
+                                (click)="promoDiscountType = 'PERCENT'"
+                                class="px-4 py-2.5 text-sm font-black transition-colors"
+                                [class.bg-amber-400]="promoDiscountType === 'PERCENT'"
+                                [class.text-slate-900]="promoDiscountType === 'PERCENT'"
+                                [class.bg-slate-800]="promoDiscountType !== 'PERCENT'"
+                                [class.text-slate-500]="promoDiscountType !== 'PERCENT'">
+                                %
+                            </button>
+                            <button type="button"
+                                (click)="promoDiscountType = 'FIXED'"
+                                class="px-4 py-2.5 text-sm font-black transition-colors border-l border-slate-700"
+                                [class.bg-amber-400]="promoDiscountType === 'FIXED'"
+                                [class.text-slate-900]="promoDiscountType === 'FIXED'"
+                                [class.bg-slate-800]="promoDiscountType !== 'FIXED'"
+                                [class.text-slate-500]="promoDiscountType !== 'FIXED'">
+                                {{ selectedProduct.devise || 'MGA' }}
+                            </button>
+                        </div>
+                        <!-- Value -->
+                        <input type="number" [(ngModel)]="promoValue" min="0"
+                            [max]="promoDiscountType === 'PERCENT' ? 100 : 99999999"
+                            placeholder="{{ promoDiscountType === 'PERCENT' ? '0-100' : 'Amount' }}"
+                            class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:border-amber-400 focus:outline-none transition-colors" />
+                    </div>
+                </div>
+
+                <!-- Live preview -->
+                @if (previewPrice !== null) {
+                <div
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl bg-amber-950/40 border border-amber-800/50">
+                    <span
+                        class="text-[10px] font-black uppercase tracking-widest text-amber-500">Preview</span>
+                    <span class="text-slate-500 line-through text-sm">{{
+                        selectedProduct.price }} {{ selectedProduct.devise
+                        }}</span>
+                    <span class="text-xl font-black text-amber-400">{{
+                        previewPrice | number:'1.0-0' }}</span>
+                    <span class="text-sm text-slate-400">{{
+                        selectedProduct.devise }}</span>
+                </div>
+                }
+
+                <!-- Dates -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label
+                            class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">Start
+                            *</label>
+                        <input type="date" [(ngModel)]="promoStart"
+                            class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:border-amber-400 focus:outline-none transition-colors" />
+                    </div>
+                    <div>
+                        <label
+                            class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">End</label>
+                        <input type="date" [(ngModel)]="promoEnd"
+                            class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:border-amber-400 focus:outline-none transition-colors" />
+                        <p class="text-[10px] text-slate-600 mt-1">Empty =
+                            open-ended</p>
+                    </div>
+                </div>
+
+                <!-- Form error -->
+                @if (formError) {
+                <div
+                    class="px-4 py-3 rounded-xl bg-red-950/40 border border-red-800 text-sm text-red-400 flex items-center gap-2">
+                    ⚠ {{ formError }}
+                </div>
+                }
+
+            </div>
+
+            <!-- Panel footer -->
+            <div
+                class="flex items-center justify-between px-6 py-4 border-t border-slate-800 flex-shrink-0">
+                <button (click)="closeCreate()"
+                    class="px-4 py-2.5 rounded-xl border border-slate-700 text-sm font-semibold text-slate-400 hover:text-white hover:border-slate-500 transition-colors">
+                    Cancel
+                </button>
+                <button (click)="submit()" [disabled]="isSaving()"
+                    class="px-6 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 disabled:opacity-40 text-slate-900 text-sm font-black transition-colors flex items-center gap-2">
+                    @if (isSaving()) {
+                    <div
+                        class="w-4 h-4 rounded-full border-2 border-slate-900 border-t-transparent animate-spin"></div>
+                    }
+                    {{ isSaving() ? 'Saving…' : 'Create Promotion' }}
+                </button>
+            </div>
+
+            }
+        </aside>
+    </div>
+
+    @if (isEventModalOpen() && modalPromo) {
+
+    <!-- Backdrop -->
+    <div
+        class="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
+        (click)="closeEventModal()">
+    </div>
+
+    <div
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm"
+        (click)="closeEventModal()">
+        <div
+            class="relative w-full max-w-3xl bg-white dark:bg-gray-900 shadow-2xl rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800"
+            (click)="$event.stopPropagation()">
+            <!-- Header -->
+            <div
+                class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex-shrink-0">
+                <div class="min-w-0">
+                    <p
+                        class="text-xs uppercase tracking-widest font-black text-gray-400">Promotion</p>
+
+                    <div class="flex items-center gap-2 mt-1">
+                        <span
+                            class="px-2 py-0.5 rounded-full text-xs font-black"
+                            [class.bg-orange-100]="modalPromo.discountType === 'PERCENT'"
+                            [class.text-orange-600]="modalPromo.discountType === 'PERCENT'"
+                            [class.bg-indigo-100]="modalPromo.discountType === 'FIXED'"
+                            [class.text-indigo-600]="modalPromo.discountType === 'FIXED'">
+                            {{ modalPromo.discountType === 'PERCENT' ? '-' +
+                            modalPromo.value + '%' : '-' + modalPromo.value }}
+                        </span>
+
+                        @if (isPromoActive(modalPromo)) {
+                        <span
+                            class="px-2 py-0.5 rounded-full text-[10px] font-black bg-green-100 text-green-600">
+                            ● LIVE
+                        </span>
+                        } @else {
+                        <span
+                            class="px-2 py-0.5 rounded-full text-[10px] font-black bg-gray-100 text-gray-500">
+                            ENDED
+                        </span>
+                        }
+                    </div>
+
+                    <h2
+                        class="text-lg font-bold text-gray-900 dark:text-white truncate mt-1">
+                        {{ modalPromo.title }}
+                    </h2>
+                </div>
+
+                <button
+                    (click)="closeEventModal()"
+                    class="w-9 h-9 rounded-xl flex items-center justify-center text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20"
+                        height="20"
+                        fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="flex-1 overflow-y-auto px-6 py-6 space-y-5">
+
+                <!-- Product row -->
+                <div
+                    class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+                    <div
+                        class="w-12 h-12 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0">
+                        @if (modalPromo.product.images?.length > 0) {
+                        <img [src]="modalPromo.product.images[0]"
+                            class="w-full h-full object-cover" />
+                        }
+                    </div>
+
+                    <div class="min-w-0">
+                        <p
+                            class="text-xs uppercase tracking-widest font-black text-gray-400">Product</p>
+                        <p
+                            class="font-bold text-gray-800 dark:text-white truncate">
+                            {{ modalPromo.product.name }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                @if (modalPromo.description) {
+                <div
+                    class="rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
+                    <p
+                        class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                        {{ modalPromo.description }}
+                    </p>
+                </div>
+                }
+
+                <!-- Info -->
+                <fieldset
+                    class="space-y-4 rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
+                    <legend
+                        class="px-2 text-xs font-black uppercase tracking-widest text-gray-400">Details</legend>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p
+                                class="text-[10px] uppercase tracking-widest font-black text-gray-400 mb-1">Discount
+                                type</p>
+                            <p
+                                class="text-sm font-bold text-gray-900 dark:text-white">
+                                {{ modalPromo.discountType === 'PERCENT' ?
+                                'Percentage' : 'Fixed amount' }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p
+                                class="text-[10px] uppercase tracking-widest font-black text-gray-400 mb-1">Value</p>
+                            <p class="text-sm font-bold"
+                                [class.text-orange-500]="modalPromo.discountType === 'PERCENT'"
+                                [class.text-indigo-500]="modalPromo.discountType === 'FIXED'">
+                                {{ modalPromo.discountType === 'PERCENT' ?
+                                modalPromo.value + '%' : modalPromo.value }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p
+                                class="text-[10px] uppercase tracking-widest font-black text-gray-400 mb-1">Start
+                                date</p>
+                            <p
+                                class="text-sm font-semibold text-gray-900 dark:text-white">
+                                {{ modalPromo.startDate | date:'dd MMM y' }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <p
+                                class="text-[10px] uppercase tracking-widest font-black text-gray-400 mb-1">End
+                                date</p>
+                            <p
+                                class="text-sm font-semibold text-gray-900 dark:text-white">
+                                {{ modalPromo.endDate | date:'dd MMM y' }}
+                            </p>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Disable error -->
+                @if (disableError) {
+                <div
+                    class="rounded-lg border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/10 px-4 py-3 text-sm text-red-600 dark:text-red-400 flex items-center gap-2">
+                    {{ disableError }}
+                </div>
+                }
+
+                <!-- Confirm strip -->
+                @if (showDisableConfirm()) {
+                <div
+                    class="rounded-2xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-4">
+                    <p
+                        class="text-sm text-amber-700 dark:text-amber-400 font-semibold mb-3">
+                        End this promotion now? This sets today as the end date.
+                    </p>
+                    <div class="flex items-center gap-2">
+                        <button
+                            (click)="showDisableConfirm.set(false)"
+                            class="flex-1 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800 transition-colors">
+                            Cancel
+                        </button>
+
+                        <button
+                            (click)="confirmDisable()"
+                            [disabled]="isDisabling()"
+                            class="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white text-sm font-black transition-colors flex items-center justify-center gap-2">
+                            @if (isDisabling()) {
+                            <div
+                                class="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin"></div>
+                            }
+                            {{ isDisabling() ? 'Ending…' : 'Yes, end it' }}
+                        </button>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <!-- Footer -->
+            <div
+                class="flex-shrink-0 border-t border-gray-100 dark:border-gray-800 px-6 py-4 space-y-3 bg-white dark:bg-gray-900">
+                <div class="flex items-center justify-between gap-3">
+                    <button
+                        (click)="closeEventModal()"
+                        class="px-4 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                        Close
+                    </button>
+
+                    @if (isPromoActive(modalPromo) && !showDisableConfirm()) {
+                    <button
+                        (click)="requestDisable()"
+                        class="px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-black transition-colors flex items-center gap-2">
+                        End Promotion
+                    </button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+</div>

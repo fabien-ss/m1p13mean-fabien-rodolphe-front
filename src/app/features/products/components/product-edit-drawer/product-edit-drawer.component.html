@@ -1,0 +1,262 @@
+
+<!-- backdrop blur -->
+@if (isOpen) {
+  <div
+    class="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
+    (click)="onClose()">
+  </div>
+}
+<div
+  class="fixed top-0 right-0 z-50 h-full w-full max-w-xl bg-white dark:bg-gray-900 shadow-2xl flex flex-col transition-transform duration-300"
+  [class.translate-x-0]="isOpen"
+  [class.translate-x-full]="!isOpen">
+
+  <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex-shrink-0">
+    <div>
+      <p class="text-xs uppercase tracking-widest font-black text-gray-400">Product</p>
+      <h2 class="text-lg font-bold text-gray-900 dark:text-white">Edit</h2>
+    </div>
+    <button
+      (click)="onClose()"
+      class="w-9 h-9 rounded-xl flex items-center justify-center text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto px-6 py-6 space-y-5">
+
+    @if (product) {
+      <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+        <div class="w-12 h-12 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
+          <img
+            [src]="product.images?.[0] || 'assets/placeholder.png'"
+            [alt]="product.name"
+            class="w-full h-full object-cover"
+          />
+        </div>
+        <div class="min-w-0">
+          <p class="font-bold text-gray-800 dark:text-white truncate">{{ product.name }}</p>
+          <p class="text-xs text-gray-400 font-mono">SKU: {{ product.sku }}</p>
+        </div>
+      </div>
+
+      <fieldset class="space-y-4 rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
+        <legend class="px-2 text-xs font-black uppercase tracking-widest text-gray-400">Basic Info</legend>
+
+        <div>
+          <app-label for="draftName">Name *</app-label>
+          <app-input-field
+            id="draftName"
+            name="draftName"
+            [(ngModel)]="draft.name"
+            placeholder="Product name"
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <app-label for="draftBrand">Brand</app-label>
+            <app-input-field
+              id="draftBrand"
+              name="draftBrand"
+              [(ngModel)]="draft.brand"
+              placeholder="Brand"
+            />
+          </div>
+          <div>
+            <app-label for="draftModel">Model</app-label>
+            <app-input-field
+              id="draftModel"
+              name="draftModel"
+              [(ngModel)]="draft.model"
+              placeholder="Model"
+            />
+          </div>
+        </div>
+
+        <div>
+          <app-label for="draftDescription">Description</app-label>
+          <app-text-area
+            id="draftDescription"
+            name="draftDescription"
+            [(ngModel)]="draft.description"
+            placeholder="Product description"
+            class="w-full h-20"
+          />
+        </div>
+
+        <div>
+          <app-label for="draftCategory">Category</app-label>
+          <app-select
+            id="draftCategory"
+            [options]="categoryOptions"
+            placeholder="Select a category"
+            [value]="selectedCategoryId"
+            (valueChange)="onCategoryChange($any($event))"
+            className="dark:bg-gray-900"
+          />
+        </div>
+      </fieldset>
+
+      <fieldset class="space-y-4 rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
+        <legend class="px-2 text-xs font-black uppercase tracking-widest text-gray-400">Pricing</legend>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <app-label for="draftPrice">Price *</app-label>
+            <app-input-field
+              id="draftPrice"
+              name="draftPrice"
+              type="number"
+              [(ngModel)]="draft.price"
+              placeholder="0"
+            />
+          </div>
+          <div>
+            <app-label for="draftDevise">Currency</app-label>
+            <app-input-field
+              id="draftDevise"
+              name="draftDevise"
+              [(ngModel)]="draft.devise"
+              placeholder="MGA"
+            />
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- ── Section: Stock & Identity ──────────────────────────────── -->
+      <fieldset class="space-y-4 rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
+        <legend class="px-2 text-xs font-black uppercase tracking-widest text-gray-400">Stock & Identity</legend>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <app-label for="draftStock">Stock</app-label>
+            <app-input-field
+              id="draftStock"
+              name="draftStock"
+              type="number"
+              [(ngModel)]="draft.stock"
+              placeholder="0"
+            />
+          </div>
+          <div>
+            <app-label for="draftMinStock">Min Stock</app-label>
+            <app-input-field
+              id="draftMinStock"
+              name="draftMinStock"
+              type="number"
+              [(ngModel)]="draft.minStock"
+              placeholder="0"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <app-label for="draftSku">SKU</app-label>
+            <app-input-field
+              id="draftSku"
+              name="draftSku"
+              [(ngModel)]="draft.sku"
+              placeholder="SKU-001"
+            />
+          </div>
+          <div>
+            <app-label for="draftBarcode">Barcode</app-label>
+            <app-input-field
+              id="draftBarcode"
+              name="draftBarcode"
+              [(ngModel)]="draft.barcode"
+              placeholder="123456789"
+            />
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- ── Section: Tags ───────────────────────────────────────────── -->
+      <fieldset class="space-y-3 rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
+        <legend class="px-2 text-xs font-black uppercase tracking-widest text-gray-400">Tags</legend>
+
+        <!-- Tag input -->
+        <div class="flex gap-2">
+          <input
+            type="text"
+            [(ngModel)]="tagInput"
+            (keydown)="onTagKeydown($event)"
+            placeholder="Add a tag, press Enter"
+            class="flex-1 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-800 dark:text-white focus:border-indigo-500 focus:outline-none"
+          />
+          <button
+            (click)="addTag()"
+            type="button"
+            class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition-colors">
+            Add
+          </button>
+        </div>
+
+        <!-- Tag chips -->
+        @if ((draft.tags ?? []).length > 0) {
+          <div class="flex flex-wrap gap-2">
+            @for (tag of draft.tags; track tag) {
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 text-xs font-semibold">
+                #{{ tag }}
+                <button (click)="removeTag(tag)" class="hover:text-red-500 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </span>
+            }
+          </div>
+        }
+      </fieldset>
+
+      <!-- ── Section: Availability ───────────────────────────────────── -->
+      <fieldset class="rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
+        <legend class="px-2 text-xs font-black uppercase tracking-widest text-gray-400">Availability</legend>
+        <div class="flex items-center gap-3 mt-2">
+          <app-switch [(ngModel)]="draft.available" name="draftAvailable" class="scale-110">
+            Ready to sell
+          </app-switch>
+          <span class="text-xs text-gray-400">
+            {{ draft.available ? 'Visible in catalog' : 'Hidden from catalog' }}
+          </span>
+        </div>
+      </fieldset>
+
+    }
+
+  </div>
+
+  <div class="flex-shrink-0 border-t border-gray-100 dark:border-gray-800 px-6 py-4 space-y-3">
+
+    @if (errorMessage) {
+      <div class="rounded-lg border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/10 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 flex items-center gap-2">
+        {{ errorMessage }}
+      </div>
+    }
+    @if (successMessage) {
+      <div class="rounded-lg border border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/10 px-4 py-2.5 text-sm text-green-600 dark:text-green-400 flex items-center gap-2">
+        {{ successMessage }}
+      </div>
+    }
+
+    <div class="flex items-center justify-between gap-3">
+      <app-button variant="outline" size="sm" (click)="onClose()">
+        Cancel
+      </app-button>
+      <app-button
+        variant="primary"
+        size="sm"
+        (click)="onSave()"
+        [disabled]="isLoading()">
+        {{ isLoading() ? 'Saving...' : 'Save Changes' }}
+      </app-button>
+    </div>
+  </div>
+
+</div>

@@ -22,6 +22,10 @@ export class AuthService {
       tap((response: any) => {
         localStorage.setItem('token', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
+        localStorage.setItem('userFirstName', response.user.firstName);
+        localStorage.setItem('userName', response.user.name);
+        localStorage.setItem('currentUserRole', response.user.role);
+        localStorage.setItem('email', response.user.email);
         this.loggedIn.next(true);
       })
     );

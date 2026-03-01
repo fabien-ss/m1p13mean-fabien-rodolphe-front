@@ -10,7 +10,7 @@ export interface Product {
   model?: string;
   description?: string;
   costPrice?: number;
-  sellingPrice?: number | string;
+  price?: number | string;
   stock?: number;
   expiryDate?: string | null;
   isActive?: boolean;
@@ -23,7 +23,7 @@ export interface Product {
   modificationDate?: Date | string;
   modifiedBy?: string;
   locked?: number | string;
-  minStock?: number | string; 
+  minStock?: number; 
 }
 
 export interface SimpleProduct {
@@ -36,7 +36,7 @@ export interface SimpleProduct {
   model?: string;
   description?: string;
   costPrice?: number;
-  sellingPrice?: number | string;
+  price?: number | string;
   stock?: number;
   expiryDate?: string | null;
   isActive?: boolean;

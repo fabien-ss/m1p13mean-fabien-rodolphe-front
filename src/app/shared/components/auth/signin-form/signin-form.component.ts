@@ -57,6 +57,7 @@ export class SigninFormComponent {
       next: (response) => {
         this.isLoading = false;
         localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
         localStorage.setItem('userFirstName', response.user.firstName);
         localStorage.setItem('userName', response.user.name);
         localStorage.setItem('currentUserRole', response.user.role);

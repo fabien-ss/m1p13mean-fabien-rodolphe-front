@@ -1,81 +1,185 @@
 <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 mt-5">
-  
-    <!-- Header -->
-    <div class="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">
-          Product Categories
-        </h3>
-      </div>
-      <div class="flex items-center gap-3">
-        <button class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
-          <svg class="stroke-current fill-white dark:fill-gray-800" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2.29004 5.90393H17.7067" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M17.7075 14.0961H2.29085" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12.0826 3.33331C13.5024 3.33331 14.6534 4.48431 14.6534 5.90414C14.6534 7.32398 13.5024 8.47498 12.0826 8.47498C10.6627 8.47498 9.51172 7.32398 9.51172 5.90415C9.51172 4.48432 10.6627 3.33331 12.0826 3.33331Z" stroke-width="1.5"/>
-            <path d="M7.91745 11.525C6.49762 11.525 5.34662 12.676 5.34662 14.0959C5.34661 15.5157 6.49762 16.6667 7.91745 16.6667C9.33728 16.6667 10.4883 15.5157 10.4883 14.0959C10.4883 12.676 9.33728 11.525 7.91745 11.525Z" stroke-width="1.5"/>
-          </svg>
-          Filter
-        </button>
-      </div>
+
+  <!-- Header -->
+  <div class="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
+    <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">
+      Product Categories
+      <span class="ml-2 text-sm font-normal text-gray-400">({{ categories.length }})</span>
+    </h3>
+  </div>
+
+  <!-- Feedback messages -->
+  @if (successMessage) {
+    <div class="mb-4 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-800 dark:bg-green-900/10 dark:text-green-400">
+      {{ successMessage }}
     </div>
-  
+  }
+  @if (errorMessage) {
+    <div class="mb-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-800 dark:bg-red-900/10 dark:text-red-400">
+      {{ errorMessage }}
+    </div>
+  }
+
+  @if (!categories.length) {
+    <div class="flex flex-col items-center justify-center py-16 text-center">
+      <span class="text-4xl mb-3">📂</span>
+      <p class="text-sm font-semibold text-gray-500 dark:text-gray-400">No categories yet.</p>
+      <p class="text-xs text-gray-400 mt-1">Create your first category using the form above.</p>
+    </div>
+
+  } @else {
+
     <!-- Table -->
     <div class="max-w-full overflow-x-auto">
       <table class="w-full text-left">
+
         <thead class="border-y border-gray-100 dark:border-gray-800">
           <tr>
-            <th class="py-3 font-medium text-gray-500 text-theme-xs dark:text-gray-400">Category Name</th>
-            <th class="py-3 font-medium text-gray-500 text-theme-xs dark:text-gray-400">Parent Category</th>
-            <th class="py-3 font-medium text-gray-500 text-theme-xs dark:text-gray-400">Description</th>
-            <th class="py-3 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Status</th>
+            <th class="py-3 pr-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400">Category Name</th>
+            <th class="py-3 pr-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400">Parent</th>
+            <th class="py-3 pr-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 hidden md:table-cell">Description</th>
+            <th class="py-3 pr-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Status</th>
             <th class="py-3 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Actions</th>
           </tr>
         </thead>
+
         <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-          @for (category of categories; track category.name) {
-            <tr>
-              <!-- Name -->
-              <td class="py-4">
-                <p class="font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                  {{ category.name }}
-                </p>
-              </td>
-  
-              <!-- Parent -->
-              <td class="py-4 text-gray-500 text-theme-sm dark:text-gray-400">
-                {{ category.parent?.name || '—' }}
-              </td>
-  
-              <!-- Description -->
-              <td class="py-4 text-gray-500 text-theme-sm dark:text-gray-400 max-w-xs truncate">
-                {{ category.description || '—' }}
-              </td>
-  
-              <!-- Status Toggle -->
-              <td class="py-3 text-gray-500 text-theme-sm dark:text-gray-400 text-center align-middle">
+          @for (category of categories; track category._id) {
+            @if (confirmDeleteId === category._id) {
+              <tr>
+                <td colspan="5" class="py-4 px-2">
+                  <div class="flex items-center justify-between gap-4 flex-wrap">
+                    <p class="text-sm text-red-700 dark:text-red-400 font-medium">
+                      Supprimer <strong>"{{ category.name }}"</strong>? Cette action est irréversible!
+                    </p>
+                    <div class="flex items-center gap-2">
+                      <app-button size="sm" variant="outline" (click)="cancelDelete()">
+                        Cancel
+                      </app-button>
+                      <app-button
+                        size="sm"
+                        
+                        (click)="confirmDelete(category)"
+                        [disabled]="isLoading()">
+                        Confirm Delete
+                      </app-button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
 
-                <app-switch 
-                  name="shortEnable" 
-                  [defaultChecked]="category.isActive === true" 
-                  class="scale-125 mx-auto block"
-                >
-                {{ category.isActive ? 'Active' : 'Inactive' }}
-                </app-switch>
-              
-              </td>
+            
+            } @else if (editingId === category._id) {
+              <tr>
+                <!-- Name input -->
+                <td class="py-3 pr-4">
+                  <app-input-field [(ngModel)]="draftName" id="draftName" name="draftName" placeholder="Enter category name" required />
+                  <!-- <input
+                    type="text"
+                    [(ngModel)]="draftName"
+                    placeholder="Category name"
+                    class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-900 px-3 py-2 text-sm text-gray-800 dark:text-white focus:border-indigo-500 focus:outline-none"
+                  /> -->
+                </td>
 
-              <!-- Actions -->
-              <td class="py-4 text-center align-middle">
-                <div class="inline-flex items-center justify-center gap-2">
-                  <!-- <app-button size="sm" variant="primary" (click)="editCategory(category)">Edit</app-button> -->
-                  <app-button size="sm" variant="outline" (click)="deleteCategory(category)">Delete</app-button>
-                </div>
-              </td>
-            </tr>
+                <!-- Parent select -->
+                <td class="py-3 pr-4">
+                  <select
+                    [(ngModel)]="draftParentId"
+                    class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-dark-900 px-3 py-2 text-sm text-gray-700 dark:text-white focus:border-indigo-500 focus:outline-none">
+                    <option value="">None</option>
+                    @for (opt of parentOptions; track opt.value) {
+                      <option [value]="opt.value">{{ opt.label }}</option>
+                    }
+                  </select>
+                </td>
+
+                <!-- Description input -->
+                <td class="py-3 pr-4 hidden md:table-cell">
+                  <app-input-field [(ngModel)]="draftDescription" id="draftDescription" name="draftDescription" placeholder="Enter description" />
+                </td>
+
+                <!-- isActive switch -->
+                <td class="py-3 pr-4 text-center align-middle">
+                  <app-switch
+                    [(ngModel)]="draftIsActive"
+                    name="draftIsActive"
+                    class="scale-125 mx-auto block">
+                  </app-switch>
+                </td>
+
+                <!-- Save / Cancel -->
+                <td class="py-3 text-center align-middle">
+                  <div class="inline-flex items-center gap-2">
+                    <app-button
+                      size="sm"
+                      variant="primary"
+                      (click)="saveEdit(category)"
+                      [disabled]="isLoading()">
+                      Save
+                    </app-button>
+                    <app-button size="sm" variant="outline" (click)="cancelEdit()">
+                      Cancel
+                    </app-button>
+                  </div>
+                </td>
+              </tr>
+
+            } @else {
+              <tr class="group hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+
+                <!-- Name -->
+                <td class="py-4 pr-4">
+                  <p class="font-medium text-gray-800 text-theme-sm dark:text-white/90">
+                    {{ category.name }}
+                  </p>
+                </td>
+                <!-- Parent -->
+                <td class="py-4 pr-4 text-gray-500 text-theme-sm dark:text-gray-400">
+                  @if (category.parent) {
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 dark:bg-dark-600 text-xs font-medium">
+                      ↳ {{ category.parent.name }}
+                    </span>
+                  } @else {
+                    <span class="text-gray-300 dark:text-gray-600">—</span>
+                  }
+                </td>
+
+                <!-- Description -->
+                <td class="py-4 pr-4 text-gray-500 text-theme-sm dark:text-gray-400 hidden md:table-cell max-w-xs truncate">
+                  {{ category.description || '—' }}
+                </td>
+
+                <!-- isActive -->
+                <td class="py-3 pr-4 text-center align-middle">
+                  {{category.isActive ? 'Active' : 'Inactive' }}
+                </td>
+
+                <!-- Actions — visible on row hover -->
+                <td class="py-4 text-center align-middle">
+                  <div class="inline-flex items-center justify-center gap-2">
+                    <app-button
+                      size="sm"
+                      variant="outline"
+                      (click)="startEdit(category)">
+                      Edit
+                    </app-button>
+                    <app-button
+                      size="sm"
+                      
+                      (click)="requestDelete(category)">
+                      Delete
+                    </app-button>
+                  </div>
+                </td>
+
+              </tr>
+            }
+
           }
         </tbody>
       </table>
     </div>
-  
-  </div>
+  }
+
+</div>
