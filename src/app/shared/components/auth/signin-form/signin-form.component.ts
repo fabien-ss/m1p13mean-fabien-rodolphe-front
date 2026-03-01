@@ -8,7 +8,6 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../../../environments/environment';
-import { ButtonComponent } from '../../ui/button/button.component';
 
 @Component({
   selector: 'app-signin-form',
@@ -16,8 +15,6 @@ import { ButtonComponent } from '../../ui/button/button.component';
   imports: [
     CommonModule,
     LabelComponent,
-    ButtonComponent,
-    CheckboxComponent,
     InputFieldComponent,
     RouterModule,
     FormsModule,
