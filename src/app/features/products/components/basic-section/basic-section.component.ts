@@ -146,6 +146,10 @@ export class BasicSectionComponent {
       this.errorMessage = 'Opening Stock is required and cannot be negative.';
       return;
     }
+    if (this.files.length === 0) {
+      this.errorMessage = 'At least one product image is required.';
+      return;
+    }
 
     this.isLoading = true;
 

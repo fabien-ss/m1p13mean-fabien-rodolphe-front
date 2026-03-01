@@ -9,6 +9,7 @@ import { Product } from '../../../../services/models/product.models';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '../../../../services/services/product.service';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-product-list-table',
@@ -46,6 +47,8 @@ export class ProductListTableComponent implements OnInit {
   tableData: Product[] = [];
 
   selectedProduct: Product | null = null;
+
+  apiEndPoint = environment.apiUrl // Replace with your actual API endpoint
 
   ngOnInit() {
     this.refreshTable();

@@ -32,9 +32,15 @@ export class UserListComponent implements OnInit {
   selectedUser: User | null = null;
 
   searchQuery = '';
+  statusFilter = 'all'; // Nouvelle variable pour le filtre de statut
 
   isLoading = false;
   errorMessage = '';
+
+  // Pagination
+  currentPage = 1;
+  pageSize = 20;; 
+  totalPages = 1;
 
   // Modals
   isCreateModalOpen = false;
@@ -58,7 +64,7 @@ export class UserListComponent implements OnInit {
     this.userService.getAll().subscribe({
       next: (data) => {
         this.users = data;
-        this.filteredUsers = data;
+        this.onSearch(); 
         this.isLoading = false;
       },
       error: (err) => {
@@ -68,14 +74,44 @@ export class UserListComponent implements OnInit {
     });
   }
 
+  /**
+   * Combine Recherche Textuelle + Filtre Statut + Pagination
+   */
   onSearch(): void {
-    const q = this.searchQuery.toLowerCase();
-    this.filteredUsers = this.users.filter(u =>
-      u.firstName.toLowerCase().includes(q) ||
-      u.name.toLowerCase().includes(q) ||
-      u.email.toLowerCase().includes(q) ||
-      u.role.name.toLowerCase().includes(q)
-    );
+    const q = this.searchQuery.toLowerCase().trim();
+    
+    // 1. Filtrage combiné (Texte ET Statut)
+    const results = this.users.filter(u => {
+      const matchesText = 
+        u.firstName?.toLowerCase().includes(q) ||
+        u.name?.toLowerCase().includes(q) ||
+        u.email?.toLowerCase().includes(q) ||
+        u.role?.name?.toLowerCase().includes(q);
+
+      const matchesStatus = 
+        this.statusFilter === 'all' || 
+        (this.statusFilter === 'active' && u.isActive) || 
+        (this.statusFilter === 'inactive' && !u.isActive);
+
+      return matchesText && matchesStatus;
+    });
+
+    // 2. Calcul des pages
+    this.totalPages = Math.ceil(results.length / this.pageSize) || 1;
+
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = 1;
+    }
+
+    // 3. Découpage pour la vue (filteredUsers)
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    this.filteredUsers = results.slice(start, end);
+  }
+
+  changePage(offset: number): void {
+    this.currentPage += offset;
+    this.onSearch();
   }
 
   // --- Modals ---
@@ -103,13 +139,13 @@ export class UserListComponent implements OnInit {
   // --- Callbacks ---
   onUserCreated(user: User) {
     this.users = [user, ...this.users];
-    this.filteredUsers = [user, ...this.filteredUsers];
+    this.onSearch();
     this.closeCreateModal();
   }
 
   onUserUpdated(updatedUser: User) {
     this.users = this.users.map(u => u._id === updatedUser._id ? updatedUser : u);
-    this.filteredUsers = this.filteredUsers.map(u => u._id === updatedUser._id ? updatedUser : u);
+    this.onSearch();
     this.closeEditModal();
   }
 
@@ -122,7 +158,7 @@ export class UserListComponent implements OnInit {
     action$.subscribe({
       next: (updated) => {
         this.users = this.users.map(u => u._id === updated._id ? updated : u);
-        this.filteredUsers = this.filteredUsers.map(u => u._id === updated._id ? updated : u);
+        this.onSearch();
       },
       error: (err) => { this.errorMessage = err?.error?.message ?? 'Action failed.'; }
     });

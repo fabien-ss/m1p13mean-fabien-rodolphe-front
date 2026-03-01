@@ -1,188 +1,373 @@
 <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 mt-5">
 
-    <!-- Header -->
-    <div class="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Orders</h3>
-        <p class="text-sm text-gray-500 dark:text-gray-400">Manage and track customer orders</p>
-      </div>
-  
-      <div class="flex items-center gap-3">
-
-        <app-date-picker  id="filter-date"  placeholder="Start Date" (dateChange)="startDate = $event.Str" > </app-date-picker>
-
-        <app-date-picker id="filter-date"  placeholder="End Date" (dateChange)="endDate = $event.Str" > </app-date-picker>
-
-        <!-- Status Filter -->
-        <div class="flex items-center rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <button (click)="filterStatus = 'all'"
-            class="px-3 py-2 text-theme-sm font-medium transition-colors"
-            [class]="filterStatus === 'all' ? 'bg-brand-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">
-            All
-          </button>
-          <button (click)="filterStatus = 'pending'"
-            class="px-3 py-2 text-theme-sm font-medium transition-colors"
-            [class]="filterStatus === 'pending' ? 'bg-orange-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">
-            Pending
-          </button>
-          <button (click)="filterStatus = 'in progress'"
-            class="px-3 py-2 text-theme-sm font-medium transition-colors"
-            [class]="filterStatus === 'in progress' ? 'bg-blue-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">
-            In Progress
-          </button>
-          <button (click)="filterStatus = 'delivered'"
-            class="px-3 py-2 text-theme-sm font-medium transition-colors"
-            [class]="filterStatus === 'delivered' ? 'bg-green-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">
-            Delivered
-          </button>
-          <button (click)="filterStatus = 'cancelled'"
-            class="px-3 py-2 text-theme-sm font-medium transition-colors"
-            [class]="filterStatus === 'cancelled' ? 'bg-red-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">
-            Cancelled
-          </button>
-        </div>
-  
-        <button
-          (click)="refreshOrders()"
-          class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03]">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M23 4v6h-6" />
-            <path d="M1 20v-6h6" />
-            <path d="M3.51 9a9 9 0 0 1 14.36-3.36L23 10M1 14l5.13 4.36A9 9 0 0 0 20.49 15" />
-          </svg>
-          Refresh
-        </button>
-  
-        <button class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
-          <svg class="stroke-current fill-white dark:fill-gray-800" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2.29004 5.90393H17.7067" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M17.7075 14.0961H2.29085" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M12.0826 3.33331C13.5024 3.33331 14.6534 4.48431 14.6534 5.90414C14.6534 7.32398 13.5024 8.47498 12.0826 8.47498C10.6627 8.47498 9.51172 7.32398 9.51172 5.90415C9.51172 4.48432 10.6627 3.33331 12.0826 3.33331Z" stroke-width="1.5" />
-            <path d="M7.91745 11.525C6.49762 11.525 5.34662 12.676 5.34662 14.0959C5.34661 15.5157 6.49762 16.6667 7.91745 16.6667C9.33728 16.6667 10.4883 15.5157 10.4883 14.0959C10.4883 12.676 9.33728 11.525 7.91745 11.525Z" stroke-width="1.5" />
-          </svg>
-          Filter
-        </button>
-  
-      </div>
+  <!-- Header -->
+  <div class="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Orders</h3>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Manage and track customer orders</p>
     </div>
-  
-    <!-- Summary Cards -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-      <div class="rounded-xl border border-orange-100 bg-orange-50 dark:border-orange-800 dark:bg-orange-900/10 px-4 py-3">
-        <p class="text-xs font-medium text-orange-600 dark:text-orange-400 uppercase tracking-wide mb-1">Pending</p>
-        <p class="text-2xl font-bold text-orange-700 dark:text-orange-300">{{ pending }}</p>
-        <p class="text-xs text-orange-400 mt-0.5">awaiting confirmation</p>
+
+    <div class="flex items-center gap-3 flex-wrap">
+      <app-date-picker placeholder="Start Date" (dateChange)="setStartDate($event)"></app-date-picker>
+      <app-date-picker placeholder="End Date" (dateChange)="setEndDate($event)"></app-date-picker>
+
+      <!-- Status Filter -->
+      <div class="flex items-center rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <button (click)="filterStatus = 'all'" class="px-3 py-2 text-theme-sm font-medium transition-colors"
+          [class]="filterStatus === 'all' ? 'bg-brand-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">All</button>
+        <button (click)="filterStatus = 'pending'" class="px-3 py-2 text-theme-sm font-medium transition-colors"
+          [class]="filterStatus === 'pending' ? 'bg-orange-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">Pending</button>
+        <button (click)="filterStatus = 'in progress'" class="px-3 py-2 text-theme-sm font-medium transition-colors"
+          [class]="filterStatus === 'in progress' ? 'bg-blue-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">In Progress</button>
+        <button (click)="filterStatus = 'delivered'" class="px-3 py-2 text-theme-sm font-medium transition-colors"
+          [class]="filterStatus === 'delivered' ? 'bg-green-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">Delivered</button>
+        <button (click)="filterStatus = 'cancelled'" class="px-3 py-2 text-theme-sm font-medium transition-colors"
+          [class]="filterStatus === 'cancelled' ? 'bg-red-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">Cancelled</button>
       </div>
-      <div class="rounded-xl border border-blue-100 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/10 px-4 py-3">
-        <p class="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide mb-1">In Progress</p>
-        <p class="text-2xl font-bold text-blue-700 dark:text-blue-300">{{ processing }}</p>
-        <p class="text-xs text-blue-400 mt-0.5">being prepared</p>
-      </div>
-      <div class="rounded-xl border border-green-100 bg-green-50 dark:border-green-800 dark:bg-green-900/10 px-4 py-3">
-        <p class="text-xs font-medium text-green-600 dark:text-green-400 uppercase tracking-wide mb-1">Delivered</p>
-        <p class="text-2xl font-bold text-green-700 dark:text-green-300">{{ delivered }}</p>
-        <p class="text-xs text-green-400 mt-0.5">completed orders</p>
-      </div>
-      <div class="rounded-xl border border-red-100 bg-red-50 dark:border-red-800 dark:bg-red-900/10 px-4 py-3">
-        <p class="text-xs font-medium text-red-600 dark:text-red-400 uppercase tracking-wide mb-1">Cancelled</p>
-        <p class="text-2xl font-bold text-red-700 dark:text-red-300">{{ cancelled }}</p>
-        <p class="text-xs text-red-400 mt-0.5">this month</p>
-      </div>
+
+      <button (click)="refreshOrders()"
+        class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 4v6h-6"/><path d="M1 20v-6h6"/>
+          <path d="M3.51 9a9 9 0 0 1 14.36-3.36L23 10M1 14l5.13 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+        Refresh
+      </button>
+
+      <!-- Bouton Nouvelle Commande -->
+      <button (click)="openCreateModal()"
+        class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-theme-sm font-medium text-white hover:bg-brand-600 transition-colors shadow-theme-xs">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        New Order
+      </button>
     </div>
-  
-    <!-- Table -->
-    <div class="max-w-full overflow-x-auto">
-      <table class="w-full text-left">
-        <thead class="border-y border-gray-100 dark:border-gray-800">
-          <tr>
-            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400">Order</th>
-            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400">Customer</th>
-            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Items</th>
-            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Total</th>
-            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Payment</th>
-            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Status</th>
-            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Date</th>
-            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-          @for (order of filteredOrders; track order.id) {
-            <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
-  
-              <!-- Order ID -->
-              <td class="py-4 px-4">
-                <p class="font-semibold text-gray-800 text-theme-sm dark:text-white/90">#{{ order.id }}</p>
-                <span class="text-gray-400 text-theme-xs">{{ order.channel }}</span>
-              </td>
-  
-              <!-- Customer -->
-              <td class="py-4 px-4">
-                <div class="flex items-center gap-2">
-                  <div class="h-8 w-8 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center text-xs font-bold text-brand-600 dark:text-brand-400 flex-shrink-0">
-                    {{ order.customer.name.charAt(0) }}
-                  </div>
-                  <div>
-                    <p class="text-sm font-medium text-gray-800 dark:text-white/90">{{ order.customer.name }}</p>
-                    <p class="text-xs text-gray-400">{{ order.customer.email }}</p>
-                  </div>
-                </div>
-              </td>
-  
-              <!-- Items -->
-              <td class="py-4 px-4 text-center text-gray-500 text-theme-sm dark:text-gray-400">
-                {{ order.itemCount }} item{{ order.itemCount > 1 ? 's' : '' }}
-              </td>
-  
-              <!-- Total -->
-              <td class="py-4 px-4 text-center font-semibold text-gray-800 dark:text-white/90">
-                ${{ order.total.toFixed(2) }}
-              </td>
-  
-              <!-- Payment -->
-              <td class="py-4 px-4 text-center">
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
-                  [class]="order.paymentStatus === 'paid'
-                    ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
-                    : order.paymentStatus === 'pending'
-                    ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400'
-                    : 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'">
-                  {{ order.paymentStatus | titlecase }}
-                </span>
-              </td>
-  
-              <!-- Status -->
-              <td class="py-4 px-4 text-center">
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
-                  [class]="order.status === 'delivered' ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
-                    : order.status === 'in progress' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'
-                    : order.status === 'pending' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400'
-                    : 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'">
-                  {{ order.status | titlecase }}
-                </span>
-              </td>
-  
-              <!-- Date -->
-              <td class="py-4 px-4 text-center text-gray-500 text-theme-sm dark:text-gray-400">
-                {{ order.date }}
-              </td>
-  
-              <!-- Actions -->
-              <td class="py-4 px-4 text-center">
-                <div class="inline-flex items-center gap-2">
-                  <app-button size="sm" variant="outline" (click)="viewOrder(order)">
-                    View
-                  </app-button>
-                  <app-button size="sm" variant="primary" (click)="updateStatus(order)"
-                    [disabled]="order.status === 'delivered' || order.status === 'cancelled'">
-                    Cancel
-                  </app-button>
-                </div>
-              </td>
-  
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  
   </div>
+
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+    <div class="rounded-xl border border-orange-100 bg-orange-50 dark:border-orange-800 dark:bg-orange-900/10 px-4 py-3">
+      <p class="text-xs font-medium text-orange-600 dark:text-orange-400 uppercase tracking-wide mb-1">Pending</p>
+      <p class="text-2xl font-bold text-orange-700 dark:text-orange-300">{{ pending }}</p>
+      <p class="text-xs text-orange-400 mt-0.5">awaiting confirmation</p>
+    </div>
+    <div class="rounded-xl border border-blue-100 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/10 px-4 py-3">
+      <p class="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide mb-1">In Progress</p>
+      <p class="text-2xl font-bold text-blue-700 dark:text-blue-300">{{ processing }}</p>
+      <p class="text-xs text-blue-400 mt-0.5">being prepared</p>
+    </div>
+    <div class="rounded-xl border border-green-100 bg-green-50 dark:border-green-800 dark:bg-green-900/10 px-4 py-3">
+      <p class="text-xs font-medium text-green-600 dark:text-green-400 uppercase tracking-wide mb-1">Delivered</p>
+      <p class="text-2xl font-bold text-green-700 dark:text-green-300">{{ delivered }}</p>
+      <p class="text-xs text-green-400 mt-0.5">completed orders</p>
+    </div>
+    <div class="rounded-xl border border-red-100 bg-red-50 dark:border-red-800 dark:bg-red-900/10 px-4 py-3">
+      <p class="text-xs font-medium text-red-600 dark:text-red-400 uppercase tracking-wide mb-1">Cancelled</p>
+      <p class="text-2xl font-bold text-red-700 dark:text-red-300">{{ cancelled }}</p>
+      <p class="text-xs text-red-400 mt-0.5">this month</p>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="max-w-full overflow-x-auto">
+    <table class="w-full text-left">
+      <thead class="border-y border-gray-100 dark:border-gray-800">
+        <tr>
+          <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400">Order</th>
+          <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400">Customer</th>
+          <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Items</th>
+          <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Total</th>
+          <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Payment</th>
+          <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Status</th>
+          <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Date</th>
+          <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+        @for (order of filteredOrders; track order.id) {
+          <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+            <td class="py-4 px-4">
+              <p class="font-semibold text-gray-800 text-theme-sm dark:text-white/90">#{{ order.id }}</p>
+              <span class="text-gray-400 text-theme-xs">{{ order.channel }}</span>
+            </td>
+            <td class="py-4 px-4">
+              <div class="flex items-center gap-2">
+                <div class="h-8 w-8 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center text-xs font-bold text-brand-600 dark:text-brand-400 flex-shrink-0">
+                  {{ order.customer.name.charAt(0) }}
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-gray-800 dark:text-white/90">{{ order.customer.name }}</p>
+                  <p class="text-xs text-gray-400">{{ order.customer.email }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="py-4 px-4 text-center text-gray-500 text-theme-sm dark:text-gray-400">
+              {{ order.itemCount }} item{{ order.itemCount > 1 ? 's' : '' }}
+            </td>
+            <td class="py-4 px-4 text-center font-semibold text-gray-800 dark:text-white/90">
+              {{ order.total.toFixed(2) }}
+            </td>
+            <td class="py-4 px-4 text-center">
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium"
+                [class]="order.paymentStatus === 'paid' ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                  : order.paymentStatus === 'pending' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400'
+                  : 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'">
+                {{ order.paymentStatus | titlecase }}
+              </span>
+            </td>
+            <td class="py-4 px-4 text-center">
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium"
+                [class]="order.status === 'delivered' ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                  : order.status === 'in progress' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400'
+                  : order.status === 'pending' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/20 dark:text-orange-400'
+                  : 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'">
+                {{ order.status | titlecase }}
+              </span>
+            </td>
+            <td class="py-4 px-4 text-center text-gray-500 text-theme-sm dark:text-gray-400">
+              {{ order.date }}
+            </td>
+            <td class="py-4 px-4 text-center">
+              <div class="inline-flex items-center gap-2">
+                <!-- View Button 
+                <app-button size="sm" variant="outline" (click)="viewOrder(order)">View</app-button>
+                -->
+                <app-button size="sm" variant="primary" (click)="openValidateModal(order)"
+                  [disabled]="order.status === 'delivered' || order.status === 'cancelled' || order.status === 'in progress'">
+                  Validate
+                </app-button>
+                <app-button size="sm" variant="outline" (click)="openCancelModal(order)"
+                  [disabled]="order.status === 'delivered' || order.status === 'cancelled'">
+                  Cancel
+                </app-button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     MODAL — Confirmation d'annulation
+═══════════════════════════════════════════════════════ -->
+@if (isCancelModalOpen) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="w-full max-w-md rounded-2xl bg-white dark:bg-gray-900 p-6 shadow-xl">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-red-600 dark:text-red-400" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-base font-semibold text-gray-900 dark:text-white">Cancel Order</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">This action cannot be undone.</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-300 mb-6">
+        Are you sure you want to cancel order <strong>#{{ selectedOrder?.id }}</strong> for <strong>{{ selectedOrder?.customer?.name }}</strong>? The stock will be restored.
+      </p>
+      <div class="flex justify-end gap-3">
+        <button (click)="closeCancelModal()"
+          class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
+          Keep Order
+        </button>
+        <button (click)="confirmCancel()"
+          class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors">
+          Yes, Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+}
+<!-- ══════════════════════════════════════════════════════
+     MODAL — Confirmation de validation
+═══════════════════════════════════════════════════════ -->
+@if(isValidateModalOpen){
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="w-full max-w-md rounded-2xl bg-white dark:bg-gray-900 p-6 shadow-xl">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/20">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-green-600 dark:text-green-400" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-base font-semibold text-gray-900 dark:text-white">Validate Order</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">This will mark the order as delivered.</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 dark:text-gray-300 mb-6">
+        Are you sure you want to validate order <strong>#{{ selectedOrder?.id }}</strong> for <strong>{{ selectedOrder?.customer?.name }}</strong>? This action cannot be undone.
+      </p>
+      <div class="flex justify-end gap-3">
+        <button (click)="closeValidateModal()"
+          class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
+          No, Keep it
+        </button>
+        <button (click)="confirmValidate()"
+          class="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors">
+          Yes, Validate
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ══════════════════════════════════════════════════════
+     MODAL — Créer une commande en boutique
+═══════════════════════════════════════════════════════ -->
+@if (isCreateModalOpen) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <div class="w-full max-w-2xl rounded-2xl bg-white dark:bg-gray-900 shadow-xl flex flex-col max-h-[90vh]">
+
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+        <div>
+          <h3 class="text-base font-semibold text-gray-900 dark:text-white">New In-Store Order</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Create an order for a walk-in customer</p>
+        </div>
+        <button (click)="closeCreateModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="flex-1 overflow-y-auto px-6 py-4 space-y-5">
+
+        <!-- Erreur -->
+        @if (createError) {
+          <div class="rounded-lg bg-red-50 border border-red-200 dark:bg-red-900/10 dark:border-red-800 px-4 py-3 text-sm text-red-600 dark:text-red-400">
+            {{ createError }}
+          </div>
+        }
+
+        <!-- Sélection client -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Customer</label>
+          <div class="relative">
+            <input type="text" [value]="clientSearchQuery"
+              (input)="onClientSearch($any($event.target).value)"
+              placeholder="Search by name or email..."
+              class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-2.5 text-sm text-gray-800 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+
+            @if (clientSuggestions.length > 0) {
+              <ul class="absolute z-10 mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg divide-y divide-gray-100 dark:divide-gray-700">
+                @for (client of clientSuggestions; track client.id) {
+                  <li (click)="selectClient(client)"
+                    class="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <div class="h-8 w-8 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center text-xs font-bold text-brand-600 flex-shrink-0">
+                      {{ client.name.charAt(0) }}
+                    </div>
+                    <div>
+                      <p class="text-sm font-medium text-gray-800 dark:text-white">{{ client.name }}</p>
+                      <p class="text-xs text-gray-400">{{ client.email }}</p>
+                    </div>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+          @if (selectedClient) {
+            <div class="mt-2 inline-flex items-center gap-2 rounded-full bg-brand-50 dark:bg-brand-900/20 border border-brand-200 dark:border-brand-800 px-3 py-1 text-sm text-brand-700 dark:text-brand-300">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+              {{ selectedClient.name }} — {{ selectedClient.email }}
+            </div>
+          }
+        </div>
+
+        <!-- Produits disponibles -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Products</label>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-40 overflow-y-auto">
+            @for (product of shopProducts; track product.id) {
+              <button (click)="addItem(product)"
+                class="flex flex-col items-start rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2.5 text-left hover:border-brand-400 hover:bg-brand-50 dark:hover:bg-brand-900/10 transition-colors">
+                <span class="text-sm font-medium text-gray-800 dark:text-white truncate w-full">{{ product.name }}</span>
+                <span class="text-xs text-gray-400 mt-0.5">Stock: {{ product.stock }} · {{product.price}} {{ product.devise }}</span>
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Panier -->
+        @if (orderItems.length > 0) {
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Cart</label>
+            <div class="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <table class="w-full text-sm">
+                <thead class="bg-gray-50 dark:bg-gray-800">
+                  <tr>
+                    <th class="py-2 px-3 text-left font-medium text-gray-500 dark:text-gray-400">Product</th>
+                    <th class="py-2 px-3 text-center font-medium text-gray-500 dark:text-gray-400">Qty</th>
+                    <th class="py-2 px-3 text-center font-medium text-gray-500 dark:text-gray-400">Unit Price</th>
+                    <th class="py-2 px-3 text-center font-medium text-gray-500 dark:text-gray-400">Subtotal</th>
+                    <th class="py-2 px-3"></th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                  @for (item of orderItems; track item.produitId; let i = $index) {
+                    <tr>
+                      <td class="py-2 px-3 text-gray-800 dark:text-white">{{ item.name }}</td>
+                      <td class="py-2 px-3 text-center">
+                        <input type="number" [(ngModel)]="item.quantite" [min]="1" [max]="item.stock ? item.stock : 0"
+                          class="w-16 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1 text-center text-sm text-gray-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-500" />
+                      </td>
+                      <td class="py-2 px-3 text-center">
+                        <input type="number" [(ngModel)]="item.prix" [min]="0"
+                          class="w-24 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1 text-center text-sm text-gray-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+                          placeholder="0" />
+                      </td>
+                      <td class="py-2 px-3 text-center font-medium text-gray-800 dark:text-white">
+                        {{ (item.prix * item.quantite).toFixed(2) }} {{ item.devise }}
+                      </td>
+                      <td class="py-2 px-3 text-center">
+                        <button (click)="removeItem(i)" class="text-red-400 hover:text-red-600 transition-colors">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+              <div class="flex justify-end px-4 py-3 bg-gray-50 dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
+                <span class="text-sm font-semibold text-gray-800 dark:text-white">
+                  Total : {{ orderTotal.toFixed(2) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        }
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-100 dark:border-gray-800">
+        <button (click)="closeCreateModal()"
+          class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
+          Cancel
+        </button>
+        <button (click)="submitOrder()" [disabled]="isSubmitting"
+          class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-5 py-2 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-60 disabled:cursor-not-allowed transition-colors">
+          @if (isSubmitting) {
+            <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+            </svg>
+          }
+          Create Order
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

@@ -30,7 +30,7 @@ export class SigninFormComponent {
   errorMessage = '';
 
   email = 'test@test.test ';
-  password = '';
+  password = 'mypassword123';
 
   private apiEndPoint = environment.apiUrl;
 
@@ -61,12 +61,28 @@ export class SigninFormComponent {
         localStorage.setItem('userFirstName', response.user.firstName);
         localStorage.setItem('userName', response.user.name);
         localStorage.setItem('currentUserRole', response.user.role);
-        this.router.navigate(['/dashboard']);
+        localStorage.setItem('keepLoggedIn', this.isChecked.toString());
+        localStorage.setItem('email', response.user.email);
+        if (response.user.role === 'admin') {
+          this.router.navigate(['/dashboard']);
+        } else if (response.user.role === 'boutique') {
+          this.router.navigate(['/admin-shop']);
+        } else {
+          this.router.navigate(['/']);
+        }
       },
       error: (err) => {
         this.isLoading = false;
         this.errorMessage = err?.error?.message ?? 'Invalid email or password.';
       }
     });
+  }
+
+  ngOnInit() {
+    localStorage.setItem("theme", "dark")
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.router.navigate(['/dashboard']);
+    }
   }
 }

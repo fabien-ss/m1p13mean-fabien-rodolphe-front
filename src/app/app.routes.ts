@@ -30,13 +30,13 @@ export const routes: Routes = [
         component: EcommerceComponent,
         pathMatch: 'full',
         title:
-          'Angular Ecommerce Dashboard | TailAdmin - Angular Admin Dashboard Template',
+          'Akoor',
       },
     ],
     canActivate: [authGuard, roleGuard(['admin'])]
   },
   {
-    path: 'shop',
+    path: 'admin-shop',
     component: AppLayoutComponent,
     canActivate: [authGuard, roleGuard(['boutique', 'admin'])],
     children: [
@@ -45,17 +45,20 @@ export const routes: Routes = [
         component: ShopManagementComponent,
         pathMatch: 'full',
         title: 'Managing shop',
+        canActivate: [authGuard, roleGuard(['boutique', 'admin'])]
       },
       {
         path: 'view',
         component: ShopViewComponent,
         pathMatch: 'full',
         title: 'Managing shop',
+        canActivate: [authGuard, roleGuard(['boutique', 'admin'])]
       },
       {
         path: 'view/products/add',
         component: ProductCreateComponent,
         title: 'Product new',
+        canActivate: [authGuard, roleGuard(['boutique'])]
       },
       {
         path: 'view/products',
@@ -63,12 +66,7 @@ export const routes: Routes = [
         pathMatch: 'full',
         title:
           'Product list',
-      },
-      {
-        path: 'view/products/categories',
-        component: ProductCategoriesComponent,
-        title:
-          'Product categories',
+        canActivate: [authGuard, roleGuard(['boutique'])]
       },
       {
         path: 'view/products/settings',
@@ -79,8 +77,8 @@ export const routes: Routes = [
       {
         path: 'view/products/orders',
         component: ProductOrdersComponent,
-        title:
-          'Orders',
+        title: 'Orders',
+        canActivate: [authGuard, roleGuard(['boutique'])]
       },
       
     ]
@@ -89,6 +87,7 @@ export const routes: Routes = [
     path: 'user',
     title: 'User',
     component: AppLayoutComponent,
+    canActivate: [authGuard, roleGuard(['admin'])],
     children: [
       {
         path: 'list',
@@ -110,6 +109,20 @@ export const routes: Routes = [
         component: UserResetPasswordComponent,
         title: 'Reset Password'
       }
+    ]
+  },
+  {
+    path: 'category',
+    title: 'Category',
+    component: AppLayoutComponent,
+    canActivate: [authGuard, roleGuard(['admin'])],
+    children: [
+      {
+        path: '',
+        component: ProductCategoriesComponent,
+        pathMatch: 'full',
+        title: 'Category List'
+      },
     ]
   }
   ,

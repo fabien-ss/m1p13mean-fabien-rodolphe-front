@@ -15,7 +15,7 @@ export interface Product {
   expiryDate?: string | null;
   isActive?: boolean;
   shop?: string | null;
-  images?: string[];
+  images?: string[] ;
   available?: boolean;
   devise?: string;
   tags?: string[];

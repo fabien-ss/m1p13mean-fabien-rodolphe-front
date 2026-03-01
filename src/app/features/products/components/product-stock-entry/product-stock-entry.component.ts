@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Product } from '../../../../services/models/product.models';
 import { MovementService } from '../../../../services/services/movement.service';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-product-stock-entry',
@@ -15,6 +16,8 @@ export class ProductStockEntryComponent {
   @Input() product: Product | null = null;
   @Output() saved = new EventEmitter<void>();
 
+  apiEndPoint = environment.apiUrl;
+
   costPrice: number | null = null;
   sellingPrice: number | null = null;
   quantity: number | null = null;
@@ -22,8 +25,11 @@ export class ProductStockEntryComponent {
   reason: string = '';
   isLoading = false;
   errorMessage = '';
+  
+  firstImageUrl: string = this.product?.images?.length ? this.apiEndPoint +  this.product.images[0] : '';
 
-  constructor(private movementService: MovementService) {}
+  constructor(private movementService: MovementService) {
+  }
 
   onSaveEntry() {
     if (!this.product?._id) { this.errorMessage = 'No product selected.'; return; }
@@ -59,5 +65,9 @@ export class ProductStockEntryComponent {
     this.expiryDate = '';
     this.reason = '';
     this.errorMessage = '';
+  }
+
+  ngOnInit() {
+    console.log(this.product)
   }
 }
