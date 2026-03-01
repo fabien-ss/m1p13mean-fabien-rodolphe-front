@@ -61,7 +61,7 @@ export class ProductListTableComponent implements OnInit {
   }
 
   newProduct() {
-    this.router.navigate(['/shop/view/products/add']);
+    this.router.navigate(['/admin-shop/view/products/add']);
   }
 
   openModal(product: Product) { 
