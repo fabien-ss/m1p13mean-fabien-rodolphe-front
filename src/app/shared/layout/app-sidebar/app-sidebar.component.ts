@@ -170,10 +170,9 @@ export class AppSidebarComponent {
 
               if (this.userRole === 'boutique') {
                 subItems.push(
-                  { name: 'Orders', path: '/admin-shop/view/products/orders' },
-                  { name: 'Settings', path: '/admin-shop/view/settings' },
                   { name: 'Add New Product', path: '/admin-shop/view/products/add' },
-                  { name: 'Inventory', path: '/admin-shop/view/products' }
+                  { name: 'Inventory', path: '/admin-shop/view/products' },
+                  { name: 'Orders', path: '/admin-shop/view/products/orders' },
                 );
               }
 
@@ -280,10 +279,9 @@ export class AppSidebarComponent {
             name: 'Shop Management',
             icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6H20V8H4V6ZM4 10H20V12H4V10ZM4 14H14V16H4V14Z" fill="currentColor"/></svg>`,
             subItems: [
-              { name: 'Products', path: '/admin-shop/view/products' },
-              { name: 'Orders', path: '/admin-shop/view/products/orders' },
-              { name: 'Settings', path: '/admin-shop/view/settings' },
-               { name: 'Inventory', path: '/admin-shop/view/products' }
+               { name: 'Add New Product', path: '/admin-shop/view/products/add' },
+                  { name: 'Inventory', path: '/admin-shop/view/products' },
+                  { name: 'Orders', path: '/admin-shop/view/products/orders' },
             ]
           }
         ]
