@@ -173,6 +173,7 @@ export class AppSidebarComponent {
                   { name: 'Add New Product', path: '/admin-shop/view/products/add' },
                   { name: 'Inventory', path: '/admin-shop/view/products' },
                   { name: 'Orders', path: '/admin-shop/view/products/orders' },
+                  { name: 'Promotions', path: '/admin-shop/view/promotions' },
                 );
               }
 
@@ -288,6 +289,7 @@ export class AppSidebarComponent {
               { name: 'Add New Product', path: '/admin-shop/view/products/add' },
               { name: 'Inventory', path: '/admin-shop/view/products' },
               { name: 'Orders', path: '/admin-shop/view/products/orders' },
+              {name: 'Promotions', path: '/admin-shop/view/promotions'}
             ]
           }
         ]

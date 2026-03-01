@@ -61,17 +61,23 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard(['boutique', 'admin'])],
     children: [
       {
+        path: 'view/promotions',
+        loadComponent: () => import('./features/products/pages/shop-promotion/shop-promotions.component').then(m => m.ShopPromotionsComponent),
+        title: 'm1p13mean-fabien-rodolphe - Shop Promotions',
+        canActivate: [authGuard, roleGuard(['boutique', 'admin'])]
+      },
+      {
         path: '',
         component: ShopManagementComponent,
         pathMatch: 'full',
-        title: 'Managing shop',
+        title: 'm1p13mean-fabien-rodolphe - Managing shop',
         canActivate: [authGuard, roleGuard(['boutique', 'admin'])]
       },
       {
         path: 'view',
         component: ShopViewComponent,
         pathMatch: 'full',
-        title: 'Managing shop',
+        title: 'm1p13mean-fabien-rodolphe - Shop View',
         canActivate: [authGuard, roleGuard(['boutique', 'admin'])]
       },
       {

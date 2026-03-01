@@ -35,30 +35,21 @@ export class ProductListTableComponent implements OnInit {
     private router: Router,
     private productService: ProductService,
   ) {}
-
-  // ── State ──────────────────────────────────────────────────────────────
   tableData: Product[] = [];
   isLoading    = false;
   errorMessage = '';
 
   selectedProduct: Product | null = null;
-
-  // Modal flags (existing)
   isOpen          = false;
   isStockModalOpen = false;
-
-  // Drawer flag (new)
   isEditDrawerOpen = false;
 
   apiEndPoint = environment.apiUrl;
 
-  // ── Lifecycle ──────────────────────────────────────────────────────────
 
   ngOnInit(): void {
     this.refreshTable();
   }
-
-  // ── Data ───────────────────────────────────────────────────────────────
 
   refreshTable(): void {
     const shopId = localStorage.getItem('selectedShopId');
@@ -71,7 +62,7 @@ export class ProductListTableComponent implements OnInit {
     });
   }
 
-  // ── Toggle available ────────────────────────────────────────────────────
+  // Toggle available
 
   updateProductStatus(id: string, isActivate: boolean): void {
     this.productService.setActive(id, isActivate).subscribe({
@@ -82,7 +73,6 @@ export class ProductListTableComponent implements OnInit {
     });
   }
 
-  // ── Edit drawer ─────────────────────────────────────────────────────────
 
   openEditDrawer(product: Product): void {
     this.selectedProduct = product;
@@ -103,14 +93,13 @@ export class ProductListTableComponent implements OnInit {
     this.closeEditDrawer();
   }
 
-  // ── Other modals ────────────────────────────────────────────────────────
+  // modals
 
   openModal(product: Product): void      { this.selectedProduct = product; this.isOpen = true; }
   openStockModal(product: Product): void { this.selectedProduct = product; this.isStockModalOpen = true; }
   closeModal(): void      { this.isOpen = false; }
   closeStockModal(): void { this.isStockModalOpen = false; }
 
-  // ── Navigation ─────────────────────────────────────────────────────────
 
   newProduct(): void {
     this.router.navigate(['/admin-shop/view/products/add']);

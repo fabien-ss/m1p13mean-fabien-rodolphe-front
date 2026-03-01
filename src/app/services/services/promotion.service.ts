@@ -16,4 +16,12 @@ export class PromotionService {
   create(data: Partial<Promotion>): Observable<Promotion> {
     return this.http.post<Promotion>(this.apiUrl, data);
   }
+
+  getAllByShop(shopId: string): Observable<Promotion[]> {
+    return this.http.get<Promotion[]>(`${this.apiUrl}/shop/${shopId}`);
+  }
+
+  disable(id: string): Observable<Promotion> {
+    return this.http.put<Promotion>(`${this.apiUrl}/${id}/disable`, {});
+  }
 }
