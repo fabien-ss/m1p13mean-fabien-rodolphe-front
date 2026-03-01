@@ -8,7 +8,6 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../../../environments/environment';
-import { ButtonComponent } from '../../ui/button/button.component';
 
 @Component({
   selector: 'app-signin-form',
@@ -16,8 +15,6 @@ import { ButtonComponent } from '../../ui/button/button.component';
   imports: [
     CommonModule,
     LabelComponent,
-    ButtonComponent,
-    CheckboxComponent,
     InputFieldComponent,
     RouterModule,
     FormsModule,
@@ -31,7 +28,7 @@ export class SigninFormComponent {
   isLoading = false;
   errorMessage = '';
 
-  email = 'test@test.test ';
+  email = 'test@test.test';
   password = 'mypassword123';
 
   private apiEndPoint = environment.apiUrl;
@@ -83,7 +80,8 @@ export class SigninFormComponent {
   ngOnInit() {
     localStorage.setItem("theme", "dark")
     const token = localStorage.getItem('token');
-    if (token) {
+    const userRole = localStorage.getItem("currentUserRole")
+    if (token && (userRole === 'admin' || userRole === 'boutiqe')) {
       this.router.navigate(['/dashboard']);
     }
   }

@@ -1,14 +1,18 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap, BehaviorSubject } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+
+  private apiEndpoint = environment.apiUrl;
+
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8888/auth/login';
-  private registerApiUrl = 'http://localhost:8888/auth/register';
+  private apiUrl = `${this.apiEndpoint}/auth/login`;
+  private registerApiUrl = `${this.apiEndpoint}/auth/register`;
 
   private loggedIn = new BehaviorSubject<boolean>(this.isLoggedIn());
   loggedIn$ = this.loggedIn.asObservable();

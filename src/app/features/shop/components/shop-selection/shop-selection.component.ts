@@ -103,7 +103,7 @@ export class ShopSelectionComponent {
   goToView(shop: Shop) {
     localStorage.setItem('selectedShop', shop.name);
     localStorage.setItem('selectedShopId', shop._id);
-    this.router.navigate(['/shop/view']);
+    this.router.navigate(['/admin-shop/view']);
   }
 
   fetchShops(): void {
