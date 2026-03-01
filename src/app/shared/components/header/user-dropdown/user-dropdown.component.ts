@@ -10,7 +10,22 @@ import { DropdownItemTwoComponent } from '../../ui/dropdown/dropdown-item/dropdo
   imports:[CommonModule,RouterModule,DropdownComponent,DropdownItemTwoComponent]
 })
 export class UserDropdownComponent {
+  singout() {
+    const keepLoggedIn = localStorage.getItem('keepLoggedIn');
+    if (keepLoggedIn === 'true') { 
+      window.location.href = '/';
+      return;
+    }
+    localStorage.removeItem('token');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userFirstName');
+    window.location.href = '/';
+  }
   isOpen = false;
+
+  currentUserName = localStorage.getItem('userName') || 'User';
+  currentUserFirstName = localStorage.getItem('userFirstName') || 'User';
+  currentUserMail = localStorage.getItem('email') || '';
 
   toggleDropdown() {
     this.isOpen = !this.isOpen;

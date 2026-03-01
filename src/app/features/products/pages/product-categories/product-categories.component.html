@@ -10,7 +10,7 @@
         <!-- Parent Category (optional) -->
         <div>
             <app-label for="parentCategory">Parent Category</app-label>
-            <app-select id="parentCategory" [options]="parentCategories" placeholder="Select parent category (optional)"
+            <app-select id="parentCategory" [options]="optionCategories" placeholder="Select parent category (optional)"
                 [value]="selectedParentCategory" (valueChange)="onParentCategoryChange($any($event))"
                 className="dark:bg-dark-900"></app-select>
         </div>
@@ -18,13 +18,13 @@
         <!-- Category Description -->
         <div>
             <app-label for="categoryDescription">Description</app-label>
-            <app-text-area id="categoryDescription" name="categoryDescription"
+            <app-text-area id="categoryDescription" name="categoryDescription" [(ngModel)]="categoryDescription"
                 placeholder="Add a short description for this category" class="w-full h-24"></app-text-area>
         </div>
 
         <!-- Status Toggle -->
         <div class="flex items-center gap-3">
-            <app-switch name="categoryStatus" [defaultChecked]="true" class="scale-125">
+            <app-switch [(ngModel)]="categoryStatus" name="categoryStatus" class="scale-125">
                 Active
             </app-switch>
         </div>
@@ -37,5 +37,12 @@
         </div>
 
     </div>
+<!-- Error Message -->
+  @if (errorMessage) {
+    <div class="rounded-lg border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/10 px-4 py-3 text-sm text-red-600 dark:text-red-400">
+      ⚠️ {{ errorMessage }}
+    </div>
+  }
+
 </app-component-card>
-<app-product-categories-list />
+<app-product-categories-list [categories]="trueCategories" />

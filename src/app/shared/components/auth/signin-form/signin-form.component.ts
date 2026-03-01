@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { LabelComponent } from '../../form/label/label.component';
 import { CheckboxComponent } from '../../form/input/checkbox.component';
-import { ButtonComponent } from '../../ui/button/button.component';
 import { InputFieldComponent } from '../../form/input/input-field.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -9,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../../../environments/environment';
+import { ButtonComponent } from '../../ui/button/button.component';
 
 @Component({
   selector: 'app-signin-form',
@@ -17,6 +17,7 @@ import { environment } from '../../../../../environments/environment';
     CommonModule,
     LabelComponent,
     ButtonComponent,
+    CheckboxComponent,
     InputFieldComponent,
     RouterModule,
     FormsModule,
@@ -31,13 +32,13 @@ export class SigninFormComponent {
   errorMessage = '';
 
   email = 'test@test.test ';
-  password = '';
+  password = 'mypassword123';
 
   private apiEndPoint = environment.apiUrl;
 
   private apiUrl = `${this.apiEndPoint}/auth/login`;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) { }
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
@@ -49,7 +50,6 @@ export class SigninFormComponent {
       return;
     }
 
-
     this.isLoading = true;
     this.errorMessage = '';
 
@@ -60,12 +60,31 @@ export class SigninFormComponent {
       next: (response) => {
         this.isLoading = false;
         localStorage.setItem('token', response.token);
-        this.router.navigate(['/dashboard']);
+        localStorage.setItem('userFirstName', response.user.firstName);
+        localStorage.setItem('userName', response.user.name);
+        localStorage.setItem('currentUserRole', response.user.role);
+        localStorage.setItem('keepLoggedIn', this.isChecked.toString());
+        localStorage.setItem('email', response.user.email);
+        if (response.user.role === 'admin') {
+          this.router.navigate(['/dashboard']);
+        } else if (response.user.role === 'boutique') {
+          this.router.navigate(['/admin-shop']);
+        } else {
+          this.router.navigate(['/']);
+        }
       },
       error: (err) => {
         this.isLoading = false;
         this.errorMessage = err?.error?.message ?? 'Invalid email or password.';
       }
     });
+  }
+
+  ngOnInit() {
+    localStorage.setItem("theme", "dark")
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.router.navigate(['/dashboard']);
+    }
   }
 }

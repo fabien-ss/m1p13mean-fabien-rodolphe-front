@@ -1,0 +1,164 @@
+<div class="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 pb-3 pt-4 dark:border-white/[0.05] dark:bg-white/[0.03] sm:px-6">
+
+  <div class="flex flex-col sm:flex-row justify-between gap-3 mb-4">
+    <div>
+      <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Users</h3>
+      <p class="text-sm text-gray-500 dark:text-gray-400">{{ users.length }} total user(s)</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <select 
+        [(ngModel)]="statusFilter" 
+        (change)="currentPage = 1; onSearch()"
+        class="rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-500">
+        <option value="all">All Status</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="currentPage = 1; onSearch()"
+        placeholder="Search..."
+        class="rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm text-gray-700 dark:text-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 w-48" />
+      
+      <app-button size="sm" variant="primary" [startIcon]="plusIcon" (click)="openCreateModal()">
+        New User
+      </app-button>
+    </div>
+  </div>
+
+  @if (errorMessage) {
+    <div class="mb-4 rounded-lg border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/10 px-4 py-3 text-sm text-red-600 dark:text-red-400">
+      ⚠️ {{ errorMessage }}
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="py-10 text-center text-sm text-gray-400">Loading users...</div>
+  }
+
+  @if (!isLoading) {
+    <div class="max-w-full overflow-x-auto">
+      <table class="w-full">
+        <thead class="border-y border-gray-100 dark:border-white/[0.05]">
+          <tr>
+            <th class="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">User</th>
+            <th class="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Role</th>
+            <th class="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Last Login</th>
+            <th class="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Status</th>
+            <th class="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 dark:divide-white/[0.05]">
+
+          @for (user of filteredUsers; track user._id) {
+            <tr>
+              <td class="py-3">
+                <div class="flex items-center gap-3">
+                  <div class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 font-semibold text-sm shrink-0">
+                    {{ user.firstName?.charAt(0) }}{{ user.name?.charAt(0) }}
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-800 dark:text-white/90">
+                      {{ user.firstName }} {{ user.name }}
+                    </p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ user.email }}</p>
+                  </div>
+                </div>
+              </td>
+
+              <td class="py-3">
+                <span class="inline-flex items-center rounded-full bg-gray-100 dark:bg-gray-800 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:text-gray-300">
+                  {{ user.role.name }}
+                </span>
+              </td>
+
+              <td class="py-3 text-xs text-gray-500 dark:text-gray-400">
+                  {{ user.lastlogin ? (user.lastlogin ) : '—' }}
+              </td>
+
+              <td class="py-3">
+                <span (click)="toggleActive(user)" class="cursor-pointer inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                  [class]="user.isActive
+                    ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                    : 'bg-red-100 text-red-600 dark:bg-red-900/20 dark:text-red-400'">
+                  {{ user.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+
+              <td class="py-3 text-right">
+                <div class="flex items-center justify-end gap-2">
+                  <app-button size="sm" variant="outline" (click)="openEditModal(user)">
+                    Edit
+                  </app-button>
+                  <app-table-dropdown>
+                    <div dropdown-button>
+                      <button class="text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                        <svg class="size-5" fill="currentColor" viewBox="0 0 24 24">
+                          <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M5.99902 10.245C6.96552 10.245 7.74902 11.0285 7.74902 11.995V12.005C7.74902 12.9715 6.96552 13.755 5.99902 13.755C5.03253 13.755 4.24902 12.9715 4.24902 12.005V11.995C4.24902 11.0285 5.03253 10.245 5.99902 10.245ZM17.999 10.245C18.9655 10.245 19.749 11.0285 19.749 11.995V12.005C19.749 12.9715 18.9655 13.755 17.999 13.755C17.0325 13.755 16.249 12.9715 16.249 12.005V11.995C16.249 11.0285 17.0325 10.245 17.999 10.245ZM13.749 11.995C13.749 11.0285 12.9655 10.245 11.999 10.245C11.0325 10.245 10.249 11.0285 10.249 11.995V12.005C10.249 12.9715 11.0325 13.755 11.999 13.755C12.9655 13.755 13.749 12.9715 13.749 12.005V11.995Z"/>
+                        </svg>
+                      </button>
+                    </div>
+                    <div dropdown-content>
+                      <button
+                        (click)="openResetPasswordModal(user)"
+                        class="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300 p-2">
+                        Reset Password
+                      </button>
+                    </div>
+                  </app-table-dropdown>
+                </div>
+              </td>
+            </tr>
+          }
+
+          @empty {
+            <tr>
+              <td colspan="5" class="py-10 text-center text-sm text-gray-400 dark:text-gray-500">
+                No users found matching your criteria.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="flex items-center justify-between border-t border-gray-100 dark:border-white/[0.05] pt-4 mt-2">
+      <div class="text-sm text-gray-500 dark:text-gray-400">
+        Page <strong>{{ currentPage }}</strong> sur {{ totalPages }}
+      </div>
+      <div class="flex items-center gap-2">
+        <button 
+          (click)="changePage(-1)" 
+          [disabled]="currentPage === 1"
+          class="inline-flex items-center justify-center rounded-lg border border-gray-300 dark:border-gray-700 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed">
+          Previous
+        </button>
+        <button 
+          (click)="changePage(1)" 
+          [disabled]="currentPage === totalPages"
+          class="inline-flex items-center justify-center rounded-lg border border-gray-300 dark:border-gray-700 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed">
+          Next
+        </button>
+      </div>
+    </div>
+  }
+</div>
+
+<app-modal [isOpen]="isCreateModalOpen" (close)="closeCreateModal()" className="max-w-[600px] p-6 lg:p-10">
+  <app-user-new (userCreated)="onUserCreated($event)" />
+</app-modal>
+
+<app-modal [isOpen]="isEditModalOpen" (close)="closeEditModal()" className="max-w-[600px] p-6 lg:p-10">
+  @if (selectedUser) {
+    <app-user-edit [user]="selectedUser" (userUpdated)="onUserUpdated($event)" />
+  }
+</app-modal>
+
+<app-modal [isOpen]="isResetPasswordModalOpen" (close)="closeResetPasswordModal()" className="max-w-[400px] p-6 lg:p-8">
+  @if (selectedUser) {
+    <app-user-reset-password [user]="selectedUser" (close)="closeResetPasswordModal()" />
+  }
+</app-modal>

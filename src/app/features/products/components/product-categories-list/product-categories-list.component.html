@@ -44,7 +44,7 @@
   
               <!-- Parent -->
               <td class="py-4 text-gray-500 text-theme-sm dark:text-gray-400">
-                {{ category.parent || '—' }}
+                {{ category.parent?.name || '—' }}
               </td>
   
               <!-- Description -->
@@ -57,20 +57,18 @@
 
                 <app-switch 
                   name="shortEnable" 
-                  [defaultChecked]="category.status === 'Active'" 
+                  [defaultChecked]="category.isActive === true" 
                   class="scale-125 mx-auto block"
                 >
-                {{ category.status }}
+                {{ category.isActive ? 'Active' : 'Inactive' }}
                 </app-switch>
               
               </td>
 
-              
-  
               <!-- Actions -->
               <td class="py-4 text-center align-middle">
                 <div class="inline-flex items-center justify-center gap-2">
-                  <app-button size="sm" variant="primary" (click)="editCategory(category)">Edit</app-button>
+                  <!-- <app-button size="sm" variant="primary" (click)="editCategory(category)">Edit</app-button> -->
                   <app-button size="sm" variant="outline" (click)="deleteCategory(category)">Delete</app-button>
                 </div>
               </td>

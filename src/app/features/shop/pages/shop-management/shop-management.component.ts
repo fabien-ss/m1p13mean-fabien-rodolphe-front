@@ -12,5 +12,5 @@ import { ShopChartComponent } from '../../components/shop-statics/shop-chart.com
   styleUrl: './shop-management.component.css',
 })
 export class ShopManagementComponent {
-
+  userRole = localStorage.getItem('currentUserRole') || '';
 }

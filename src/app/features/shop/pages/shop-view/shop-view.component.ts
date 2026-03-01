@@ -3,6 +3,7 @@ import { RecentOrdersComponent } from '../../../../shared/components/ecommerce/r
 import { ShopMetricsComponent } from '../../components/shop-metrics/shop-metrics.component';
 import { MonthlyTargetComponent } from '../../../../shared/components/ecommerce/monthly-target/monthly-target.component';
 import { ShopTargetComponent } from '../../components/shop-target/shop-target.component';
+import { ShopChartComponent } from '../../components/shop-statics/shop-chart.component';
 
 @Component({
   selector: 'app-shop-view',
@@ -10,6 +11,7 @@ import { ShopTargetComponent } from '../../components/shop-target/shop-target.co
     RecentOrdersComponent, 
     ShopMetricsComponent, 
     ShopTargetComponent,
+    ShopChartComponent
   ],
   templateUrl: './shop-view.component.html',
   styleUrl: './shop-view.component.css',

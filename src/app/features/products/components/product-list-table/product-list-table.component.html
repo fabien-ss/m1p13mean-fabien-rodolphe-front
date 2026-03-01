@@ -9,6 +9,7 @@
 
     <div class="flex items-center gap-3">
       <button
+        (click)="refreshTable()"
         class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -70,14 +71,14 @@
           <td class="py-5">
             <div class="flex items-center gap-3">
               <div class="h-[50px] w-[50px] overflow-hidden rounded-md">
-                <img [src]="product.image" [alt]="product.name" class="h-[50px] w-[50px]" />
+                <img [src]="apiEndPoint + product.images?.[0] || 'assets/placeholder.png'" [alt]="product.name" class="h-[50px] w-[50px]" />
               </div>
               <div>
                 <p class="font-medium text-gray-800 text-theme-sm dark:text-white/90">
                   {{ product.name }}
                 </p>
                 <span class="text-gray-500 text-theme-xs dark:text-gray-400">
-                  {{ product.variant }}
+                  {{ product.model }}
                 </span>
               </div>
             </div>
@@ -86,7 +87,7 @@
             {{ product.sku }}
           </td>
           <td class="py-3 text-gray-500 text-center">
-            {{ product.category }}
+            {{ product.category?.name }}
           </td>
           <td class="py-3 text-gray-500 text-center">
             {{ product.locked }}
@@ -98,24 +99,28 @@
             {{ product.stock }}
           </td>
           <td class="py-3 text-gray-500 text-center">
-            {{ product.price }}
+            {{ product.sellingPrice }}
           </td>
 
           <td class="py-3">
             <div class="flex justify-center items-center">
-              <app-switch name="shortEnable" [defaultChecked]="product.status === 'Available'">
+              <app-switch 
+                name="shortEnable" 
+                [defaultChecked]="product.available ?? false" 
+                [(ngModel)]="product.available"
+                (ngModelChange)="updateProductStatus(product._id!, product.available ?? true )">
                 Ready to sell
               </app-switch>
             </div>
           </td>
           <td class="py-3 text-gray-500 text-center">
-            {{ product.lastUpdated }}
+            {{ product.modificationDate }}
           </td>
           <td class="py-3 text-gray-500 text-center">
             <app-button
               size="sm"
               variant="outline"
-              (click)="openStockModal()"
+              (click)="openStockModal(product)"
             >
               <span class="hidden sm:inline">Manage</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -134,7 +139,7 @@
             <app-button
               size="sm"
               variant="outline"
-              (click)="openModal()"
+              (click)="openModal(product)"
             >
               <span class="hidden sm:inline">Pricing</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -153,14 +158,15 @@
     [isOpen]="isOpen"
     (close)="closeModal()"
     className="max-w-[700px] p-6 lg:p-10"
+
   >
-    <app-product-avancement />
+    <app-product-avancement (cancel)="closeModal()" (saved)="closeModal()" [product]="selectedProduct" />
   </app-modal>
   <app-modal
     [isOpen]="isStockModalOpen"
     (close)="closeStockModal()"
     className="max-w-[700px] p-6 lg:p-10"
   >
-    <app-product-stock-entry />
+    <app-product-stock-entry  (saved)="closeStockModal()" [product]="selectedProduct" />
   </app-modal>
 </div>

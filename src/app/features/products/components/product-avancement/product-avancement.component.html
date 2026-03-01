@@ -71,7 +71,7 @@
 
       <!-- Effective Date -->
       <div>
-        <app-date-picker id="start-date-picker" label="Effective Date" placeholder="Select a date" [(ngModel)]="startDate" />
+        <app-date-picker id="start-date-picker" (dateChange)="updateStartDate($event)" label="Effective Date" placeholder="Select a date" />
         <p class="mt-1 text-xs text-gray-400">
           {{ priceType === 'promotion' ? 'Promotion start date.' : 'Leave empty to apply immediately.' }}
         </p>
@@ -87,7 +87,7 @@
             id="end-date-picker" 
             label="End Date" 
             placeholder="Select a date" 
-            [(ngModel)]="promoEndDate"
+            (dateChange)="updatePromoEndDate($event)"
             position="top"
 />
           <p class="mt-1 text-xs text-gray-400">Leave empty if the promotion has no end date.</p>
@@ -101,15 +101,17 @@
     <!-- RIGHT: Product Image -->
     <div class="w-48 flex-shrink-0 flex flex-col items-center gap-3">
       <div class="w-full rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-        <img
-          src="https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/notebooks/dell-plus/db16255/media-gallery/non-touch/laptop-dell-plus-db16255nt-ice-bl-fpr-gallery-5.psd?fmt=png-alpha&pscan=auto&scl=1&hei=804&wid=979&qlt=100,1&resMode=sharp2&size=979,804&chrss=full"
+        @if (product && product.images && product.images.length > 0) {
+          <img
+          src="{{ product.images[0] ?? '/placeholder.png' }}"
           alt="Product"
           class="w-full object-contain"
-        />
+          />
+        }
       </div>
       <div class="text-center">
-        <p class="text-sm font-medium text-gray-800 dark:text-white/90">TEST</p>
-        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Current: <span class="font-semibold text-gray-700 dark:text-gray-300">$3000</span></p>
+        <p class="text-sm font-medium text-gray-800 dark:text-white/90">{{ product?.name }}</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Current: <span class="font-semibold text-gray-700 dark:text-gray-300">${{ product?.sellingPrice }}</span></p>
       </div>
     </div>
 
@@ -118,6 +120,7 @@
   <!-- Actions -->
   <div class="flex items-center gap-3 mt-6 sm:justify-end">
     <button type="button"
+    (click)="close()"
       class="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 sm:w-auto">
       Cancel
     </button>
@@ -127,5 +130,9 @@
       {{ priceType === 'promotion' ? 'Apply Promotion' : 'Update Price' }}
     </button>
   </div>
-
+  @if (errorMessage) {
+    <p class="mt-4 text-sm text-red-500">
+      {{ errorMessage }}
+    </p>
+  }
 </div>
