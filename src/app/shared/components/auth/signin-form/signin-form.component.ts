@@ -28,8 +28,8 @@ export class SigninFormComponent {
   isLoading = false;
   errorMessage = '';
 
-  email = 'test@test.test';
-  password = 'mypassword123';
+  email = 'alice.martin@admin.com';
+  password = 'Admin123!';
 
   private apiEndPoint = environment.apiUrl;
 

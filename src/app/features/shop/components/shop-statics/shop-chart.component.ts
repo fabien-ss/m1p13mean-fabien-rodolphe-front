@@ -108,12 +108,14 @@ export class ShopChartComponent implements OnInit {
     ).subscribe({
       next: (response: any) => {
         const data: SalesStatistics = response.data;
-        this.series = [...data.series];
-        this.xaxis = { ...this.xaxis, categories: [...data.categories] };
+        this.loadSalesStatistics();
+//        this.series = [...data.series];
+ //       this.xaxis = { ...this.xaxis, categories: [...data.categories] };
         this.closeTargetModal();
       },
       error: (err) => {
         console.error('Failed to update sales statistics', err);
+        this.closeTargetModal();
       },
     });
   }

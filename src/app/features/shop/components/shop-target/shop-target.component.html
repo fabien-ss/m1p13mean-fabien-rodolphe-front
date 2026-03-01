@@ -64,13 +64,12 @@
             </apx-chart>
           }
         </div>
-        <span class="absolute left-1/2 top-full -translate-x-1/2 -translate-y-[95%] rounded-full bg-success-50 px-3 py-1 text-xs font-medium text-success-600 dark:bg-success-500/15 dark:text-success-500">
-          +10%
-        </span>
+        @if((100 - ( revenue * 100 / target )) * -1 ){
+          <span class="absolute left-1/2 top-full -translate-x-1/2 -translate-y-[95%] rounded-full bg-success-50 px-3 py-1 text-xs font-medium text-success-600 dark:bg-success-500/15 dark:text-success-500">
+            {{ (100 - ( revenue * 100 / target )) * -1 }}% 
+          </span>
+        }
       </div>
-      <p class="mx-auto mt-10 w-full max-w-[380px] text-center text-sm text-gray-500 sm:text-base">
-        You earn {{ formatCurrency(today) }} today, it's higher than last month. Keep up your good work!
-      </p>
     }
 
   </div>

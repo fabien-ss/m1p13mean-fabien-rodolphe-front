@@ -44,7 +44,7 @@ export class EcommerceComponent implements OnInit {
   revenueStroke: ApexStroke = { show: true, width: 4, colors: ['transparent'] };
   revenueGrid: ApexGrid = { yaxis: { lines: { show: true } } };
   revenueFill: ApexFill = { opacity: 1 };
-  revenueTooltip: ApexTooltip = { y: { formatter: (val) => `$${val.toLocaleString()}` } };
+  revenueTooltip: ApexTooltip = { y: { formatter: (val) => `MGA ${val.toLocaleString()}` } };
   revenueLegend: ApexLegend = { show: true, position: 'top', horizontalAlign: 'left', fontFamily: 'Outfit' };
   revenueYaxis: ApexYAxis = { labels: { style: { fontSize: '12px', colors: ['#6B7280'] } } };
 
@@ -58,11 +58,11 @@ export class EcommerceComponent implements OnInit {
   comparisonStroke: ApexStroke = { show: true, width: 4, colors: ['transparent'] };
   comparisonGrid: ApexGrid = { yaxis: { lines: { show: true } } };
   comparisonFill: ApexFill = { opacity: 1 };
-  comparisonTooltip: ApexTooltip = { y: { formatter: (val) => `$${val.toLocaleString()}` } };
+  comparisonTooltip: ApexTooltip = { y: { formatter: (val) => `MGA ${val.toLocaleString()}` } };
   comparisonLegend: ApexLegend = { show: true, position: 'top', horizontalAlign: 'left', fontFamily: 'Outfit' };
   comparisonYaxis: ApexYAxis = { labels: { style: { fontSize: '12px', colors: ['#6B7280'] } } };
 
-  constructor(private adminStatsService: AdminStatsService) {}
+  constructor(private adminStatsService: AdminStatsService) { }
 
   ngOnInit(): void {
     this.loadDashboard();
@@ -83,9 +83,18 @@ export class EcommerceComponent implements OnInit {
         this.ordersXaxis = { ...this.ordersXaxis, categories: [...this.data.ordersOverTime.categories] };
 
         // Revenue per shop
-        this.revenueSeries = [...this.data.revenuePerShop.series];
-        this.revenueXaxis = { ...this.revenueXaxis, categories: [...this.data.revenuePerShop.categories] };
+        const indices = this.data.revenuePerShop.categories.map((_, i) => i)
+          .sort(() => Math.random() - 0.5);
 
+        this.revenueSeries = this.data.revenuePerShop.series.map(serie => ({
+          ...serie,
+          data: indices.map(i => serie.data[i]),
+        }));
+
+        this.revenueXaxis = {
+          ...this.revenueXaxis,
+          categories: indices.map(i => this.data.revenuePerShop.categories[i]),
+        };
         // Monthly comparison
         this.comparisonSeries = [...this.data.monthlySalesComparison.series];
         this.comparisonXaxis = { ...this.comparisonXaxis, categories: [...this.data.monthlySalesComparison.categories] };
@@ -106,8 +115,8 @@ export class EcommerceComponent implements OnInit {
   }
 
   formatCurrency(value: number): string {
-    if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
-    if (value >= 1000) return `$${(value / 1000).toFixed(1)}K`;
-    return `$${value}`;
+    if (value >= 1000000) return `MGA ${(value / 1000000).toFixed(1)}M`;
+    if (value >= 1000) return `MGA ${(value / 1000).toFixed(1)}K`;
+    return `MGA ${value}`;
   }
 }

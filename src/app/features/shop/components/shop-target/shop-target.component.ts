@@ -97,8 +97,8 @@ export class ShopTargetComponent implements OnInit {
   }
 
   formatCurrency(value: number): string {
-    if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
-    return `$${value}`;
+    if (value >= 1000) return `MGA ${(value / 1000).toFixed(0)}K`;
+    return `MGA ${value}`;
   }
 
   toggleDropdown() { this.isOpen = !this.isOpen; }
