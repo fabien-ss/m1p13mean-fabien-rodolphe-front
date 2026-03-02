@@ -49,11 +49,11 @@ type AppUser = {
 
           <div class="hidden md:flex flex-1 max-w-sm mx-4">
             <div class="search-wrap relative w-full">
-              <span class="search-icon material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-base transition-colors pointer-events-none">search</span>
+              
               <input
                 type="text"
-                placeholder="Rechercher produit, boutique..."
-                class="w-full pl-9 pr-4 py-2 rounded-xl bg-gray-100 border border-transparent focus:border-indigo-300 focus:bg-white focus:outline-none text-sm transition-all duration-200"
+                placeholder="m1p13mean-fabien-rodolphe"
+                class="text-center w-full pl-9 pr-4 py-2 rounded-xl bg-gray-100 border border-transparent focus:border-indigo-300 focus:bg-white focus:outline-none text-sm transition-all duration-200"
               />
             </div>
           </div>
@@ -207,15 +207,15 @@ type AppUser = {
               <h3 class="font-black text-gray-900 text-sm uppercase tracking-wider">Mon compte</h3>
               <ul class="space-y-2.5 text-sm text-gray-500">
                 <li><a routerLink="/account"         class="footer-link">Mon profil</a></li>
-                <li><a routerLink="/account/orders"  class="footer-link">Mes commandes</a></li>
+                <li><a routerLink="/account"  class="footer-link">Mes commandes</a></li>
               </ul>
             </div>
 
             <div class="space-y-4">
               <h3 class="font-black text-gray-900 text-sm uppercase tracking-wider">Qui sommes-nous ?</h3>
               <ul>
-                <li><p class="text-sm text-gray-500">RAKOTO-HARISOA Rodolphe Yoann</p></li>
-                <li><p class="text-sm text-gray-500">RAKOTOMANANA Andriniaina Fabien</p></li>
+                <li><p class="text-sm text-gray-500 font-bold">RAKOTO-HARISOA Rodolphe Yoann</p></li>
+                <li><p class="text-sm text-gray-500 font-bold">RAKOTOMANANA Andriniaina Fabien</p></li>
               </ul>
             </div>
           </div>
@@ -223,12 +223,7 @@ type AppUser = {
 
         <div class="border-t border-gray-100">
           <div class="container mx-auto px-6 md:px-10 py-4 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-gray-400">
-            <span>© 2025 Akoor · Tous droits réservés</span>
-            <div class="flex gap-4">
-              <a href="#" class="footer-link">Conditions d'utilisation</a>
-              <a href="#" class="footer-link">Politique de confidentialité</a>
-              <a href="#" class="footer-link">Cookies</a>
-            </div>
+            <span>© 2026 · m1p13mean-fabien-rodolphe</span>
           </div>
         </div>
       </footer>

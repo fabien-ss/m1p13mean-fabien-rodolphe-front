@@ -7,6 +7,7 @@ import { ProductService } from '@/client/core/services/product.service';
 import { CartService } from '@/client/core/services/cart.service';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { CategoryService } from '@/client/core/services/category.service';
+import { environment } from 'src/environments/environment';
 
 
 interface FilterMetadata {
@@ -29,6 +30,7 @@ export class CatalogComponent {
   private productService = inject(ProductService);
   private categoryService = inject(CategoryService);
   cartService = inject(CartService);
+  apiEndPoint = environment.apiUrl;
 
   // Filter useState
   searchTerm       = signal('');

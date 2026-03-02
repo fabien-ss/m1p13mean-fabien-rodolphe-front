@@ -39,6 +39,7 @@ export const routes: Routes = [
       { path: 'deals', loadComponent: () => import('./client/pages/hot-deal/hot-deal.component').then(m => m.HotDealComponent) },
       { path: 'auth/login', loadComponent: () => import('./client/pages/auth/login/login.component').then(m => m.LoginComponent) },
       { path: 'auth/register', loadComponent: () => import('./client/pages/auth/register/register.component').then(m => m.RegisterComponent) },
+      { path: 'account', loadComponent: () => import('./client/pages/account/account.component').then(m => m.AccountComponent) },
     ]
   },
   {

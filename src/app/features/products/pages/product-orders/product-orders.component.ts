@@ -222,7 +222,7 @@ export class ProductOrdersComponent implements OnInit {
 
     this.orderService.createOrder({
       clientId: this.selectedClient.id,
-      shopId,
+      // shopId,
       items: this.orderItems.map(i => ({ produitId: i.produitId, quantite: i.quantite, prix: i.prix }))
     }).subscribe({
       next: (order) => {

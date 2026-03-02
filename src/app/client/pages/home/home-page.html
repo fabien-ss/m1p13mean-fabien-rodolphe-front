@@ -15,7 +15,7 @@
         <div class="flex gap-4">
           <z-button variant="secondary" size="lg" routerLink="/catalog">Voir le
             catalogue</z-button>
-          <z-button variant="outline" size="lg"
+          <z-button variant="outline" size="lg" routerLink="/shops"
             class="text-white border-white hover:bg-white/10">Boutiques</z-button>
         </div>
       </div>
@@ -35,14 +35,16 @@
         <h2 class="text-2xl font-bold text-red-600">Offres Flash ⚡</h2>
         <p class="text-red-800/60">Ne ratez pas ces pépites à prix réduit</p>
       </div>
-      <z-button variant="link" color="danger">Voir tout</z-button>
+      <z-button routerLink="/deals" variant="link" color="danger">Voir tout</z-button>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
       @for (product of promotions(); track product._id) {
       <z-card class="overflow-hidden hover:scale-[1.02] transition-transform">
         <div class="relative">
-          <img [src]="product.images[0]" class="w-full h-48 object-cover">
+          <img 
+          [src]="apiEndPoint + (product?.images?.[0] ?? '') || '/assets/placeholder.png'"
+          class="w-full h-48 object-cover">
           <z-badge variant="danger" class="absolute top-2 right-2">
             -{{ calcDiscount(product.oldPrice!, product.price) }}%
           </z-badge>
@@ -75,7 +77,7 @@
       <div
         class="flex items-center p-5 bg-white rounded-2xl border border-gray-100 shadow-sm gap-4 hover:shadow-md transition-shadow">
         <img
-          [src]="shop.images[1] || shop.images[0]"
+          [src]="apiEndPoint + (shop?.images?.[1] ?? shop?.images?.[0] ?? '') || 'assets/placeholder.png'"
           class="w-14 h-14 rounded-xl bg-gray-50 border border-gray-200 object-contain p-1" />
 
         <div class="flex-1 min-w-0">
@@ -115,7 +117,7 @@
         class="group cursor-pointer">
         <div
           class="relative overflow-hidden rounded-xl bg-gray-100 mb-3 aspect-square">
-          <img [src]="product.images[0]"
+          <img [src]="apiEndPoint + (product?.images?.[0] ?? '') || 'assets/placeholder.png'"
             class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500">
           <button (click)="addToCart(product, $event)"
             class="absolute bottom-2 right-2 p-2 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all">

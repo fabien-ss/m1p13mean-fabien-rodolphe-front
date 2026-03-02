@@ -47,7 +47,7 @@
             class="flex items-center p-5 bg-white rounded-2xl border border-gray-100 shadow-sm gap-4 hover:shadow-md transition-shadow">
 
             <img
-              [src]="shop.images?.[1] || shop.images?.[0]"
+              [src]="apiEndPoint + ((shop?.images?.[1] || shop?.images?.[0]) ?? '') || '/assets/placeholder.png'"
               class="w-14 h-14 rounded-xl bg-gray-50 border border-gray-200 object-contain p-1"
               alt="Shop logo"
             />

@@ -1,4 +1,10 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { OrderService } from '@/services/services/order.service';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { environment } from 'src/environments/environment';
+import { CreateOrderPayload } from '@/services/models/order.model';
+import { OrderItem } from '@/services/models/order.model';
+import { AuthService } from './auth.service';
+import { Observable } from 'rxjs';
 
 export interface CartItem {
   id: number;
@@ -10,6 +16,9 @@ export interface CartItem {
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
+
+  private orderService = inject(OrderService);
+  private authService = inject(AuthService);
   private _items = signal<CartItem[]>(this.loadFromStorage());
 
   items = this._items.asReadonly();
@@ -21,6 +30,25 @@ export class CartService {
     if (typeof window !== 'undefined') {
       localStorage.setItem('mall_cart', JSON.stringify(this._items()));
     }
+  }
+
+  makeOrder(): Observable<any> | undefined {
+    const user = this.authService.getUser();
+    if (!user) {
+      console.error('User not logged in');
+      return undefined;
+    }
+
+    const orderData: CreateOrderPayload = {
+      clientId: user?.id || '',
+      items: this._items().map(item => ({
+        produitId: item.id.toString(),
+        quantite: item.qty,
+        prix: item.price
+      }))
+    };
+
+    return this.orderService.createOrder(orderData);
   }
 
   clearCart() {

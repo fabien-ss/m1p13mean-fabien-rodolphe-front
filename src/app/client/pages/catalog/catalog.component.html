@@ -58,14 +58,14 @@
                 }}</span>
             </li>
             @for (category of availableCategories(); track category._id) {
-              <li
-                (click)="selectCategory(category._id)"
-                class="flex items-center justify-between px-3 py-2 rounded-xl cursor-pointer transition-colors hover:bg-gray-50"
-                [class.bg-indigo-50]="selectedCategory() === category._id"
-                [class.text-indigo-600]="selectedCategory() === category._id">
-                <span class="text-sm font-medium">{{ category.name }}</span>
-                <!-- <span class="text-xs text-gray-400 font-mono">20</span> -->
-              </li>
+            <li
+              (click)="selectCategory(category._id)"
+              class="flex items-center justify-between px-3 py-2 rounded-xl cursor-pointer transition-colors hover:bg-gray-50"
+              [class.bg-indigo-50]="selectedCategory() === category._id"
+              [class.text-indigo-600]="selectedCategory() === category._id">
+              <span class="text-sm font-medium">{{ category.name }}</span>
+              <!-- <span class="text-xs text-gray-400 font-mono">20</span> -->
+            </li>
             }
           </ul>
         </div>
@@ -291,7 +291,7 @@
             <!-- Image -->
             <div class="relative aspect-[4/5] bg-gray-50 overflow-hidden">
               <img
-                [src]="product.images[0]"
+                [src]="apiEndPoint + (product?.images?.[0] ?? '') || '/assets/placeholder.png'"
                 [alt]="product.name"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
 

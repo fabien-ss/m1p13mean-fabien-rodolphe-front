@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { ClientSuggestion, CreateOrderPayload, Order, ShopProduct } from '../models/order.model';
+import { ClientSuggestion, CreateOrderPayload, Order, OrderClientInterface, ShopProduct } from '../models/order.model';
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
@@ -17,6 +17,11 @@ export class OrderService {
     if (startDate) params = params.set('startDate', startDate);
     if (endDate) params = params.set('endDate', endDate);
     return this.http.get<Order[]>(`${this.api}/shop/${shopId}`, { params });
+  }
+
+  // get commandes d'un client
+  getOrdersByClient(clientId: string): Observable<OrderClientInterface[]> {
+    return this.http.get<OrderClientInterface[]>(`${this.api}/client/${clientId}`);
   }
 
   getShopProducts(shopId: string): Observable<ShopProduct[]> {

@@ -10,6 +10,7 @@ import { CartService } from '../../core/services/cart.service';
 import { ZardButtonComponent } from '@/shared/components/button';
 import { ZardBadgeComponent } from '@/shared/components/badge';
 import { ZardCardComponent } from '@/shared/components/card';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-home-page',
@@ -21,6 +22,7 @@ export class HomePage {
   private productService = inject(ProductService);
   private shopService = inject(ShopService);
   cartService = inject(CartService);
+  apiEndPoint = environment.apiUrl;
 
   // ressources lancent l'appel HTTP
   productsResource = resource({

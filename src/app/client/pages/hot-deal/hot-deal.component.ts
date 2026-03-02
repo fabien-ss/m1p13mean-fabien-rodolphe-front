@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 import { ProductService } from '@/client/core/services/product.service';
 import { RouterLink } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 type Shop = {
   _id: string;
@@ -22,6 +23,7 @@ type Shop = {
 })
 export class HotDealComponent {
   private productService = inject(ProductService);
+  apiEndPoint = environment.apiUrl;
 
   hotDealResource = resource({
     loader: () => firstValueFrom(this.productService.getHotDeals()),
