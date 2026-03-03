@@ -43,6 +43,8 @@ export class ProductDetailComponent {
     },
   });
 
+  isLoading     = computed(() => this.productResource.isLoading());
+
   product = computed(() => this.productResource.value()); // Product | null
 
   relatedProductsResource = resource({

@@ -54,6 +54,8 @@ export class ShopDetailComponent {
       return await firstValueFrom(this.productService.getProductsByShop(shop._id));
     },
   });
+
+  isLoading     = computed(() => this.shopProductsResource.isLoading());
   
   shopProducts = computed(() => this.shopProductsResource.value() ?? []);
 
