@@ -1,0 +1,434 @@
+<div class="bg-gray-50 min-h-screen pb-20">
+
+  <div class="bg-white border-b border-gray-100">
+    <div class="container mx-auto px-4 md:px-6 pt-6 pb-4">
+
+      <nav class="text-sm text-gray-500 flex items-center gap-2 mb-6">
+        <a routerLink="/"
+          class="hover:text-indigo-600 transition-colors">Accueil</a>
+        <span>/</span>
+        <span class="text-gray-700 font-semibold">Catalogue</span>
+      </nav>
+
+      <div
+        class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+          <p
+            class="text-xs tracking-widest uppercase text-gray-400 font-black mb-1">Akoor</p>
+          <h1
+            class="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900">Les
+            Collections</h1>
+        </div>
+
+        <!-- Search bar -->
+        <div class="relative max-w-sm w-full">
+          <span
+            class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-base pointer-events-none">search</span>
+          <input
+            type="text"
+            [ngModel]="searchTerm()"
+            (ngModelChange)="searchTerm.set($event); applySearch()"
+            placeholder="Rechercher un produit, une marque..."
+            class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-gray-100 border border-transparent focus:border-indigo-300 focus:bg-white focus:outline-none text-sm transition-all duration-200" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 md:px-6 py-8">
+    <div class="flex flex-col lg:flex-row gap-8">
+
+      <!-- sidebar -->
+      <aside class="hidden lg:block w-64 flex-shrink-0 space-y-4">
+
+        <!-- Categories -->
+        <div
+          class="bg-white border border-gray-100 rounded-2xl shadow-sm p-5 space-y-3">
+          <h3
+            class="text-xs font-black uppercase tracking-widest text-gray-400">Catégories</h3>
+          <ul class="space-y-1">
+            <li
+              (click)="selectCategory(null)"
+              class="flex items-center justify-between px-3 py-2 rounded-xl cursor-pointer transition-colors"
+              [class.bg-indigo-50]="!selectedCategory()"
+              [class.text-indigo-600]="!selectedCategory()"
+              [class.hover:bg-gray-50]="!!selectedCategory()">
+              <span class="text-sm font-semibold">Toutes les pièces</span>
+              <span class="text-xs text-gray-400 font-mono">{{ totalProducts()
+                }}</span>
+            </li>
+            @for (category of availableCategories(); track category._id) {
+            <li
+              (click)="selectCategory(category._id)"
+              class="flex items-center justify-between px-3 py-2 rounded-xl cursor-pointer transition-colors hover:bg-gray-50"
+              [class.bg-indigo-50]="selectedCategory() === category._id"
+              [class.text-indigo-600]="selectedCategory() === category._id">
+              <span class="text-sm font-medium">{{ category.name }}</span>
+              <!-- <span class="text-xs text-gray-400 font-mono">20</span> -->
+            </li>
+            }
+          </ul>
+        </div>
+
+        <!-- Price range -->
+        <div
+          class="bg-white border border-gray-100 rounded-2xl shadow-sm p-5 space-y-4">
+          <h3
+            class="text-xs font-black uppercase tracking-widest text-gray-400">Gamme
+            de prix</h3>
+          <div class="space-y-3">
+            <div class="flex gap-2">
+              <div class="flex-1">
+                <label
+                  class="text-[10px] uppercase tracking-widest text-gray-400 font-bold block mb-1">De</label>
+                <input
+                  type="number"
+                  [ngModel]="minPrice()"
+                  (ngModelChange)="minPrice.set($event)"
+                  [placeholder]="priceRange().min.toString()"
+                  class="w-full px-3 py-2 rounded-xl bg-gray-100 border border-transparent focus:border-indigo-300 focus:bg-white focus:outline-none text-sm transition-all" />
+              </div>
+              <div class="flex-1">
+                <label
+                  class="text-[10px] uppercase tracking-widest text-gray-400 font-bold block mb-1">À</label>
+                <input
+                  type="number"
+                  [ngModel]="maxPrice()"
+                  (ngModelChange)="maxPrice.set($event)"
+                  [placeholder]="priceRange().max.toString()"
+                  class="w-full px-3 py-2 rounded-xl bg-gray-100 border border-transparent focus:border-indigo-300 focus:bg-white focus:outline-none text-sm transition-all" />
+              </div>
+            </div>
+            <button
+              (click)="applyPrice()"
+              class="w-full py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold uppercase tracking-widest transition-colors">
+              Appliquer
+            </button>
+          </div>
+        </div>
+
+        <!-- Brands -->
+        <div
+          class="bg-white border border-gray-100 rounded-2xl shadow-sm p-5 space-y-3">
+          <h3
+            class="text-xs font-black uppercase tracking-widest text-gray-400">Marques</h3>
+          @if (availableBrands().length) {
+          <div class="flex flex-wrap gap-2">
+            @for (item of availableBrands(); track item.brand) {
+            <button
+              (click)="toggleBrand(item.brand)"
+              class="px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all"
+              [class.border-indigo-500]="selectedBrands().includes(item.brand)"
+              [class.bg-indigo-50]="selectedBrands().includes(item.brand)"
+              [class.text-indigo-600]="selectedBrands().includes(item.brand)"
+              [class.border-gray-200]="!selectedBrands().includes(item.brand)"
+              [class.text-gray-600]="!selectedBrands().includes(item.brand)">
+              {{ item.brand }}
+              <span class="text-[10px] opacity-50 ml-0.5">({{ item.count
+                }})</span>
+            </button>
+            }
+          </div>
+          } @else {
+          <p class="text-xs text-gray-400 italic">Chargement...</p>
+          }
+        </div>
+
+        <!-- Tags -->
+        <div
+          class="bg-white border border-gray-100 rounded-2xl shadow-sm p-5 space-y-3">
+          <h3
+            class="text-xs font-black uppercase tracking-widest text-gray-400">Tags</h3>
+          @if (availableTags().length) {
+          <div class="flex flex-wrap gap-2">
+            @for (item of availableTags().slice(0, 12); track item.tag) {
+            <button
+              (click)="toggleTag(item.tag)"
+              class="px-3 py-1 rounded-full border text-xs font-medium transition-all"
+              [class.border-indigo-500]="selectedTags().includes(item.tag)"
+              [class.bg-indigo-50]="selectedTags().includes(item.tag)"
+              [class.text-indigo-600]="selectedTags().includes(item.tag)"
+              [class.border-gray-200]="!selectedTags().includes(item.tag)"
+              [class.text-gray-500]="!selectedTags().includes(item.tag)">
+              #{{ item.tag }}
+            </button>
+            }
+          </div>
+          } @else {
+          <p class="text-xs text-gray-400 italic">Chargement...</p>
+          }
+        </div>
+
+        <div
+          class="bg-white border border-gray-100 rounded-2xl shadow-sm p-5 space-y-3">
+          <h3
+            class="text-xs font-black uppercase tracking-widest text-gray-400">Disponibilité</h3>
+          <label class="flex items-center gap-3 cursor-pointer group">
+            <input
+              type="checkbox"
+              [ngModel]="inStockOnly()"
+              (ngModelChange)="inStockOnly.set($event); resetPage()"
+              class="w-4 h-4 accent-indigo-600 rounded" />
+            <span
+              class="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">En
+              stock uniquement</span>
+          </label>
+          <label class="flex items-center gap-3 cursor-pointer group">
+            <input
+              type="checkbox"
+              [ngModel]="onPromoOnly()"
+              (ngModelChange)="onPromoOnly.set($event); resetPage()"
+              class="w-4 h-4 accent-indigo-600 rounded" />
+            <span
+              class="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">
+              En promotion
+              <span
+                class="ml-1 px-1.5 py-0.5 rounded-full bg-red-100 text-red-500 text-[10px] font-bold">SALE</span>
+            </span>
+          </label>
+        </div>
+
+        <!-- Reset -->
+        @if (hasActiveFilters()) {
+        <button
+          (click)="resetFilters()"
+          class="w-full py-2.5 rounded-xl border border-red-200 text-sm font-semibold text-red-500 hover:bg-red-50 transition-colors flex items-center justify-center gap-2">
+          <span class="material-icons text-base">filter_alt_off</span>
+          Réinitialiser les filtres
+        </button>
+        }
+
+      </aside>
+
+      <main class="flex-1 min-w-0">
+        <div
+          class="flex items-center justify-between mb-6 pb-5 border-b border-gray-100">
+          <p class="text-sm text-gray-400 uppercase tracking-widest">
+            <span class="text-gray-900 font-black">{{ totalProducts() }}</span>
+            résultat(s)
+          </p>
+          <div class="flex items-center gap-3">
+            <select
+              [ngModel]="sortBy()"
+              (ngModelChange)="sortBy.set($event); resetPage()"
+              class="px-4 py-2 rounded-xl bg-white border border-gray-200 text-sm font-semibold text-gray-700 focus:border-indigo-300 focus:outline-none transition-colors cursor-pointer">
+              <option value="createdAt_desc">Nouveautés</option>
+              <option value="price_asc">Prix croissant</option>
+              <option value="price_desc">Prix décroissant</option>
+              <option value="name_asc">Nom A–Z</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- badge des filtres-->
+        @if (hasActiveFilters()) {
+        <div class="flex flex-wrap gap-2 mb-5">
+          @if (searchTerm()) {
+          <span
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-600 text-xs font-semibold">
+            "{{ searchTerm() }}"
+            <button (click)="searchTerm.set(''); applySearch()">
+              <span class="material-icons text-xs">close</span>
+            </button>
+          </span>
+          }
+          @for (brand of selectedBrands(); track brand) {
+          <span
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-600 text-xs font-semibold">
+            {{ brand }}
+            <button (click)="toggleBrand(brand)">
+              <span class="material-icons text-xs">close</span>
+            </button>
+          </span>
+          }
+          @for (tag of selectedTags(); track tag) {
+          <span
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-600 text-xs font-semibold">
+            #{{ tag }}
+            <button (click)="toggleTag(tag)">
+              <span class="material-icons text-xs">close</span>
+            </button>
+          </span>
+          }
+          @if (onPromoOnly()) {
+          <span
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-600 text-xs font-semibold">
+            En promo
+            <button (click)="onPromoOnly.set(false)">
+              <span class="material-icons text-xs">close</span>
+            </button>
+          </span>
+          }
+          @if (inStockOnly()) {
+          <span
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-50 border border-green-200 text-green-700 text-xs font-semibold">
+            En stock
+            <button (click)="inStockOnly.set(false)">
+              <span class="material-icons text-xs">close</span>
+            </button>
+          </span>
+          }
+        </div>
+        }
+
+        <!-- Loading -->
+        @if (isLoading()) {
+        <div class="flex justify-center py-40">
+          <div
+            class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+        </div>
+
+        } @else {
+
+        <!-- Product grid -->
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-5 gap-y-8">
+          @for (product of allProducts(); track product._id) {
+          <a
+            [routerLink]="['/product', product._id]"
+            class="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-md transition-all duration-300">
+
+            <!-- Image -->
+            <div class="relative aspect-[4/5] bg-gray-50 overflow-hidden">
+              <img
+                [src]="apiEndPoint + (product?.images?.[0] ?? '') || '/assets/placeholder.png'"
+                [alt]="product.name"
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+
+              <!-- Promo badge -->
+              @if (product.promo) {
+              <div class="absolute top-3 left-3">
+                <span
+                  class="bg-red-500 text-white text-[11px] font-black rounded-full px-3 py-1">
+                  -{{ product.discountPercent }}%
+                </span>
+              </div>
+              }
+
+              <!-- Low stock badge -->
+              @if (product.stock > 0 && product.stock <= 5) {
+              <div class="absolute top-3 right-3">
+                <span
+                  class="bg-white/90 backdrop-blur border border-gray-200 text-gray-700 text-[11px] font-semibold rounded-full px-3 py-1">
+                  Stock faible ({{ product.stock }})
+                </span>
+              </div>
+              }
+
+              @if (product.stock === 0) {
+              <div
+                class="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center">
+                <span
+                  class="bg-white border border-gray-200 text-gray-500 text-xs font-bold px-4 py-2 rounded-xl shadow-sm">
+                  Rupture de stock
+                </span>
+              </div>
+              }
+
+              <!-- add to cart -->
+              <div
+                class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                <z-button
+                  (click)="addToCart(product, $event)"
+                  class="w-full"
+                  variant="primary">
+                  Ajouter au panier
+                </z-button>
+              </div>
+            </div>
+
+            <div class="p-4 space-y-2">
+              <p
+                class="text-[11px] tracking-widest uppercase text-gray-500 font-black">
+                {{ product.brand || 'Premium' }}
+              </p>
+              <h3 class="font-semibold text-gray-900 truncate">{{ product.name
+                }}</h3>
+              <div class="flex items-baseline justify-between pt-1">
+                <div class="flex items-baseline gap-2">
+                  <span class="text-lg font-black text-gray-900">
+                    {{ product.price | number:'1.0-0' }} {{ product.devise }}
+                  </span>
+                  @if (product.promo && product.oldPrice) {
+                  <span class="text-xs text-gray-400 line-through">
+                    {{ product.oldPrice | number:'1.0-0' }}
+                  </span>
+                  }
+                </div>
+                <span
+                  class="text-[11px] text-gray-400 font-mono truncate max-w-[80px]">{{
+                  product.sku }}</span>
+              </div>
+            </div>
+          </a>
+          }
+
+          @empty {
+          <div class="col-span-full py-32 text-center space-y-3">
+            <span
+              class="material-icons text-5xl text-gray-200">search_off</span>
+            <p class="text-gray-400 text-base">Aucun produit ne correspond à
+              votre recherche.</p>
+            <button (click)="resetFilters()"
+              class="text-sm text-indigo-600 hover:underline font-semibold">
+              Réinitialiser les filtres
+            </button>
+          </div>
+          }
+        </div>
+
+        <!-- pagination-->
+        @if (totalPages() > 1) {
+        <div
+          class="mt-14 pt-8 border-t border-gray-100 flex items-center justify-between">
+
+          <button
+            (click)="prevPage()"
+            [disabled]="currentPage() === 1"
+            class="text-sm font-bold uppercase tracking-widest transition-colors flex items-center gap-1"
+            [class.text-gray-300]="currentPage() === 1"
+            [class.cursor-not-allowed]="currentPage() === 1"
+            [class.text-gray-700]="currentPage() > 1"
+            [class.hover:text-indigo-600]="currentPage() > 1">
+            <span class="material-icons text-base">chevron_left</span>
+            Précédent
+          </button>
+
+          <div class="flex items-center gap-1">
+            @for (p of pageNumbers(); track $index) {
+            @if (p === '...') {
+            <span class="px-2 text-gray-400 text-sm font-bold">…</span>
+            } @else {
+            <button
+              (click)="goToPage(p)"
+              class="w-9 h-9 rounded-xl text-sm font-bold uppercase tracking-widest transition-colors"
+              [class.bg-indigo-600]="currentPage() === p"
+              [class.text-white]="currentPage() === p"
+              [class.text-gray-500]="currentPage() !== p"
+              [class.hover:bg-gray-100]="currentPage() !== p">
+              {{ p.toString().padStart(2, '0') }}
+            </button>
+            }
+            }
+          </div>
+
+          <button
+            (click)="nextPage()"
+            [disabled]="currentPage() === totalPages()"
+            class="text-sm font-bold uppercase tracking-widest transition-colors flex items-center gap-1"
+            [class.text-gray-300]="currentPage() === totalPages()"
+            [class.cursor-not-allowed]="currentPage() === totalPages()"
+            [class.text-gray-700]="currentPage() < totalPages()"
+            [class.hover:text-indigo-600]="currentPage() < totalPages()">
+            Suivant
+            <span class="material-icons text-base">chevron_right</span>
+          </button>
+
+        </div>
+        }
+        }
+
+      </main>
+    </div>
+  </div>
+</div>

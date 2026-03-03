@@ -1,0 +1,222 @@
+<div class="bg-white min-h-screen pb-20">
+  @if (shop()) {
+
+  <!-- Hero -->
+  <section class="border-b border-gray-200">
+    <div class="relative h-[42vh] md:h-[52vh] overflow-hidden">
+      <img
+        [src]="shop()?.images?.[0]"
+        class="w-full h-full object-cover"
+        [alt]="shop()?.name" />
+      <div
+        class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/20 to-transparent"></div>
+
+      <div class="absolute inset-0 flex flex-col justify-end">
+        <div class="container mx-auto px-4 pb-10 md:pb-14">
+          <div class="inline-flex items-center gap-2">
+            <z-badge
+              class="bg-primary-500 border-none rounded-full px-3 py-1 text-[11px] tracking-wider uppercase text-white">
+              {{ shop()?.type }}
+            </z-badge>
+
+            <span class="text-white/80 text-xs tracking-widest uppercase">
+              Boutique
+            </span>
+          </div>
+
+          <h1
+            class="mt-4 text-4xl md:text-6xl font-extrabold tracking-tight text-white">
+            {{ shop()?.name }}
+          </h1>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shop info -->
+  <section class="container mx-auto px-4 -mt-10 relative z-10">
+    <div
+      class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 md:p-8">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+
+        <div class="md:col-span-8 space-y-5">
+          <div>
+            <p
+              class="text-xs font-semibold uppercase tracking-wider text-gray-500">
+              À propos
+            </p>
+            <p class="mt-2 text-gray-700 leading-relaxed">
+              {{ shop()?.description }}
+            </p>
+          </div>
+
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-gray-100">
+            <div class="flex items-center gap-3 text-sm text-gray-600">
+              <span
+                class="material-icons text-gray-400 text-base">mail_outline</span>
+              <span class="truncate">{{ shop()?.email }}</span>
+            </div>
+
+            <div class="flex items-center gap-3 text-sm text-gray-600">
+              <span
+                class="material-icons text-gray-400 text-base">phone_iphone</span>
+              <span class="truncate">{{ shop()?.phone }}</span>
+            </div>
+
+            <div class="flex items-center gap-3 text-sm text-gray-600">
+              <span
+                class="material-icons text-gray-400 text-base">place</span>
+              <span class="truncate">{{ shop()?.location }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logo -->
+        <div class="md:col-span-4">
+          <div
+            class="w-full h-48 md:h-56 bg-gray-50 border border-gray-200 rounded-2xl flex items-center justify-center p-6">
+            <img
+              [src]="shop()?.images?.[1] || 'https://placehold.co/400x400?text=Logo'"
+              class="max-w-full max-h-full object-contain"
+              [alt]="shop()?.name" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- catalogue produit -->
+  <section class="container mx-auto px-4 py-12">
+    <div
+      class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
+      <div>
+        <p class="text-xs tracking-widest uppercase text-gray-500">Catalogue</p>
+        <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
+          Collections disponibles
+        </h2>
+        <p class="text-gray-500 mt-1">
+          Retrouvez les articles de cette boutique.
+        </p>
+      </div>
+
+      <!-- Petit filtre (àdéfinir) -->
+      <div class="flex gap-2">
+        <button
+          class="px-4 h-10 rounded-full border border-gray-200 bg-white text-xs font-semibold uppercase tracking-wider text-gray-800 hover:bg-gray-50">
+          Tous
+        </button>
+        <button
+          class="px-4 h-10 rounded-full border border-gray-200 bg-white text-xs font-semibold uppercase tracking-wider text-gray-500 hover:text-gray-900 hover:bg-gray-50">
+          Nouveautés
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      @for (product of shopProducts(); track product._id) {
+      <a
+        [routerLink]="['/product', product._id]"
+        class="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-md transition-all duration-300">
+
+        <!-- Image -->
+        <div class="relative aspect-[4/5] bg-gray-50 overflow-hidden">
+          <img
+            [src]="product.images[0]"
+            [alt]="product.name"
+            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+
+          <!-- Promo badge -->
+          @if (product.promo) {
+          <div class="absolute top-3 left-3">
+            <span
+              class="bg-red-500 text-white text-[11px] font-black rounded-full px-3 py-1">
+              -{{ product.discountPercent }}%
+            </span>
+          </div>
+          }
+
+          <!-- Low stock badge -->
+          @if (product.stock > 0 && product.stock <= 5) {
+          <div class="absolute top-3 right-3">
+            <span
+              class="bg-white/90 backdrop-blur border border-gray-200 text-gray-700 text-[11px] font-semibold rounded-full px-3 py-1">
+              Stock faible ({{ product.stock }})
+            </span>
+          </div>
+          }
+
+          @if (product.stock === 0) {
+          <div
+            class="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center">
+            <span
+              class="bg-white border border-gray-200 text-gray-500 text-xs font-bold px-4 py-2 rounded-xl shadow-sm">
+              Rupture de stock
+            </span>
+          </div>
+          }
+
+          <!-- Hover add to cart -->
+          <div
+            class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+            <z-button
+              (click)="addToCart(product)"
+              class="w-full"
+              variant="primary">
+              Ajouter au panier
+            </z-button>
+          </div>
+        </div>
+
+        <div class="p-4 space-y-2">
+          <p
+            class="text-[11px] tracking-widest uppercase text-gray-500 font-black">
+            {{ product.brand || 'Premium' }}
+          </p>
+          <h3 class="font-semibold text-gray-900 truncate">{{ product.name
+            }}</h3>
+          <div class="flex items-baseline justify-between pt-1">
+            <div class="flex items-baseline gap-2">
+              <span class="text-lg font-black text-gray-900">
+                {{ product.price | number:'1.0-0' }} {{ product.devise }}
+              </span>
+              @if (product.promo && product.oldPrice) {
+              <span class="text-xs text-gray-400 line-through">
+                {{ product.oldPrice | number:'1.0-0' }}
+              </span>
+              }
+            </div>
+            <span
+              class="text-[11px] text-gray-400 font-mono truncate max-w-[80px]">{{
+              product.sku }}</span>
+          </div>
+        </div>
+      </a>
+
+      } @empty {
+      <div class="col-span-full py-24 text-center">
+        <p class="text-gray-500">Cette boutique n’a pas encore de
+          produits.</p>
+      </div>
+      }
+    </div>
+  </section>
+
+  } @else {
+  @if (isLoading()) {
+  <div class="flex justify-center py-40">
+    <div
+      class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+  </div>
+  } @else {
+  <div class="min-h-screen flex items-center justify-center flex-col gap-6">
+    <h2 class="text-2xl font-bold text-gray-900">Boutique introuvable</h2>
+    <p class="text-gray-500">Retournez à l’accueil pour continuer.</p>
+    <z-button routerLink="/" variant="outline" class="rounded-full px-10">
+      Retour au centre
+    </z-button>
+  </div>
+  }
+  }
+</div>

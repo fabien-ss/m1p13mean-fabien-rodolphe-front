@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, Output, EventEmitter, HostListener, Input } from '@angular/core';
 import { ComponentCardComponent } from '../../../common/component-card/component-card.component';
 
 
@@ -15,6 +15,8 @@ import { ComponentCardComponent } from '../../../common/component-card/component
 export class DropzoneComponent {
 
   isDragActive = false;
+
+  @Input() title: string = 'Drop files here';
 
   @Output() filesDropped = new EventEmitter<File[]>();
 

@@ -1,0 +1,280 @@
+<!-- product-avancement.component.html -->
+<div class="flex flex-col px-2 overflow-y-auto custom-scrollbar">
+
+  <!-- Header -->
+  <div>
+    <h5 class="mb-2 font-semibold text-gray-800 modal-title text-theme-xl dark:text-white/90 lg:text-2xl">
+      {{ priceType === 'promotion' ? 'Create Promotion' : 'Update Pricing' }}
+    </h5>
+    <p class="text-sm text-gray-500 dark:text-gray-400">
+      {{ priceType === 'promotion'
+          ? 'Set a time-limited discount on this product.'
+          : 'Update the product price or switch to a promotional offer.' }}
+    </p>
+  </div>
+
+  <!-- Main layout -->
+  <div class="mt-8 flex gap-6">
+
+    <!-- LEFT: Form -->
+    <div class="flex-1 flex flex-col gap-6">
+
+      <!-- ── Type selector ──────────────────────────────────────────── -->
+      <div>
+        <label class="block mb-3 text-sm font-medium text-gray-700 dark:text-gray-400">
+          Type
+        </label>
+        <div class="flex items-center gap-6">
+
+          <!-- Standard -->
+          <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-400 cursor-pointer">
+            <input type="radio" name="priceType" value="standard"
+              class="sr-only" [(ngModel)]="priceType" (ngModelChange)="onTypeChange()" />
+            <span class="flex items-center justify-center w-5 h-5 rounded-full border border-gray-300 dark:border-gray-700">
+              <span class="w-2 h-2 rounded-full bg-brand-500"
+                [class.block]="priceType === 'standard'"
+                [class.hidden]="priceType !== 'standard'">
+              </span>
+            </span>
+            Standard Price
+          </label>
+
+          <!-- Promotion -->
+          <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-400 cursor-pointer">
+            <input type="radio" name="priceType" value="promotion"
+              class="sr-only" [(ngModel)]="priceType" (ngModelChange)="onTypeChange()" />
+            <span class="flex items-center justify-center w-5 h-5 rounded-full border border-gray-300 dark:border-gray-700">
+              <span class="w-2 h-2 rounded-full bg-orange-500"
+                [class.block]="priceType === 'promotion'"
+                [class.hidden]="priceType !== 'promotion'">
+              </span>
+            </span>
+            Promotion
+          </label>
+
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════════════════
+           STANDARD PRICING FORM
+      ══════════════════════════════════════════════════════════════ -->
+      @if (priceType === 'standard') {
+
+        <!-- New price -->
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+            New Price
+          </label>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400">
+              {{ product?.devise || 'MGA' }}
+            </span>
+            <input type="number" [(ngModel)]="newPrice" min="0" step="0.01" placeholder="0.00"
+              class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent pl-14 pr-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+            />
+          </div>
+        </div>
+
+        <!-- Effective date -->
+        <div>
+          <app-date-picker
+            id="start-date-picker"
+            label="Effective Date"
+            placeholder="Select a date"
+            (dateChange)="updateStartDate($event)"
+          />
+          <p class="mt-1 text-xs text-gray-400">Leave empty to apply immediately.</p>
+        </div>
+
+        <!-- Note -->
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+            Note <span class="text-gray-400 font-normal">(optional)</span>
+          </label>
+          <textarea rows="2" [(ngModel)]="priceNote" placeholder="e.g. Price correction, supplier update..."
+            class="dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+          ></textarea>
+        </div>
+      }
+
+      <!-- ══════════════════════════════════════════════════════════════
+           PROMOTION FORM
+      ══════════════════════════════════════════════════════════════ -->
+      @if (priceType === 'promotion') {
+        <div class="flex flex-col gap-5 p-4 rounded-xl border border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-900/10">
+
+          <p class="text-xs font-black uppercase tracking-widest text-orange-500 dark:text-orange-400">
+            🏷️ Promotion Details
+          </p>
+
+          <!-- Title -->
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+              Title *
+            </label>
+            <input
+              type="text"
+              [(ngModel)]="promoTitle"
+              placeholder="e.g. Summer Sale, Flash Deal..."
+              class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2.5 text-sm text-gray-800 dark:text-white focus:border-orange-400 focus:outline-none"
+            />
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+              Description <span class="text-gray-400 font-normal">(optional)</span>
+            </label>
+            <textarea
+              rows="2"
+              [(ngModel)]="promoDescription"
+              placeholder="Short description of the promotion..."
+              class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2.5 text-sm text-gray-800 dark:text-white focus:border-orange-400 focus:outline-none"
+            ></textarea>
+          </div>
+
+          <!-- Discount type + value -->
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+              Discount *
+            </label>
+            <div class="flex gap-2">
+
+              <!-- PERCENT / FIXED toggle -->
+              <div class="flex rounded-lg border border-gray-300 dark:border-gray-700 overflow-hidden flex-shrink-0">
+                <button type="button"
+                  (click)="promoDiscountType = 'PERCENT'"
+                  class="px-3 py-2.5 text-sm font-semibold transition-colors"
+                  [class.bg-orange-500]="promoDiscountType === 'PERCENT'"
+                  [class.text-white]="promoDiscountType === 'PERCENT'"
+                  [class.bg-white]="promoDiscountType !== 'PERCENT'"
+                  [class.dark:bg-gray-900]="promoDiscountType !== 'PERCENT'"
+                  [class.text-gray-600]="promoDiscountType !== 'PERCENT'">
+                  %
+                </button>
+                <button type="button"
+                  (click)="promoDiscountType = 'FIXED'"
+                  class="px-3 py-2.5 text-sm font-semibold transition-colors border-l border-gray-300 dark:border-gray-700"
+                  [class.bg-orange-500]="promoDiscountType === 'FIXED'"
+                  [class.text-white]="promoDiscountType === 'FIXED'"
+                  [class.bg-white]="promoDiscountType !== 'FIXED'"
+                  [class.dark:bg-gray-900]="promoDiscountType !== 'FIXED'"
+                  [class.text-gray-600]="promoDiscountType !== 'FIXED'">
+                  {{ product?.devise || 'MGA' }}
+                </button>
+              </div>
+
+              <!-- Value input -->
+              <input
+                type="number"
+                [(ngModel)]="promoValue"
+                [max]="promoDiscountType === 'PERCENT' ? 100 : 9999999"
+                min="0"
+                placeholder="{{ promoDiscountType === 'PERCENT' ? 'e.g. 20' : 'e.g. 5000' }}"
+                class="flex-1 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2.5 text-sm text-gray-800 dark:text-white focus:border-orange-400 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          <!-- Price preview -->
+          @if (previewPrice !== null) {
+            <div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-800">
+              <span class="text-xs uppercase tracking-widest font-black text-gray-400">Preview</span>
+              <span class="text-sm text-gray-400 line-through">
+                {{ product?.price }} {{ product?.devise }}
+              </span>
+              <span class="text-lg font-black text-orange-500">
+                → {{ previewPrice | number:'1.0-0' }} {{ product?.devise }}
+              </span>
+            </div>
+          }
+
+          <!-- Dates -->
+          <div class="">
+            <div>
+              <app-date-picker
+                id="promo-start-date"
+                label="Start Date *"
+                placeholder="Select start"
+                (dateChange)="updatePromoStartDate($event)"
+              />
+            </div>
+            <div>
+              <app-date-picker
+                id="promo-end-date"
+                label="End Date"
+                placeholder="No end date"
+                position="top"
+                (dateChange)="updatePromoEndDate($event)"
+              />
+              <p class="mt-1 text-xs text-gray-400">Leave empty for an open-ended promo.</p>
+            </div>
+          </div>
+
+        </div>
+      }
+
+    </div>
+
+    <!-- RIGHT: Product image -->
+    <div class="w-44 flex-shrink-0 flex flex-col items-center gap-3">
+      <div class="w-full rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        @if (product?.images?.length) {
+          <img
+            [src]="product!.images![0]"
+            [alt]="product!.name"
+            class="w-full object-contain"
+          />
+        } @else {
+          <div class="h-36 flex items-center justify-center text-gray-300 dark:text-gray-600">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+          </div>
+        }
+      </div>
+      <div class="text-center">
+        <p class="text-sm font-semibold text-gray-800 dark:text-white/90 truncate max-w-[160px]">
+          {{ product?.name }}
+        </p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+          Current:
+          <span class="font-semibold text-gray-700 dark:text-gray-300">
+            {{ product?.price }} {{ product?.devise }}
+          </span>
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Actions ────────────────────────────────────────────────────── -->
+  <div class="flex items-center gap-3 mt-6 sm:justify-end">
+    <button type="button" (click)="close()"
+      class="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 sm:w-auto">
+      Cancel
+    </button>
+    <button type="button" (click)="onUpdatePrice()" [disabled]="isLoading"
+      class="flex w-full justify-center rounded-lg px-4 py-2.5 text-sm font-medium text-white sm:w-auto disabled:opacity-50 transition-colors"
+      [class.bg-orange-500]="priceType === 'promotion'"
+      [class.hover:bg-orange-600]="priceType === 'promotion'"
+      [class.bg-brand-500]="priceType === 'standard'"
+      [class.hover:bg-brand-600]="priceType === 'standard'">
+      @if (isLoading) {
+        <svg class="animate-spin mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+        </svg>
+      }
+      {{ isLoading ? 'Saving...' : priceType === 'promotion' ? 'Create Promotion' : 'Update Price' }}
+    </button>
+  </div>
+
+  @if (errorMessage) {
+    <p class="mt-3 text-sm text-red-500 flex items-center gap-1.5">
+      ⚠️ {{ errorMessage }}
+    </p>
+  }
+
+</div>

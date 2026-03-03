@@ -1,0 +1,139 @@
+<div class="space-y-12">
+  <!-- Hero -->
+  <section
+    class="relative bg-gradient-to-r from-blue-600 to-indigo-700 py-16 md:py-24 overflow-hidden">
+    <div
+      class="container mx-auto px-4 flex flex-col md:flex-row items-center relative z-10">
+      <div class="md:w-1/2 text-white space-y-6">
+        <h1 class="text-4xl md:text-6xl font-extrabold leading-tight">
+          Tout le centre commercial <br> dans votre poche.
+        </h1>
+        <p class="text-lg text-blue-100 max-w-lg">
+          Découvrez les meilleures boutiques et profitez de promotions
+          exclusives livrées chez vous en un clic.
+        </p>
+        <div class="flex gap-4">
+          <z-button variant="secondary" size="lg" routerLink="/catalog">Voir le
+            catalogue</z-button>
+          <z-button variant="outline" size="lg" routerLink="/shops"
+            class="text-white border-white hover:bg-white/10">Boutiques</z-button>
+        </div>
+      </div>
+      <div class="hidden md:flex md:w-1/2 justify-center">
+        <img src="/images/centre-commercial.jpg" alt="Banner"
+          class="rounded-2xl shadow-2xl rotate-3">
+      </div>
+    </div>
+    <div
+      class="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+  </section>
+
+  <!-- Promotions du moment -->
+  <section class="container mx-auto px-4 bg-red-50 py-12 rounded-3xl">
+    <div class="flex justify-between items-end mb-8 px-4">
+      <div>
+        <h2 class="text-2xl font-bold text-red-600">Offres Flash ⚡</h2>
+        <p class="text-red-800/60">Ne ratez pas ces pépites à prix réduit</p>
+      </div>
+      <z-button routerLink="/deals" variant="link" color="danger">Voir tout</z-button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
+      @for (product of promotions(); track product._id) {
+      <z-card class="overflow-hidden hover:scale-[1.02] transition-transform">
+        <div class="relative">
+          <img 
+          [src]="apiEndPoint + (product?.images?.[0] ?? '') || '/assets/placeholder.png'"
+          class="w-full h-48 object-cover">
+          <z-badge variant="danger" class="absolute top-2 right-2">
+            -{{ calcDiscount(product.oldPrice!, product.price) }}%
+          </z-badge>
+        </div>
+        <div class="p-4 space-y-2">
+          <p class="text-xs text-gray-400 uppercase font-semibold">{{
+            product.brand || 'Premium' }}</p>
+          <h3 class="font-bold text-gray-800 truncate">{{ product.name }}</h3>
+          <div class="flex items-center gap-2">
+            <span class="text-xl font-bold text-primary-600">{{ product.price }}
+              {{ product.devise }}</span>
+            <span class="text-sm text-gray-400 line-through">{{ product.oldPrice
+              }} {{ product.devise }}</span>
+          </div>
+          <z-button class="w-full" variant="outline"
+            (click)="addToCart(product, $event)">
+            Ajouter au panier
+          </z-button>
+        </div>
+      </z-card>
+      }
+    </div>
+  </section>
+
+  <!-- Boutiques populaires -->
+  <section class="container mx-auto px-4">
+    <h2 class="text-2xl font-bold mb-6 font-primary">Boutiques à la une</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (shop of shops(); track shop._id) {
+      <div
+        class="flex items-center p-5 bg-white rounded-2xl border border-gray-100 shadow-sm gap-4 hover:shadow-md transition-shadow">
+        <img
+          [src]="apiEndPoint + (shop?.images?.[1] ?? shop?.images?.[0] ?? '') || 'assets/placeholder.png'"
+          class="w-14 h-14 rounded-xl bg-gray-50 border border-gray-200 object-contain p-1" />
+
+        <div class="flex-1 min-w-0">
+          <h3 class="font-semibold text-gray-900 truncate">{{ shop.name }}</h3>
+
+          <p class="text-sm text-gray-500 flex items-center gap-1 truncate">
+            <span class="material-icons text-base text-gray-400">place</span>
+            {{ shop.location || 'Centre Commercial' }}
+          </p>
+
+          <div
+            class="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-amber-500">
+            <span>★</span><span>4.8</span>
+          </div>
+        </div>
+
+        <a
+          [routerLink]="['/shop', shop._id]"
+          class="px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-colors">
+          Visiter
+        </a>
+      </div>
+      }
+    </div>
+  </section>
+
+  <!-- Nouveautés -->
+  <section class="container mx-auto px-4">
+    <div class="flex items-center gap-4 mb-8">
+      <h2 class="text-2xl font-bold">Dernières arrivées</h2>
+      <div class="h-px flex-1 bg-gray-200"></div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      @for (product of newArrivals(); track product._id) {
+      <div [routerLink]="['/product', product._id]"
+        class="group cursor-pointer">
+        <div
+          class="relative overflow-hidden rounded-xl bg-gray-100 mb-3 aspect-square">
+          <img [src]="apiEndPoint + (product?.images?.[0] ?? '') || 'assets/placeholder.png'"
+            class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500">
+          <button (click)="addToCart(product, $event)"
+            class="absolute bottom-2 right-2 p-2 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all">
+            <span
+              class="material-icons text-primary-600">add_shopping_cart</span>
+          </button>
+        </div>
+        <h3 class="font-medium text-gray-900 truncate">{{ product.name }}</h3>
+        <div class="flex justify-between items-center mt-1">
+          <span class="font-bold text-gray-900">{{ product.price }} {{
+            product.devise }}</span>
+          <span class="text-xs text-green-600" *ngIf="product.stock > 0">En
+            stock ({{ product.stock }})</span>
+        </div>
+      </div>
+      }
+    </div>
+  </section>
+</div>

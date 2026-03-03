@@ -1,0 +1,127 @@
+<div class="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 pb-3 pt-4 dark:border-white/[0.05] dark:bg-white/[0.03] sm:px-6">
+
+  <div class="flex justify-between gap-2 mb-4 sm:items-center">
+    <div>
+      <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Shop</h3>
+    </div>
+    @if(currentUserRole === 'admin') {
+    <div class="flex items-center gap-2">
+      <!-- Bouton créer -->
+      <app-button size="sm" variant="primary" [startIcon]="plusIcon" (click)="openCreateModal()">
+        New Shop
+      </app-button>
+
+    </div>
+  }
+  </div>
+
+  <!-- Error -->
+  @if (errorMessage) {
+    <div class="mb-4 rounded-lg border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/10 px-4 py-3 text-sm text-red-600 dark:text-red-400">
+      ⚠️ {{ errorMessage }}
+    </div>
+  }
+
+  <!-- Loading -->
+  @if (isLoading) {
+    <div class="py-10 text-center text-sm text-gray-400 dark:text-gray-500">Loading shops...</div>
+  }
+
+  <!-- Table -->
+  @if (!isLoading) {
+    <div class="max-w-full overflow-x-auto">
+      <table class="w-full">
+        <thead class="border-gray-100 border-y dark:border-white/[0.05]">
+          <tr>
+            <th class="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Manager</th>
+            <th class="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Shop Name</th>
+            <th class="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Status</th>
+            <th class="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 dark:divide-white/[0.05]">
+          @for (item of shops; track item._id) {
+            <tr>
+
+              <!-- Manager -->
+              <td class="py-3">
+                <div class="flex items-center gap-[18px]">
+                  <div class="w-10 h-10 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-sm font-semibold text-gray-600 dark:text-gray-300">
+                    @if (item.manager?.image) {
+                      <img width="40" height="40" class="w-full size-10 object-cover" [src]="item.manager.image" alt="manager" />
+                    } @else {
+                      {{ item.manager?.firstName?.charAt(0) }}{{ item.manager?.name?.charAt(0) }}
+                    }
+                  </div>
+                  <p class="text-gray-700 text-theme-sm dark:text-gray-400">
+                    {{ item.manager?.firstName }} {{ item.manager?.name }}
+                  </p>
+                </div>
+              </td>
+
+              <!-- Shop Name -->
+              <td class="py-3">
+                <div class="flex items-center gap-5">
+                  @if (item.images?.[0]) {
+                    <div class="w-8 h-8 overflow-hidden rounded">
+                      <img width="32" height="32" class="w-full size-8 object-cover" [src]="apiEndpoint + item.images[0]" alt="shop" />
+                    </div>
+                  }
+                  <div class="truncate">
+                    <p class="mb-0.5 truncate text-theme-sm font-medium text-gray-700 dark:text-gray-400">{{ item.name }}</p>
+                    <span class="text-gray-500 text-theme-xs dark:text-gray-400">{{ item.type }}</span>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Status -->
+              <td class="py-3">
+                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                  [class]="item.isActive
+                    ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                    : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'">
+                  {{ item.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+
+              <!-- Actions -->
+              <td class="py-3 text-right">
+                <div class="flex items-center justify-end gap-2">
+                  @if(currentUserRole === 'admin') {
+                   <app-button size="sm" variant="outline" (click)="handleEdit(item)">
+                    Edit
+                  </app-button>
+                  }
+                    <app-button size="sm" variant="primary" (click)="goToView(item)" [endIcon]="boxIcon">
+                      Manage
+                    </app-button>
+                </div>
+              </td>
+
+            </tr>
+          }
+
+          @empty {
+            <tr>
+              <td colspan="4" class="py-10 text-center text-sm text-gray-400 dark:text-gray-500">
+                No shops found.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+<!-- Modal Create -->
+<app-modal [isOpen]="isCreateModalOpen" (close)="closeCreateModal()" className="max-w-[1200px] max-h-[90vh] overflow-y-auto p-6 lg:p-10">
+  <app-shop-new (shopCreated)="onShopCreated($event)" />
+</app-modal>
+
+<!-- Modal Edit -->
+<app-modal [isOpen]="isEditModalOpen" (close)="closeEditModal()" className="max-w-[1200px] max-h-[90vh] overflow-y-auto p-6 lg:p-10">
+  @if (selectedShop) {
+    <app-shop-edit [shop]="selectedShop" (shopUpdated)="onShopUpdated($event)" />
+  }
+</app-modal>

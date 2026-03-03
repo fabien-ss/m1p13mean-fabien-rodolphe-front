@@ -1,0 +1,43 @@
+<div class="space-y-5">
+  <h4 class="text-base font-semibold text-gray-800 dark:text-white/90">New User</h4>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <app-label>First Name *</app-label>
+      <app-input-field name="firstName" [(ngModel)]="firstName" class="w-full" />
+    </div>
+    <div>
+      <app-label>Last Name *</app-label>
+      <app-input-field name="name" [(ngModel)]="name" class="w-full" />
+    </div>
+  </div>
+
+  <div>
+    <app-label>Email *</app-label>
+    <app-input-field type="email" name="email" [(ngModel)]="email" class="w-full" />
+  </div>
+
+  <div>
+    <app-label>Password *</app-label>
+    <app-input-field type="password" name="password" [(ngModel)]="password" class="w-full" />
+  </div>
+
+  <div>
+    <app-label>Role *</app-label>
+    <app-select [options]="roleOptions" placeholder="Select role" [value]="role" (valueChange)="role = $event" />
+  </div>
+
+  @if (errorMessage) {
+    <div class="rounded-lg border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/10 px-4 py-3 text-sm text-red-600 dark:text-red-400">
+      ⚠️ {{ errorMessage }}
+    </div>
+  }
+
+  <div class="flex justify-end gap-2 pt-2">
+    <app-button size="sm" variant="outline" type="button" (click)="onClear()">Clear</app-button>
+    <button type="button" (click)="onSave()" [disabled]="isLoading"
+      class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-theme-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50">
+      {{ isLoading ? 'Saving...' : 'Create User' }}
+    </button>
+  </div>
+</div>

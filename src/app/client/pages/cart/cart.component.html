@@ -1,0 +1,263 @@
+<!-- cart.component.html (style aligned with Catalog page) -->
+<div class="bg-gray-50 min-h-screen pb-20">
+
+  <!-- Header like catalog -->
+  <div class="bg-white border-b border-gray-100">
+    <div class="container mx-auto px-4 md:px-6 pt-6 pb-4">
+
+      <nav class="text-sm text-gray-500 flex items-center gap-2 mb-6">
+        <a routerLink="/"
+          class="hover:text-indigo-600 transition-colors">Accueil</a>
+        <span>/</span>
+        <span class="text-gray-700 font-semibold">Panier</span>
+      </nav>
+
+      <div
+        class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+          <p
+            class="text-xs tracking-widest uppercase text-gray-400 font-black mb-1">Akoor</p>
+          <h1
+            class="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900">Mon
+            Panier</h1>
+        </div>
+
+        @if (cartService.items().length > 0) {
+        <div class="text-sm text-gray-500">
+          <span class="font-black text-gray-900">{{ cartService.items().length
+            }}</span>
+          article{{ cartService.items().length > 1 ? 's' : '' }}
+        </div>
+        }
+      </div>
+
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 md:px-6 py-8">
+
+    <!-- SUCCESS -->
+    @if (orderSuccess()) {
+    <div
+      class="bg-white border border-gray-100 rounded-2xl shadow-sm p-10 text-center">
+      <div
+        class="w-14 h-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-2xl font-black mx-auto">
+        ✓
+      </div>
+      <h2 class="mt-4 text-2xl font-extrabold tracking-tight text-gray-900">
+        Commande confirmée !
+      </h2>
+      <p class="mt-2 text-sm text-gray-500 max-w-md mx-auto leading-relaxed">
+        Merci pour votre achat. Vous recevrez une confirmation prochainement.
+      </p>
+      <a routerLink="/"
+        class="mt-6 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold transition-colors">
+        Continuer mes achats
+        <span class="material-icons text-base">arrow_forward</span>
+      </a>
+    </div>
+
+    <!-- EMPTY -->
+    } @else if (cartService.items().length === 0) {
+    <div
+      class="bg-white border border-gray-100 rounded-2xl shadow-sm p-10 text-center">
+      <h2 class="mt-4 text-2xl font-extrabold tracking-tight text-gray-900">
+        Votre panier est vide
+      </h2>
+      <p class="mt-2 text-sm text-gray-500 max-w-md mx-auto leading-relaxed">
+        Découvrez nos produits et ajoutez vos coups de cœur.
+      </p>
+      <a routerLink="/catalog"
+        class="mt-6 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold transition-colors">
+        Explorer le catalogue
+        <span class="material-icons text-base">storefront</span>
+      </a>
+    </div>
+
+    <!-- CART WITH ITEMS -->
+    } @else {
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 items-start">
+
+      <!-- Items list -->
+      <div
+        class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+
+        <!-- Head row -->
+        <div
+          class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+          <p
+            class="text-sm font-black text-gray-900 tracking-tight">Articles</p>
+          <button (click)="clearCart()"
+            class="text-xs font-semibold text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1">
+            <span class="material-icons text-base">delete_outline</span>
+            Vider
+          </button>
+        </div>
+
+        <!-- Column headers (desktop) -->
+        <div
+          class="hidden sm:grid grid-cols-[1fr_90px_130px_44px] gap-3 px-6 py-3 bg-gray-50 border-b border-gray-100
+                      text-[10px] font-black tracking-widest uppercase text-gray-400">
+          <span>Produit</span>
+          <span class="text-center">Qté</span>
+          <span class="text-right">Total</span>
+          <span></span>
+        </div>
+
+        @for (item of cartService.items(); track item.id) {
+        <div
+          class="grid grid-cols-[1fr_44px] sm:grid-cols-[1fr_90px_130px_44px] gap-3 items-center px-6 py-5 border-b border-gray-100 hover:bg-gray-50 transition-colors last:border-b-0">
+
+          <!-- Product -->
+          <div class="flex items-center gap-4 min-w-0">
+            <img
+              [src]="apiEndPoint + (item?.image ?? '') || '/assets/placeholder.png'"
+              [alt]="item.name"
+              class="w-14 h-14 rounded-xl object-cover bg-gray-100 border border-gray-100 flex-shrink-0" />
+            <div class="min-w-0">
+              <p class="text-sm font-semibold text-gray-900 truncate">{{
+                item.name }}</p>
+
+              <!-- mobile info -->
+              <p class="sm:hidden text-xs text-gray-500 mt-0.5">
+                {{ item.price | currency:'MGA':'symbol':'1.0-0' }} × {{ item.qty
+                }}
+              </p>
+
+              <!-- desktop unit price -->
+              <p class="hidden sm:block text-xs text-gray-400 mt-0.5">
+                Prix unitaire : {{ item.price | currency:'MGA':'symbol':'1.0-0'
+                }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Qty (desktop) -->
+          <div class="hidden sm:flex justify-center">
+            <span
+              class="min-w-[38px] h-9 px-3 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center text-sm font-bold text-gray-700">
+              {{ item.qty }}
+            </span>
+          </div>
+
+          <!-- Total (desktop) -->
+          <div
+            class="hidden sm:block text-right text-sm font-black text-gray-900">
+            {{ item.price * item.qty | currency:'MGA':'symbol':'1.0-0' }}
+          </div>
+
+          <!-- Remove -->
+          <div class="flex justify-center">
+            <button (click)="removeFromCart(item.id)"
+              class="w-9 h-9 rounded-xl border border-gray-200 flex items-center justify-center text-gray-400
+                         hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors"
+              aria-label="Retirer">
+              <span class="material-icons text-base">close</span>
+            </button>
+          </div>
+
+          <!-- Mobile line total -->
+          <div class="sm:hidden col-span-2 -mt-1 pb-1">
+            <p class="text-xs text-gray-500">
+              Total :
+              <span class="font-black text-gray-900">
+                {{ item.price * item.qty | currency:'MGA':'symbol':'1.0-0' }}
+              </span>
+            </p>
+          </div>
+        </div>
+        }
+      </div>
+
+      <!-- Summary -->
+      <aside
+        class="bg-white border border-gray-100 rounded-2xl shadow-sm p-6 lg:sticky lg:top-6">
+
+        <h2
+          class="text-sm font-black uppercase tracking-widest text-gray-400 mb-4">
+          Récapitulatif
+        </h2>
+
+        <div class="space-y-2.5 mb-4">
+          @for (item of cartService.items(); track item.id) {
+          <div class="flex justify-between items-baseline gap-3">
+            <span class="text-sm text-gray-600 truncate">
+              {{ item.name }}
+              <span class="text-xs text-gray-400 font-mono ml-1">×{{ item.qty
+                }}</span>
+            </span>
+            <span class="text-sm text-gray-700 font-semibold whitespace-nowrap">
+              {{ item.price * item.qty | currency:'MGA':'symbol':'1.0-0' }}
+            </span>
+          </div>
+          }
+        </div>
+
+        <div class="h-px bg-gray-100 my-5"></div>
+
+        <div class="flex justify-between items-baseline mb-5">
+          <span
+            class="text-xs uppercase tracking-widest font-black text-gray-400">Total</span>
+          <span class="text-2xl font-extrabold tracking-tight text-gray-900">
+            {{ cartService.total() | currency:'MGA':'symbol':'1.0-0' }}
+          </span>
+        </div>
+
+        <!-- Error -->
+        @if (orderError()) {
+        <div
+          class="mb-4 rounded-lg border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/10 px-4 py-3 text-sm text-red-600 dark:text-red-400 flex items-center gap-2">
+          ⚠ {{ orderError() }}
+        </div>
+        }
+
+        @if (isLoggedIn) {
+        <button (click)="placeOrder()" [disabled]="isOrdering()"
+          class="w-full flex items-center justify-center gap-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700
+                     disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold py-3.5 transition-colors mb-3">
+          @if (isOrdering()) {
+          <span
+            class="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></span>
+          Traitement…
+          } @else {
+          <span class="material-icons text-base">shopping_cart_checkout</span>
+          Passer la commande
+          }
+        </button>
+
+        } @else {
+        <div
+          class="rounded-2xl border border-gray-100 bg-gray-50 p-5 text-center mb-3">
+          <div
+            class="w-11 h-11 rounded-2xl bg-white border border-gray-100 flex items-center justify-center mx-auto mb-3 text-indigo-600">
+            <span class="material-icons">person</span>
+          </div>
+          <p class="text-sm text-gray-600 leading-relaxed mb-4">
+            Connectez-vous pour finaliser votre commande.
+          </p>
+          <a routerLink="/login"
+            class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-3 transition-colors">
+            <span class="material-icons text-base">login</span>
+            Se connecter
+          </a>
+          <p class="text-[11px] text-gray-400 mt-3">
+            Pas encore de compte ?
+            <a routerLink="/register"
+              class="text-indigo-600 hover:underline font-semibold">
+              Créer un compte
+            </a>
+          </p>
+        </div>
+        }
+
+        <p class="text-[11px] text-gray-400 text-center leading-relaxed">
+          Livraison et taxes calculées à la finalisation.
+        </p>
+
+      </aside>
+
+    </div>
+    }
+
+  </div>
+</div>

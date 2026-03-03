@@ -1,0 +1,169 @@
+<div class="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 mt-5">
+  
+    <!-- Header -->
+    <div class="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">
+          Stock Movements
+        </h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Track all incoming and outgoing stock</p>
+      </div>
+  
+      <div class="flex items-center gap-3">
+  
+        <!-- Filter by type -->
+        <div class="flex items-center rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <button (click)="filterType = 'all'"
+            class="px-3 py-2 text-theme-sm font-medium transition-colors"
+            [class]="filterType === 'all' ? 'bg-brand-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">
+            All
+          </button>
+          <button (click)="filterType = 'in'"
+            class="px-3 py-2 text-theme-sm font-medium transition-colors"
+            [class]="filterType === 'in' ? 'bg-green-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">
+            IN
+          </button>
+          <button (click)="filterType = 'out'"
+            class="px-3 py-2 text-theme-sm font-medium transition-colors"
+            [class]="filterType === 'out' ? 'bg-red-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400'">
+            OUT
+          </button>
+        </div>
+  
+        <button 
+          (click)="loadMovements()"
+          class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 4v6h-6" />
+            <path d="M1 20v-6h6" />
+            <path d="M3.51 9a9 9 0 0 1 14.36-3.36L23 10M1 14l5.13 4.36A9 9 0 0 0 20.49 15" />
+          </svg>
+          Refresh
+        </button>
+  
+        <button class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
+          <svg class="stroke-current fill-white dark:fill-gray-800" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2.29004 5.90393H17.7067" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M17.7075 14.0961H2.29085" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M12.0826 3.33331C13.5024 3.33331 14.6534 4.48431 14.6534 5.90414C14.6534 7.32398 13.5024 8.47498 12.0826 8.47498C10.6627 8.47498 9.51172 7.32398 9.51172 5.90415C9.51172 4.48432 10.6627 3.33331 12.0826 3.33331Z" stroke-width="1.5" />
+            <path d="M7.91745 11.525C6.49762 11.525 5.34662 12.676 5.34662 14.0959C5.34661 15.5157 6.49762 16.6667 7.91745 16.6667C9.33728 16.6667 10.4883 15.5157 10.4883 14.0959C10.4883 12.676 9.33728 11.525 7.91745 11.525Z" stroke-width="1.5" />
+          </svg>
+          Filter
+        </button>
+  
+      </div>
+    </div>
+  
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-3 gap-4 mb-6">
+      <div class="rounded-xl border border-green-100 bg-green-50 dark:border-green-800 dark:bg-green-900/10 px-4 py-3">
+        <p class="text-xs font-medium text-green-600 dark:text-green-400 uppercase tracking-wide mb-1">Total IN</p>
+        <p class="text-2xl font-bold text-green-700 dark:text-green-300">{{ totalIn }}</p>
+        <p class="text-xs text-green-500 mt-0.5">units received</p>
+      </div>
+      <div class="rounded-xl border border-red-100 bg-red-50 dark:border-red-800 dark:bg-red-900/10 px-4 py-3">
+        <p class="text-xs font-medium text-red-600 dark:text-red-400 uppercase tracking-wide mb-1">Total OUT</p>
+        <p class="text-2xl font-bold text-red-700 dark:text-red-300">{{ totalOut }}</p>
+        <p class="text-xs text-red-500 mt-0.5">units solded</p>
+      </div>
+      <div class="rounded-xl border border-gray-100 bg-gray-50 dark:border-gray-700 dark:bg-gray-800 px-4 py-3">
+        <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Net Balance</p>
+        <p class="text-2xl font-bold text-gray-800 dark:text-white/90">{{ totalIn - totalOut }}</p>
+        <p class="text-xs text-gray-400 mt-0.5">units in stock</p>
+      </div>
+    </div>
+  
+    <!-- Table -->
+    <div class="max-w-full overflow-x-auto">
+      <table class="w-full text-left">
+        <thead class="border-y border-gray-100 dark:border-gray-800">
+          <tr>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400">Product</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Type</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Quantity</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Cost Price</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Selling Price</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Margin</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Expiry Date</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Date</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Note</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+          @for (movement of filteredMovements; track movement.id) {
+            <tr>
+              <!-- Product -->
+              <td class="py-4 px-4">
+                <div class="flex items-center gap-3">
+                  <div class="h-10 w-10 overflow-hidden rounded-md flex-shrink-0">
+                    <img [src]="movement.product.image" [alt]="movement.product.name" class="h-full w-full object-cover" />
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-800 text-theme-sm dark:text-white/90">{{ movement.product.name }}</p>
+                    <span class="text-gray-400 text-theme-xs">{{ movement.product.sku }}</span>
+                  </div>
+                </div>
+              </td>
+  
+              <!-- Type Badge -->
+              <td class="py-4 px-4 text-center">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold"
+                  [class]="movement.type === 'in'
+                    ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                    : 'bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400'">
+                  {{ movement.type === 'in' ? '▲ IN' : '▼ OUT' }}
+                </span>
+              </td>
+  
+              <!-- Quantity -->
+              <td class="py-4 px-4 text-center font-semibold"
+                [class]="movement.type === 'in' ? 'text-green-600' : 'text-red-500'">
+                {{ movement.type === 'in' ? '+' : '-' }}{{ movement.quantity }}
+              </td>
+  
+              <!-- Cost Price -->
+              <td class="py-4 px-4 text-center text-gray-500 text-theme-sm dark:text-gray-400">
+                {{ movement.costPrice ? ('$' + movement.costPrice) : '—' }}
+              </td>
+  
+              <!-- Selling Price -->
+              <td class="py-4 px-4 text-center text-gray-500 text-theme-sm dark:text-gray-400">
+                {{ movement.sellingPrice ? ('$' + movement.sellingPrice) : '—' }}
+              </td>
+  
+              <!-- Margin -->
+              <td class="py-4 px-4 text-center text-xs font-medium">
+                @if (movement.costPrice && movement.sellingPrice) {
+                  <span [class]="movement.sellingPrice > movement.costPrice ? 'text-green-500' : 'text-red-400'">
+                    {{ ((movement.sellingPrice - movement.costPrice) / movement.costPrice * 100).toFixed(1) }}%
+                  </span>
+                } @else {
+                  <span class="text-gray-400">—</span>
+                }
+              </td>
+  
+              <!-- Expiry Date -->
+              <td class="py-4 px-4 text-center text-theme-sm">
+                @if (movement.expiryDate) {
+                  <span class="text-orange-500 font-medium">{{ movement.expiryDate }}</span>
+                } @else {
+                  <span class="text-gray-400">—</span>
+                }
+              </td>
+  
+              <!-- Date -->
+              <td class="py-4 px-4 text-center text-gray-500 text-theme-sm dark:text-gray-400">
+                {{ movement.date }}
+              </td>
+  
+              <!-- Note -->
+              <td class="py-4 px-4 text-center text-gray-400 text-theme-xs max-w-[120px] truncate">
+                {{ movement.note || '—' }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  
+  </div>

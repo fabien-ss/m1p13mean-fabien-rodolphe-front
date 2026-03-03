@@ -1,0 +1,93 @@
+<div class="rounded-2xl border border-gray-200 bg-white px-5 pb-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6">
+
+  <div class="flex flex-col gap-5 mb-6 sm:flex-row sm:justify-between items-start sm:items-center">
+    <div class="w-full">
+      <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Sales statistics</h3>
+      <p class="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">Target you've set for each month</p>
+    </div>
+    <button
+      (click)="openTargetModal()"
+      class="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white transition-all bg-blue-600 rounded-lg hover:bg-blue-700 active:scale-95">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
+      Edit Targets
+    </button>
+  </div>
+
+  <!-- Loading -->
+  @if (isLoading) {
+    <div class="flex items-center justify-center h-48 text-gray-400">
+      <svg class="animate-spin size-6 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+      </svg>
+      Loading...
+    </div>
+  }
+
+  <!-- Error -->
+  @if (hasError && !isLoading) {
+    <div class="flex items-center justify-center h-48 text-red-500">
+      Failed to load sales data.
+    </div>
+  }
+
+  <!-- Chart -->
+  @if (!isLoading && !hasError) {
+    <div class="max-w-full overflow-x-auto custom-scrollbar">
+      <div class="min-w-[1000px] xl:min-w-full">
+        @if (chartReady) {
+          <apx-chart
+            [series]="series"
+            [chart]="chart"
+            [colors]="colors"
+            [stroke]="stroke"
+            [fill]="fill"
+            [markers]="markers"
+            [grid]="grid"
+            [dataLabels]="dataLabels"
+            [tooltip]="tooltip"
+            [xaxis]="xaxis"
+            [yaxis]="yaxis"
+            [legend]="legend">
+          </apx-chart>
+        }
+      </div>
+    </div>
+  }
+</div>
+
+<!-- Modal -->
+@if (isTargetModalOpen) {
+  <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+    <div class="w-full max-w-md p-6 bg-white rounded-2xl dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-800">
+      <h4 class="mb-4 text-xl font-bold text-gray-800 dark:text-white">Modifier les objectifs</h4>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Mois concerné</label>
+          <select [(ngModel)]="selectedMonthIndex" class="w-full px-4 py-2 bg-transparent border border-gray-300 rounded-lg dark:border-gray-700 dark:text-white outline-none focus:border-blue-500">
+            @for (month of xaxis.categories; track $index) {
+              <option [value]="$index">{{ month }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Objectif Revenue (Ligne Claire)</label>
+          <input type="number" [(ngModel)]="newRevenueValue" class="w-full px-4 py-2 bg-transparent border border-gray-300 rounded-lg dark:border-gray-700 dark:text-white outline-none focus:border-blue-500" />
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 mt-8">
+        <button (click)="closeTargetModal()" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:hover:text-gray-200">
+          Annuler
+        </button>
+        <button (click)="updateChartData()" class="px-5 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+          Mettre à jour le graphique
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,211 @@
+<!-- product-list-table.component.html -->
+
+<div class="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 mt-5">
+
+  <!-- Header -->
+  <div class="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
+    <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Products</h3>
+
+    <div class="flex items-center gap-3">
+      <!-- Refresh -->
+      <button
+        (click)="refreshTable()"
+        class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03]">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 4v6h-6"/><path d="M1 20v-6h6"/>
+          <path d="M3.51 9a9 9 0 0 1 14.36-3.36L23 10M1 14l5.13 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+        Refresh
+      </button>
+
+      <!-- New Product -->
+      <button
+        (click)="newProduct()"
+        class="inline-flex items-center gap-2 rounded-lg border border-blue-600 bg-blue-600 px-4 py-2.5 text-theme-sm font-medium text-white shadow-theme-xs hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        New Product
+      </button>
+    </div>
+  </div>
+
+  <!-- Error -->
+  @if (errorMessage) {
+    <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-800 dark:bg-red-900/10 dark:text-red-400">
+      ⚠️ {{ errorMessage }}
+    </div>
+  }
+
+  <!-- Loading -->
+  @if (isLoading) {
+    <div class="flex justify-center py-16">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+    </div>
+  } @else {
+
+    <!-- Table -->
+    <div class="max-w-full overflow-x-auto">
+      <table class="w-full text-left">
+        <thead class="border-y border-gray-100 dark:border-gray-800">
+          <tr>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400">Product</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">SKU</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Category</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Stock</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Min Stock</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-right">Price</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Available</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Last Updated</th>
+            <th class="py-3 px-4 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-center">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+          @for (product of tableData; track product._id) {
+            <tr class="group hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+
+              <!-- Product name + image -->
+              <td class="py-4 px-4">
+                <div class="flex items-center gap-3">
+                  <div class="h-[46px] w-[46px] overflow-hidden rounded-lg flex-shrink-0 bg-gray-100">
+                    <img
+                      [src]="apiEndPoint + (product.images?.[0] ?? '') || 'assets/placeholder.png'"
+                      [alt]="product.name"
+                      class="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div class="min-w-0">
+                    <p class="font-semibold text-gray-800 text-theme-sm dark:text-white/90 truncate max-w-[160px]">
+                      {{ product.name }}
+                    </p>
+                    <span class="text-gray-400 text-theme-xs font-mono">{{ product.model }}</span>
+                  </div>
+                </div>
+              </td>
+
+              <!-- SKU -->
+              <td class="py-3 px-4 text-gray-500 text-theme-sm text-center font-mono">
+                {{ product.sku }}
+              </td>
+
+              <!-- Category -->
+              <td class="py-3 px-4 text-gray-500 text-theme-sm text-center">
+                @if (product.category?.name) {
+                  <span class="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-xs font-medium">
+                    {{ product.category!.name }}
+                  </span>
+                } @else {
+                  <span class="text-gray-300">—</span>
+                }
+              </td>
+
+              <!-- Stock -->
+              <td class="py-3 px-4 text-center">
+                <span
+                  class="font-semibold text-sm"
+                  [class.text-red-500]="(product.stock ?? 0) <= (product.minStock ?? 0)"
+                  [class.text-green-600]="(product.stock ?? 0) > (product.minStock ?? 0)">
+                  {{ product.stock ?? 0 }}
+                </span>
+              </td>
+
+              <!-- Min stock -->
+              <td class="py-3 px-4 text-gray-500 text-theme-sm text-center">
+                {{ product.minStock ?? '—' }}
+              </td>
+
+              <!-- Price -->
+              <td class="py-3 px-4 text-gray-800 dark:text-white font-semibold text-theme-sm text-right">
+                {{ product.price }} {{ product.devise }}
+              </td>
+
+              <!-- Available toggle -->
+              <td class="py-3 px-4 text-center align-middle">
+                <div class="flex justify-center">
+                  <app-switch
+                    name="available"
+                    [defaultChecked]="product.available ?? false"
+                    [(ngModel)]="product.available"
+                    (ngModelChange)="updateProductStatus(product._id!, product.available ?? false)">
+                  </app-switch>
+                </div>
+              </td>
+
+              <!-- Last updated -->
+              <td class="py-3 px-4 text-gray-400 text-theme-xs text-center">
+                {{ product.modificationDate | date:'dd MMM y' }}
+              </td>
+
+              <!-- Actions -->
+              <td class="py-3 px-4 text-center align-middle">
+                <div class="inline-flex items-center justify-center gap-1.5 opacity-70 group-hover:opacity-100 transition-opacity">
+
+                  <!-- Edit → opens drawer -->
+                  <app-button size="sm" variant="outline" (click)="openEditDrawer(product)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    <span class="hidden sm:inline ml-1">Edit</span>
+                  </app-button>
+
+                  <!-- Stock -->
+                  <app-button size="sm" variant="outline" (click)="openStockModal(product)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                      <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                      <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                    <span class="hidden sm:inline ml-1">Stock</span>
+                  </app-button>
+
+                  <!-- Pricing -->
+                  <app-button size="sm" variant="outline" (click)="openModal(product)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 2H6a2 2 0 0 0-2 2v6l8 8 8-8-6-6a2 2 0 0 0-2-2z"/>
+                      <circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"/>
+                    </svg>
+                    <span class="hidden sm:inline ml-1">Pricing</span>
+                  </app-button>
+
+                </div>
+              </td>
+
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (!tableData.length && !isLoading) {
+        <div class="flex flex-col items-center justify-center py-20 text-center">
+          <span class="text-5xl mb-3">📦</span>
+          <p class="text-sm font-semibold text-gray-500 dark:text-gray-400">No products yet.</p>
+          <p class="text-xs text-gray-400 mt-1">Click "New Product" to add your first one.</p>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ── Existing modals ─────────────────────────────────────────── -->
+  <app-modal [isOpen]="isOpen" (close)="closeModal()" className="max-w-[700px] p-6 lg:p-10">
+    <app-product-avancement (cancel)="closeModal()" (saved)="closeModal()" [product]="selectedProduct" />
+  </app-modal>
+
+  <app-modal [isOpen]="isStockModalOpen" (close)="closeStockModal()" className="max-w-[700px] p-6 lg:p-10">
+    <app-product-stock-entry (saved)="closeStockModal()" [product]="selectedProduct" />
+  </app-modal>
+
+</div>
+
+<!-- ── Edit drawer (outside the card, at root level) ──────────────── -->
+<app-product-edit-drawer
+  [product]="selectedProduct"
+  [isOpen]="isEditDrawerOpen"
+  (close)="closeEditDrawer()"
+  (saved)="onProductSaved($event)"
+/>

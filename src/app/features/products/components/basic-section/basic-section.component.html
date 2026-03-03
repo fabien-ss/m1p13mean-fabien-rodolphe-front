@@ -1,0 +1,110 @@
+<div class="space-y-6">
+
+  <!-- SECTION 1: Basic Info -->
+  <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-6 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
+    <h4 class="text-base font-semibold text-gray-800 dark:text-white/90 mb-4">Basic Information</h4>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <div class="lg:col-span-2 space-y-4">
+        <div>
+          <app-label>Product Name *</app-label>
+          <app-input-field name="name" [(ngModel)]="name" (ngModelChange)="emit()" class="w-full" />
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <app-label>Category *</app-label>
+            <app-select [options]="options" placeholder="Select category" [value]="category._id" (valueChange)="handleSelectChange($event)" className="dark:bg-dark-900" />
+          </div>
+          <div>
+            <app-label>Brand</app-label>
+            <app-input-field name="brand" [(ngModel)]="brand" (ngModelChange)="emit()" class="w-full" />
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <app-label>SKU *</app-label>
+            <app-input-field name="sku" [(ngModel)]="sku" (ngModelChange)="emit()" class="w-full" />
+          </div>
+          <div>
+            <app-label>Barcode / UPC</app-label>
+            <app-input-field name="barcode" [(ngModel)]="barcode" (ngModelChange)="emit()" class="w-full" />
+          </div>
+        </div>
+        <div>
+          <app-label>Model Number</app-label>
+          <app-input-field name="model" [(ngModel)]="model" (ngModelChange)="emit()" class="w-full" />
+        </div>
+        <div>
+          <app-label>Description*</app-label>
+          <app-input-field name="description" [(ngModel)]="description" (ngModelChange)="emit()" class="w-full" />
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <app-dropzone class="w-full h-full" [(ngModel)]="files" (filesDropped)="onFilesDropped($event)" />
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION 2: Pricing & Inventory -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-6 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
+      <h4 class="text-base font-semibold text-gray-800 dark:text-white/90 mb-4">Pricing</h4>
+      <div class="space-y-4">
+        <div>
+          <app-label>Cost Price *</app-label>
+          <app-input-field type="number" name="costPrice" [(ngModel)]="costPrice" (ngModelChange)="emit()" class="w-full" />
+        </div>
+        <div>
+          <app-label>Selling Price *</app-label>
+          <app-input-field type="number" name="sellingPrice" [(ngModel)]="sellingPrice" (ngModelChange)="emit()" class="w-full" />
+        </div>
+      </div>
+    </div>
+
+    <div class="overflow-scroll rounded-2xl border border-gray-200 bg-white px-4 pb-6 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
+      <h4 class="text-base font-semibold text-gray-800 dark:text-white/90 mb-4">Inventory</h4>
+      <div class="space-y-4">
+        <div>
+          <app-label>Opening Stock *</app-label>
+          <app-input-field type="number" name="stock" [(ngModel)]="stock" (ngModelChange)="emit()" class="w-full" />
+        </div>
+        <div>
+          <app-date-picker (dateChange)="onExpiryDateChange($event)" id="expiry-date-picker" label="Expiry Date" placeholder="Select a date" (dateChange)="expiryDateChange($event)" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  @if (errorMessage) {
+    <div class="rounded-lg border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/10 px-4 py-3 text-sm text-red-600 dark:text-red-400">
+      ⚠️ {{ errorMessage }}
+    </div>
+  }
+
+  <!-- Actions -->
+  <div class="flex items-center justify-between pt-4 gap-4">
+    <div class="flex items-center gap-3">
+      <app-label>Enable</app-label>
+      <app-switch name="shortEnable" [(ngModel)]="isActive" class="scale-125">
+        Ready to sell
+      </app-switch>
+    </div>
+    <div class="flex items-center gap-2">
+      <app-button size="sm" variant="outline" type="button" (click)="onClear()">
+        Clear
+      </app-button>
+      <button
+        type="button"
+        (click)="onSave()"
+        [disabled]="isLoading"
+        class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-theme-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50">
+        {{ isLoading ? 'Saving...' : 'Save Product' }}
+      </button>
+    </div>
+  </div>
+
+</div>
